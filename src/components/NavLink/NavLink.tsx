@@ -19,7 +19,7 @@ export const NavLink = ({ icon, text, href }: NavLinkProps) => {
   return (
     <Link href={href}>
       <div
-        className={`flex flex-row items-center gap-2 py-3 px-5 rounded-full font-semibold w-full 
+        className={`flex flex-row items-center gap-2 py-3 px-5 rounded-full font-medium w-full 
         ${isActive ? 'bg-teal-400' : 'bg-neutral-900'}  
         hover:bg-teal-400 focus:outline-none mt-2`}
       >
@@ -30,7 +30,7 @@ export const NavLink = ({ icon, text, href }: NavLinkProps) => {
           <span
             className={`${
               isActive ? 'text-neutral-900' : 'text-white'
-            } font-semibold`}
+            } font-medium`}
           >
             {text}
           </span>
