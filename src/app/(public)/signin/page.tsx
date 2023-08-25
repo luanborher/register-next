@@ -4,7 +4,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { Login } from 'interfaces/User';
+import { FormContainer } from './styles';
+
+import { Login, User } from 'interfaces/User';
 import api from 'services/api';
 
 export default function LoginPage() {
@@ -14,9 +16,13 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<Login> = async (form) => {
     try {
-      const { data } = await api.post('/login', form);
+      const { data } = await api.post<User>('/user/sessions', {
+        ...form
+      });
 
-      console.log(data);
+      localStorage.setItem('@register:accessToken', data.access_token);
+      localStorage.setItem('@register:user', JSON.stringify(data.user));
+
       router.push('/');
     } catch (error) {
       console.log(error);
@@ -24,18 +30,15 @@ export default function LoginPage() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-16 rounded-lg shadow-md w-full max-w-[500px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    >
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-center justify-center mb-8">
         <Image
-          src="/assets/register.svg"
+          src="/assets/logo.svg"
           alt="Logo"
-          width={120}
+          width={100}
           height={110}
           placeholder="blur"
-          blurDataURL="/assets/register.svg"
+          blurDataURL="/assets/logo.svg"
         />
       </div>
 
@@ -49,10 +52,10 @@ export default function LoginPage() {
 
         <input
           id="login"
-          type="email"
+          type="text"
           className="w-full px-3 py-2 border text-black border-secondary rounded-lg focus:outline-none focus:ring focus:border-secondary"
           placeholder="Seu usuário"
-          {...register('email')}
+          {...register('login')}
         />
       </div>
 
@@ -79,6 +82,6 @@ export default function LoginPage() {
       >
         Entrar
       </button>
-    </form>
+    </FormContainer>
   );
 }

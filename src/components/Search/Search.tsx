@@ -12,7 +12,7 @@ const Search = () => {
       <button className="flex items-center justify-center w-[250px] h-[45px] px-2 gap-2 py-2 text-white bg-primary rounded-md hover:bg-opacity-80">
         <UserPlus2 className="w-[20px] h-[20px]" />
         <span className="text-xs md:text-sm xxl:text-base font-medium">
-          Novo Usuário
+          Novo Cadastro
         </span>
       </button>
     </div>

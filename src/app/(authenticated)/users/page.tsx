@@ -62,7 +62,7 @@ export default function IndexPage() {
         title="Usuários"
         subtitle="Gerencie e adicione novos acessos de usuários"
         action
-      ></Header>
+      />
 
       <Search />
 

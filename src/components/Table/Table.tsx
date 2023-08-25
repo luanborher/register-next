@@ -18,8 +18,12 @@ const TableComponent = ({ headers, children }: TableProps) => {
         {headers && (
           <TableHead>
             <TableRow>
-              {headers.map((header: string, index: number) => (
-                <TableCell key={header} align={index > 0 ? 'right' : 'left'}>
+              {headers.map((header: string) => (
+                <TableCell
+                  key={header}
+                  align="left"
+                  className="pl-0 text-black text-xs md:text-sm xxl:base font-semibold"
+                >
                   {header}
                 </TableCell>
               ))}

@@ -10,8 +10,6 @@ export default function IndexPage() {
         subtitle="Painel de Controle"
         profile
       />
-
-      <div className="flex flex-col w-full h-full border-2 border-primary"></div>
     </main>
   );
 }
