@@ -13,11 +13,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="h-screen flex">
-        <div className="xl:w-1/2 sm:w-full bg-teal-400 flex items-center justify-center p-16" />
-
-        {children}
-
-        <div className="xl:w-1/2 sm:none bg-neutral-900 flex items-center justify-center p-16" />
+        <div className="xl:w-full sm:none bg-secondary flex items-center justify-center p-16">
+          {children}
+        </div>
       </body>
     </html>
   );
