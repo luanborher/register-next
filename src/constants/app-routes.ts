@@ -11,6 +11,9 @@ export const APP_ROUTES = {
     },
     users: {
       name: '/users'
+    },
+    home: {
+      name: '/home'
     }
   },
   public: {

@@ -3,7 +3,7 @@
 import 'styles/globals.css';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import NavLink from 'components/Navbar/NavLink/NavLink';
 import Title from 'components/Navbar/Title/Title';
@@ -15,6 +15,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { push } = useRouter();
+
+  const signOut = () => {
+    localStorage.removeItem('@register:accessToken');
+    localStorage.removeItem('@register:user');
+
+    push('/');
+  };
+
   return (
     <html>
       <body className="h-screen flex">
@@ -35,7 +44,7 @@ export default function RootLayout({
 
             <Title text="MENU PRINCIPAL" />
 
-            <NavLink icon={BarChartBig} text="Dashboard" href="/" />
+            <NavLink icon={BarChartBig} text="Dashboard" href="/home" />
             <NavLink icon={Users} text="Cadastros" href="/records" />
 
             <Title text="CONFIGURAÇÕES" margin />
@@ -54,11 +63,12 @@ export default function RootLayout({
                   </span>
                 </div>
 
-                <Link href="/signin">
-                  <div className="flex justify-center items-center w-[24px] h-[24px] xxl:w-[30px] xxl:h-[30px] bg-primary rounded-extra cursor-pointer hover:bg-primaryLight">
-                    <LogOut className="text-secondary w-[14px] h-[14px] xxl:w-[18px] xxl:h-[18px]" />
-                  </div>
-                </Link>
+                <div
+                  className="flex justify-center items-center w-[24px] h-[24px] xxl:w-[30px] xxl:h-[30px] bg-primary rounded-extra cursor-pointer hover:bg-primaryLight"
+                  onClick={signOut}
+                >
+                  <LogOut className="text-secondary w-[14px] h-[14px] xxl:w-[18px] xxl:h-[18px]" />
+                </div>
               </div>
             </div>
           </div>

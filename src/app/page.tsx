@@ -1,0 +1,70 @@
+'use client';
+
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+import { Button, FormContainer, InputContainer, MainContainer } from './styles';
+
+import { Login, User } from 'interfaces/User';
+import api from 'services/api';
+
+export default function LoginPage() {
+  const { push } = useRouter();
+
+  const { register, handleSubmit } = useForm<Login>();
+
+  const onSubmit: SubmitHandler<Login> = async (form) => {
+    try {
+      const { data } = await api.post<User>('/user/sessions', {
+        ...form
+      });
+
+      localStorage.setItem('@register:accessToken', data.access_token);
+      localStorage.setItem('@register:user', JSON.stringify(data.user));
+
+      push('/records');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <MainContainer>
+      <FormContainer onSubmit={handleSubmit(onSubmit)}>
+        <Image
+          src="/assets/logo.svg"
+          alt="Logo"
+          width={100}
+          height={110}
+          placeholder="blur"
+          blurDataURL="/assets/logo.svg"
+        />
+
+        <InputContainer>
+          <label htmlFor="login">Usuário</label>
+
+          <input
+            id="login"
+            type="text"
+            placeholder="Seu usuário"
+            {...register('login')}
+          />
+        </InputContainer>
+
+        <InputContainer>
+          <label htmlFor="password">Senha</label>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Sua senha"
+            {...register('password')}
+          />
+        </InputContainer>
+
+        <Button type="submit">Entrar</Button>
+      </FormContainer>
+    </MainContainer>
+  );
+}
