@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 
 import Header from 'components/Header/Header';
 import InputText from 'components/Input/Input';
-import Select from 'components/Select/Select';
 
 import { BackButton, BackText, Row, Title, Wrapper } from './styles';
 
