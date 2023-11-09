@@ -5,10 +5,10 @@
   },
   "extends": [
     "plugin:react/recommended",
-    "airbnb",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "next/core-web-vitals"
+    "next/core-web-vitals",
+    "airbnb",
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
