@@ -6,8 +6,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { Button, FormContainer, InputContainer, MainContainer } from './styles';
 
-import { Login, User } from 'interfaces/User';
-import api from 'services/api';
+import api from '@/services/api';
+import { Login, User } from '@/interfaces/User';
 
 export default function LoginPage() {
   const { push } = useRouter();
@@ -17,7 +17,8 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<Login> = async (form) => {
     try {
       const { data } = await api.post<User>('/user/sessions', {
-        ...form
+        ...form,
+        "device_token": "",
       });
 
       localStorage.setItem('@register:accessToken', data.access_token);

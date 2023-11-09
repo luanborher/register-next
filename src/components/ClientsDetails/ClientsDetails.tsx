@@ -1,12 +1,13 @@
-import { useForm } from 'react-hook-form';
-
-import Header from 'components/Header/Header';
-import InputText from 'components/Input/Input';
-
-import { BackButton, BackText, Row, Title, Wrapper } from './styles';
-
-import { Records } from 'interfaces/Records';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
+
+import Header from '../Header/Header';
+import InputText from '../Input/Input';
+
+import { Records } from '@/interfaces/Records';
+
+import { BackButton, BackText, ButtonCancel, ButtonConfirm, ButtonDeletar, ButtonValidated, Row, Title, Wrapper } from './styles';
+import api from '@/services/api';
 
 interface ClientsDetailsProps {
   client: Records;
@@ -17,16 +18,45 @@ export default function ClientsDetails({
   client,
   onClose
 }: ClientsDetailsProps) {
-  const { register } = useForm<Records>({
+  const { register, handleSubmit } = useForm<Records>({
     defaultValues: client
   });
 
+  const onUpdate: SubmitHandler<Records> = async data => {
+    try {
+      await api.put(`/client/${client.id}`, data)
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const onValidated = async () => {
+    try {
+      await api.patch(`/client/validate/${client.id}`)
+
+      onClose();
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const onRejected = async () => {
+    try {
+      await api.patch(`/client/reject/${client.id}`)
+
+      onClose();
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
   return (
-    <Wrapper>
+    <Wrapper onSubmit={handleSubmit(onUpdate)}>
       <Header title={client.name || ''} subtitle={client.cpf || ''} action>
         <BackButton onClick={onClose}>
           <ChevronLeft color="#a5a5a5" size={22} />
-          <BackText>Voltar</BackText>
+          <BackText>Fechar</BackText>
         </BackButton>
       </Header>
 
@@ -140,6 +170,12 @@ export default function ClientsDetails({
           placeholder="Cód. Logradouro"
           {...register('property.street_code')}
         />
+
+        <InputText
+          label="Área"
+          placeholder="Área"
+          {...register('property.area')}
+        />
       </Row>
 
       <Row>
@@ -160,20 +196,122 @@ export default function ClientsDetails({
           placeholder="Rua"
           {...register('property.street.name')}
         />
+      </Row>
 
+      <Row>
         <InputText
           label="Número"
           placeholder="Número"
           {...register('property.number')}
         />
+
+        <InputText
+          label="CEP"
+          placeholder="CEP"
+          {...register('property.zip_code')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Complemento"
+          placeholder="Complemento"
+          {...register('property.complement')}
+        />
+
+        <InputText
+          label="Referência"
+          placeholder="Referência"
+          {...register('property.reference')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Entre números"
+          placeholder="Entre números"
+          {...register('property.between_numbers')}
+        />
+
+        <InputText
+          label="Quantidade de cômodos"
+          placeholder="Quantidade de cômodos"
+          {...register('property.quantity_rooms')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Situação do imóvel"
+          placeholder="Situação do imóvel"
+          {...register('property.property_situation')}
+        />
+
+        <InputText
+          label="Tipo do imóvel"
+          placeholder="Tipo do imóvel"
+          {...register('property.property_type')}
+        />
+
+        <InputText
+          label="Estrutura do imóvel"
+          placeholder="Estrutura do imóvel"
+          {...register('property.structure_type')}
+        />
+      </Row>
+
+      <Title>Informações socioeconômico</Title>
+
+      <Row>
+        <InputText
+          label="Escolaridade"
+          placeholder="Escolaridade"
+          {...register('social_information.scholarity')}
+        />
+
+        <InputText
+          label="Provedora"
+          placeholder="Provedora"
+          {...register('social_information.provider')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Renda"
+          placeholder="Renda"
+          {...register('social_information.income')}
+        />
+
+        <InputText
+          label="Benefício"
+          placeholder="Benefício"
+          {...register('social_information.benefit')}
+        />
+
+        <InputText
+          label="Profissão"
+          placeholder="Profissão"
+          {...register('social_information.profission')}
+        />
       </Row>
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-        <button className="flex items-center justify-center w-[250px] h-[45px] px-2 gap-2 py-2 text-white bg-primary rounded-md hover:bg-opacity-80">
-          <span className="text-xs md:text-sm xxl:text-base font-medium">
-            Salvar
-          </span>
-        </button>
+        <ButtonDeletar>
+          Deletar
+        </ButtonDeletar>
+
+        <ButtonCancel onClick={onRejected}>
+          Rejeitar
+        </ButtonCancel>
+
+        <ButtonValidated onClick={onValidated}>
+          Validar
+        </ButtonValidated>
+
+        <ButtonConfirm>
+          Salvar
+        </ButtonConfirm>
       </Row>
     </Wrapper>
   );

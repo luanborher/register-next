@@ -28,7 +28,6 @@ export async function refreshAccessToken() {
       const { data } = await api.put('/user/session', {
         refresh_token: credentials
       });
-      localStorage.setItem('@register:user', data.user);
       localStorage.setItem('@register:accessToken', data.access_token);
       localStorage.setItem('@register:refreshToken', data.refresh_token);
       return data?.access_token;

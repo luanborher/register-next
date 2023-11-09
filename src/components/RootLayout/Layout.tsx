@@ -1,14 +1,9 @@
-'use client';
-
-import 'styles/globals.css';
-
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
-import NavLink from 'components/Navbar/NavLink/NavLink';
-import Title from 'components/Navbar/Title/Title';
-
 import { Users, LogOut, BarChartBig, Map, User, Settings } from 'lucide-react';
+
+import NavLink from '../Navbar/NavLink/NavLink';
+import Title from '../Navbar/Title/Title';
 
 export default function RootLayout({
   children

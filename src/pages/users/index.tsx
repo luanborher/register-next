@@ -1,14 +1,11 @@
-'use client';
-
 import Image from 'next/image';
-
-import Header from 'components/Header/Header';
-import Search from 'components/Search/Search';
-import TableComponent from 'components/Table/Table';
-
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { MoreHorizontal } from 'lucide-react';
+
+import Header from '@/components/Header/Header';
+import TableComponent from '@/components/Table/Table';
+import RootLayout from '@/components/RootLayout/Layout';
 
 enum Roles {
   ADMIN = 'ADMIN',
@@ -57,14 +54,13 @@ export default function IndexPage() {
   };
 
   return (
+    <RootLayout>
     <main className="flex flex-col gap-2 h-full">
       <Header
         title="Usuários"
         subtitle="Gerencie e adicione novos acessos de usuários"
         action
       />
-
-      <Search />
 
       <div className="flex flex-col w-full max-h-full overflow-y-auto">
         <TableComponent>
@@ -108,5 +104,6 @@ export default function IndexPage() {
         </TableComponent>
       </div>
     </main>
+    </RootLayout>
   );
 }

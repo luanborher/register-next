@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.form`
   display: flex;
   flex-direction: column;
 
@@ -71,4 +71,92 @@ export const BackButton = styled.div`
 export const BackText = styled.div`
   font-size: 1rem;
   color: #a5a5a5;
+`;
+
+export const ButtonConfirm = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  width: 200px;
+  height: 45px;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #8cd630;
+
+  border: none;
+  border-radius: 8px;
+
+  color: #fff;
+  font-weight: 500;
+`;
+
+export const ButtonValidated = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  width: 200px;
+  height: 45px;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #fff;
+
+  border: 2px solid #8cd630;
+  border-radius: 8px;
+
+  color: #8cd630;
+  font-weight: 500;
+`;
+
+export const ButtonCancel = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  width: 200px;
+  height: 45px;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #fff;
+
+  border: 2px solid #E70A0A;
+  border-radius: 8px;
+
+  color: #E70A0A;
+  font-weight: bold;
+`;
+
+export const ButtonDeletar = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  width: 200px;
+  height: 45px;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #E70A0A;
+
+  border: none;
+  border-radius: 8px;
+
+  color: #fff;
+  font-weight: bold;
 `;

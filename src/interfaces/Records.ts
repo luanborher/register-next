@@ -1,3 +1,10 @@
+export interface Paginated<T> {
+  data: T;
+  page: number;
+  limit: number;
+  totalCount: number;
+}
+
 export interface Records {
   id: string;
   name: string;
@@ -128,4 +135,8 @@ export interface User {
   role: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface RecordsFilter {
+  name: string;
 }

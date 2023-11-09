@@ -23,3 +23,7 @@ export interface UserClass {
   created_at: string;
   updated_at: string;
 }
+
+export interface UserFilter {
+  name: string;
+}
