@@ -83,13 +83,17 @@ const Search = ({ register, onSubmit, filtered, setValue }: SearchProps) => (
       />
 
       <Select
+        id="status"
+        placeholder="Status"
+        onChange={e => {
+          setValue('status', e?.value || '');
+        }}
         defaultValue={{ value: 'IN_REVIEW', label: 'Auditoria' }}
         options={[
           { value: 'IN_REVIEW', label: 'Auditoria' },
           { value: 'VALIDATED', label: 'Validado' },
-          { value: 'REJEITED', label: 'Rejeitado' },
+          { value: 'REJECTED', label: 'Rejeitado' },
         ]}
-        placeholder="Status"
       />
 
       <InputText placeholder="Buscar por nome" {...register('name')} />

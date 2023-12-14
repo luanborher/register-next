@@ -122,6 +122,8 @@ export interface SocialInformation {
   quantity_preteens: number;
   quantity_elder: number;
   quantity_working: number;
+  registered_people: number;
+  teenager_contributes: boolean;
 
   race: string;
   reservoir: string;
@@ -154,6 +156,7 @@ export interface RecordsFilter {
   community_id: string;
   contract_id: string;
   situation: string;
+  status: string;
 }
 
 export interface Filtered {

@@ -54,7 +54,10 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
         ...data,
       });
 
+      handleSuccess('Cliente alterado com sucesso!');
+
       refetch();
+      onClose();
     } catch (error: any) {
       handleError(error);
     }
@@ -140,11 +143,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       <Row>
         <InputText label="RG" placeholder="RG" {...register('rg')} />
 
-        <InputText
+        {/* <InputText
           label="Telefone"
           placeholder="Telefone"
           {...register('telephone')}
-        />
+        /> */}
 
         <InputText
           label="Celular"
@@ -186,7 +189,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
           options={options?.SimNao}
         />
 
-        <InputText label="Trabalhando" {...register('number_people_working')} />
+        {/* <InputText label="Trabalhando" {...register('number_people_working')} /> */}
 
         <InputText label="Habitantes" {...register('number_people_living')} />
       </Row>
@@ -292,7 +295,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
         <InputText
           label="CEP"
           placeholder="CEP"
-          {...register('property.zip_code')}
+          {...register('property.street.cep')}
         />
       </Row>
 
@@ -516,7 +519,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
             onClick={() => {
               setShowImage(true);
               setUrlImage(
-                `${baseURL}files/${client.property.first_document_url}`,
+                `${baseURL}files/${client.property.second_document_url}`,
               );
             }}
           />

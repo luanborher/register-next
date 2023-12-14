@@ -30,7 +30,12 @@ const IndexPage = () => {
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  const { register, getValues, setValue } = useForm<RecordsFilter>();
+  const { register, getValues, setValue } = useForm<RecordsFilter>({
+    defaultValues: {
+      status: 'IN_REVIEW',
+      situation: 'NORMAL',
+    },
+  });
 
   const getClients = async () => {
     try {
@@ -45,7 +50,8 @@ const IndexPage = () => {
             contract_id: getValues('contract_id') || undefined,
             street_id: getValues('street_id') || undefined,
             community_id: getValues('community_id') || undefined,
-            filter: getValues('situation') || undefined,
+            situation_status: getValues('situation') || undefined,
+            status: getValues('status') || undefined,
           },
         },
       );
