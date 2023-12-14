@@ -4,44 +4,78 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { MoreHorizontal } from 'lucide-react';
 
-import Header from "@/components/Header/Header";
+import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
 import TableComponent from '@/components/Table/Table';
 import Modal from '@/components/Modal/Modal';
-import ClientsDetails from '@/components/ClientsDetails/ClientsDetails';
 import RootLayout from '@/components/RootLayout/Layout';
+import ClientsDetails from '@/components/ClientsDetails/ClientsDetails';
 
 import api from '@/services/api';
+import { handleError } from '@/utils/message';
 
-import { Records, Paginated, RecordsFilter } from '@/interfaces/Records';
+import {
+  Records,
+  Paginated,
+  RecordsFilter,
+  Filtered,
+} from '@/interfaces/Records';
 
 import { Content } from './styles';
 
-export default function IndexPage() {
+const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
+  const [filtered, setFiltered] = useState<Filtered>({} as Filtered);
+
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  const { register, control, getValues } = useForm<RecordsFilter>();
+  const { register, getValues, setValue } = useForm<RecordsFilter>();
 
   const getClients = async () => {
     try {
-      const { data } = await api.get<Paginated<Records[]>>('/client/filter/validated', {
-        params: {
-          page: 1,
-          limit: 10,
-          name: getValues('name'),
-        }
-      });
+      const { data } = await api.get<Paginated<Records[]>>(
+        '/client/filter/validated',
+        {
+          params: {
+            page: 1,
+            limit: 10,
+
+            name: getValues('name') || undefined,
+            contract_id: getValues('contract_id') || undefined,
+            street_id: getValues('street_id') || undefined,
+            community_id: getValues('community_id') || undefined,
+            filter: getValues('situation') || undefined,
+          },
+        },
+      );
 
       setClientsList(data.data);
     } catch (error) {
-      console.log(error);
+      handleError(error);
     }
   };
 
   useEffect(() => {
     getClients();
+  }, []);
+
+  const getFiltered = async () => {
+    try {
+      const { data } = await api.get<Filtered>('/general/filter', {
+        params: {
+          filter: 'NORMAL',
+        },
+      });
+
+      setFiltered(data);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getFiltered();
   }, []);
 
   const openDetails = (client: Records) => {
@@ -52,12 +86,12 @@ export default function IndexPage() {
   const renderStatus = (status: string) => {
     const statusList = {
       VALIDATED: 'Validado',
-      IN_REVIEW: 'Em revisão',
-      REJECTED: 'Rejeitado'
+      IN_REVIEW: 'Auditoria',
+      REJECTED: 'Rejeitado',
     } as any;
 
     return statusList[status || 'IN_REVIEW'];
-  }
+  };
 
   const renderColors = (status: string) => {
     const colors = {
@@ -67,7 +101,7 @@ export default function IndexPage() {
     } as any;
 
     return colors[status || 'IN_REVIEW'];
-  }
+  };
 
   return (
     <RootLayout>
@@ -78,7 +112,12 @@ export default function IndexPage() {
           action
         />
 
-        <Search register={register} onSubmit={getClients} />
+        <Search
+          register={register}
+          onSubmit={getClients}
+          filtered={filtered}
+          setValue={setValue}
+        />
 
         <Content>
           <TableComponent
@@ -89,10 +128,10 @@ export default function IndexPage() {
               'Comunidade',
               'Contrato',
               'Status',
-              'Ações'
+              'Ações',
             ]}
           >
-            {clientsList?.map((row) => (
+            {clientsList?.map(row => (
               <TableRow
                 key={row.id}
                 onClick={() => openDetails(row)}
@@ -109,7 +148,8 @@ export default function IndexPage() {
 
                 <TableCell align="left" height={55} className="p-0">
                   <div>
-                    {row.property.street.name || ''}, {row.property.number || ''}
+                    {row.property.street.name || ''},{' '}
+                    {row.property.number || ''}
                   </div>
                 </TableCell>
 
@@ -128,7 +168,10 @@ export default function IndexPage() {
                 </TableCell>
 
                 <TableCell align="right" width={40} className="p-0">
-                  <MoreHorizontal size={24} className="text-secondary self-end" />
+                  <MoreHorizontal
+                    size={24}
+                    className="text-secondary self-end"
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -140,10 +183,13 @@ export default function IndexPage() {
             <ClientsDetails
               client={clientSelected}
               onClose={() => setShowDetails(false)}
+              refetch={getClients}
             />
           </Modal>
         )}
       </main>
     </RootLayout>
   );
-}
+};
+
+export default IndexPage;

@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/function-component-definition */
 import NextDocument, {
   DocumentContext,

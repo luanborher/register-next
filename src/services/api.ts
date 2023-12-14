@@ -1,21 +1,22 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import axios from 'axios';
 
 export const baseURL = 'http://ec2-3-91-41-206.compute-1.amazonaws.com:3000/';
 
 const api = axios.create({
-  baseURL
+  baseURL,
 });
 
 api.interceptors.request.use(
-  async (config) => {
+  async config => {
     const accessToken = localStorage.getItem('@register:accessToken');
     if (accessToken) {
       config.headers!.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error),
 );
 
 export default api;
@@ -26,7 +27,7 @@ export async function refreshAccessToken() {
 
     if (typeof credentials === 'string') {
       const { data } = await api.put('/user/session', {
-        refresh_token: credentials
+        refresh_token: credentials,
       });
       localStorage.setItem('@register:accessToken', data.access_token);
       localStorage.setItem('@register:refreshToken', data.refresh_token);
@@ -42,14 +43,14 @@ export async function refreshAccessToken() {
 }
 
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     const originalRequest = error.config;
 
     if (
-      error.response.status === 401 &&
-      !originalRequest.retry &&
-      !originalRequest.url.includes('session')
+      error.response.status === 401
+      && !originalRequest.retry
+      && !originalRequest.url.includes('session')
     ) {
       originalRequest.retry = true;
       const accessToken = await refreshAccessToken();
@@ -57,5 +58,5 @@ api.interceptors.response.use(
       return api(originalRequest);
     }
     return Promise.reject(error);
-  }
+  },
 );

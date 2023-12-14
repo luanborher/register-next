@@ -1,11 +1,12 @@
 import { styled } from 'styled-components';
 
-export const Wrapper = styled.form`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
 
   gap: 0.6rem;
   padding-right: 15px;
+  padding-left: 5px;
 
   height: 100%;
   width: 100%;
@@ -81,7 +82,7 @@ export const ButtonConfirm = styled.button`
 
   gap: 0.5rem;
 
-  width: 200px;
+  width: 180px;
   height: 45px;
 
   padding: 0.5rem 1rem;
@@ -103,7 +104,7 @@ export const ButtonValidated = styled.button`
 
   gap: 0.5rem;
 
-  width: 200px;
+  width: 180px;
   height: 45px;
 
   padding: 0.5rem 1rem;
@@ -125,17 +126,17 @@ export const ButtonCancel = styled.button`
 
   gap: 0.5rem;
 
-  width: 200px;
+  width: 180px;
   height: 45px;
 
   padding: 0.5rem 1rem;
 
   background-color: #fff;
 
-  border: 2px solid #E70A0A;
+  border: 2px solid #e70a0a;
   border-radius: 8px;
 
-  color: #E70A0A;
+  color: #e70a0a;
   font-weight: bold;
 `;
 
@@ -147,16 +148,23 @@ export const ButtonDeletar = styled.button`
 
   gap: 0.5rem;
 
-  width: 200px;
+  width: 180px;
   height: 45px;
 
   padding: 0.5rem 1rem;
 
-  background-color: #E70A0A;
+  background-color: #e70a0a;
 
   border: none;
   border-radius: 8px;
 
   color: #fff;
   font-weight: bold;
+`;
+
+export const Image = styled.img`
+  width: 250px;
+  height: 350px;
+  object-fit: cover;
+  cursor: pointer;
 `;

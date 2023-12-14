@@ -18,6 +18,6 @@ export const theme = {
     gray2c: '#2c2c2c',
     gray16: '#161616',
     gray92: '#929292',
-    green: '#00b32c'
-  }
+    green: '#00b32c',
+  },
 } as const;

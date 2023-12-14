@@ -14,63 +14,71 @@ export interface Records {
   telephone: string;
   gender: string;
   birthDate: string;
+
+  user_id: string;
+  user: User;
+
   entity_type: string;
   marital_status: string;
   number_people_living: number;
   number_people_working: number;
-  family_income: number;
   social_benefit: string;
   profession: string;
   unemployed: boolean;
-  attendant_name: string;
-  attendant_cpf: string;
-  attendant_rg: string;
-  attendant_telephone: string;
-  user_id: string;
-  user: User;
-  attendant_entity: string;
   status: string;
   property: Property;
   social_information: SocialInformation;
   created_at: string;
   updated_at: string;
+  situation_status: string;
+
+  what_awaits_your_family: string;
+
+  attendant_name: string;
+  attendant_cpf: string;
+  attendant_rg: string;
+  attendant_telephone: string;
+  attendant_entity: string;
 }
 
 export interface Property {
   id: string;
-  registration: string;
-  provider_registration: string;
   codification: string;
   street_code: string;
-  property_situation: string;
-  structure_type: string;
   area: number;
+  hydrometer_number: string;
+  old_hydro: string;
+  registration: string;
+  street: Street;
+  street_id: string;
   number: string;
   zip_code: string;
   complement: string;
   reference: string;
   between_numbers: string;
   quantity_rooms: number;
+  provider_registration: string;
+  connection_type: string;
+  property_situation: string;
+  property_type: string;
+  structure_type: string;
   bed: string;
   tour: string;
+
   status: string;
-  connection_type: string;
-  hydrometer_number: string;
-  old_hydro: string;
   reservoir: boolean;
   exhaustion: boolean;
-  property_type: string;
   quantity_amount: number;
+
   facade_url: string;
   first_document_url: string;
   second_document_url: string;
   additional_url: string;
   signature_url: string;
+
   client_id: string;
-  street_id: string;
   created_at: string;
   updated_at: string;
-  street: Street;
 }
 
 export interface Street {
@@ -101,20 +109,23 @@ export interface Contract {
 
 export interface SocialInformation {
   id: string;
-  quantity_working: number;
-  provider: string;
-  income: number;
-  benefit: string;
-  profission: string;
-  race: string;
   scholarity: string;
-  reservoir: string;
+  profission: string;
+  benefit: string;
+  income: number;
+  provider: string;
+
+  have_history_of_illness: string[];
+  quantity_adults: number;
   quantity_children: number;
   quantity_teenagers: number;
   quantity_preteens: number;
-  quantity_young: number;
-  quantity_adults: number;
-  have_history_of_illness: boolean;
+  quantity_elder: number;
+  quantity_working: number;
+
+  race: string;
+  reservoir: string;
+
   client_id: string;
   created_at: string;
   updated_at: string;
@@ -139,4 +150,14 @@ export interface User {
 
 export interface RecordsFilter {
   name: string;
+  street_id: string;
+  community_id: string;
+  contract_id: string;
+  situation: string;
+}
+
+export interface Filtered {
+  contracts: Contract[];
+  communities: Community[];
+  streets: Street[];
 }

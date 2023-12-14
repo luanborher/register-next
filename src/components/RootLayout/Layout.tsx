@@ -5,8 +5,10 @@ import { Users, LogOut, BarChartBig, Map, User, Settings } from 'lucide-react';
 import NavLink from '../Navbar/NavLink/NavLink';
 import Title from '../Navbar/Title/Title';
 
+import { Container, MainContainer } from './styles';
+
 export default function RootLayout({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
@@ -20,15 +22,13 @@ export default function RootLayout({
   };
 
   return (
-    <html>
-      <body className="h-screen flex">
+    <Container>
+      <MainContainer>
         <div className="w-1/6 flex flex-col bg-secondary md:px-4 xl:px-6 px-2 pb-8 justify-between">
           <div className="w-full flex flex-col">
             <div className="flex items-center gap-2 mt-8 font-medium pb-4">
               <Image
-                src={
-                  'https://ui-avatars.com/api/?name=R&background=8cd630&color=000&font-size=0.6'
-                }
+                src="https://ui-avatars.com/api/?name=R&background=8cd630&color=000&font-size=0.6"
                 alt="User"
                 width={30}
                 height={30}
@@ -39,14 +39,14 @@ export default function RootLayout({
 
             <Title text="MENU PRINCIPAL" />
 
-            <NavLink icon={BarChartBig} text="Dashboard" href="/home" />
+            {/* <NavLink icon={BarChartBig} text="Dashboard" href="/home" /> */}
             <NavLink icon={Users} text="Cadastros" href="/records" />
 
             <Title text="CONFIGURAÇÕES" margin />
 
             <NavLink icon={User} text="Usuários" href="/users" />
-            <NavLink icon={Map} text="Contratos" href="/address" />
-            <NavLink icon={Settings} text="Geral" href="/general" />
+            {/* <NavLink icon={Map} text="Contratos" href="/address" /> */}
+            {/* <NavLink icon={Settings} text="Geral" href="/general" /> */}
           </div>
 
           <div className="w-full bg-gray px-4 xxl:px-6 py-5 rounded-large flex">
@@ -70,11 +70,11 @@ export default function RootLayout({
         </div>
 
         <main className="w-5/6 bg-secondary">
-          <div className="w-full h-full bg-white rounded-extra p-10">
+          <div className="w-full h-full bg-white rounded-large p-10">
             {children}
           </div>
         </main>
-      </body>
-    </html>
+      </MainContainer>
+    </Container>
   );
 }

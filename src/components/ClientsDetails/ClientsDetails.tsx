@@ -1,59 +1,124 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 
+import { Records } from '@/interfaces/Records';
+import api, { baseURL } from '@/services/api';
+import { handleSuccess, handleError } from '@/utils/message';
+import { options } from '@/utils/options';
+
+import { useState } from 'react';
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
+import Dropdown from '../Dropdown/Dropdown';
+import ModalImage from '../ModalImage/Modal';
+import ModalQuest from '../ModalQuest/Modal';
 
-import { Records } from '@/interfaces/Records';
-
-import { BackButton, BackText, ButtonCancel, ButtonConfirm, ButtonDeletar, ButtonValidated, Row, Title, Wrapper } from './styles';
-import api from '@/services/api';
+import {
+  BackButton,
+  BackText,
+  ButtonCancel,
+  ButtonConfirm,
+  ButtonDeletar,
+  ButtonValidated,
+  Row,
+  Title,
+  Wrapper,
+  Image,
+} from './styles';
 
 interface ClientsDetailsProps {
   client: Records;
   onClose: () => void;
+  refetch: () => void;
 }
 
-export default function ClientsDetails({
-  client,
-  onClose
-}: ClientsDetailsProps) {
-  const { register, handleSubmit } = useForm<Records>({
-    defaultValues: client
+const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
+  const date = new Date(client.birthDate);
+
+  const [showImage, setShowImage] = useState(false);
+  const [urlImage, setUrlImage] = useState('');
+  const [showQuest, setShowQuest] = useState(false);
+  const [showRejected, setShowRejected] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
+
+  const { register, handleSubmit, control, watch } = useForm<Records>({
+    defaultValues: {
+      ...client,
+      birthDate: date.toISOString().split('T')[0],
+    },
   });
 
   const onUpdate: SubmitHandler<Records> = async data => {
     try {
-      await api.put(`/client/${client.id}`, data)
+      await api.put(`/client/${client.id}`, {
+        ...data,
+      });
 
+      refetch();
     } catch (error: any) {
-      console.log(error);
+      handleError(error);
     }
-  }
+  };
+
+  const onDelete = async () => {
+    try {
+      await api.delete(`/client/${client.id}`);
+
+      handleSuccess('Cliente deletado com sucesso!');
+
+      setShowDeleted(false);
+      refetch();
+      onClose();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
 
   const onValidated = async () => {
     try {
-      await api.patch(`/client/validate/${client.id}`)
+      await api.patch(`/client/validate/${client.id}`);
 
+      handleSuccess('Cliente validado com sucesso!');
+
+      setShowQuest(false);
+      refetch();
       onClose();
     } catch (error: any) {
-      console.log(error);
+      handleError(error);
     }
-  }
+  };
 
   const onRejected = async () => {
     try {
-      await api.patch(`/client/reject/${client.id}`)
+      await api.patch(`/client/reject/${client.id}`);
 
+      handleSuccess('Cliente rejeitado com sucesso!');
+
+      setShowRejected(false);
+      refetch();
       onClose();
     } catch (error: any) {
-      console.log(error);
+      handleError(error);
     }
-  }
+  };
+
+  const renderStatus = (status: string) => {
+    const statusList = {
+      VALIDATED: 'Validado',
+      IN_REVIEW: 'Auditoria',
+      REJECTED: 'Rejeitado',
+    } as any;
+
+    return statusList[status || 'IN_REVIEW'];
+  };
 
   return (
-    <Wrapper onSubmit={handleSubmit(onUpdate)}>
-      <Header title={client.name || ''} subtitle={client.cpf || ''} action>
+    <Wrapper>
+      <Header
+        title={client.name || ''}
+        subtitle={`${client.cpf} - ${renderStatus(client.status)}` || ''}
+        action
+      >
         <BackButton onClick={onClose}>
           <ChevronLeft color="#a5a5a5" size={22} />
           <BackText>Fechar</BackText>
@@ -65,7 +130,7 @@ export default function ClientsDetails({
       <Row>
         <InputText
           label="Nome"
-          placeholder="Nome Completo"
+          placeholder="Nome completo"
           {...register('name')}
         />
 
@@ -91,66 +156,71 @@ export default function ClientsDetails({
       </Row>
 
       <Row>
-        <InputText label="Gênero" {...register('gender')} />
-
-        <InputText
-          label="Provedora"
-          {...register('social_information.provider')}
+        <Dropdown
+          name="gender"
+          label="Gênero"
+          control={control}
+          options={options?.Genero}
         />
 
-        <InputText label="Entidade" {...register('entity_type')} />
+        <Dropdown
+          name="marital_status"
+          label="Estado civíl"
+          control={control}
+          options={options?.EstadoCivil}
+        />
+
+        <Dropdown
+          name="entity_type"
+          label="Situação habitação"
+          control={control}
+          options={options?.SituacaoHabitacao}
+        />
       </Row>
 
       <Row>
-        <InputText label="Estado Civíl" {...register('marital_status')} />
+        <Dropdown
+          name="unemployed"
+          label="Empregado"
+          control={control}
+          options={options?.SimNao}
+        />
 
-        <InputText label="Profissão" {...register('profession')} />
-      </Row>
-
-      <Row>
         <InputText label="Trabalhando" {...register('number_people_working')} />
 
         <InputText label="Habitantes" {...register('number_people_living')} />
-
-        <InputText label="Benefício Social" {...register('social_benefit')} />
-      </Row>
-
-      <Row>
-        <InputText label="Renda Familiar" {...register('family_income')} />
-
-        <InputText label="Empregado" {...register('unemployed')} />
-
-        <InputText label="Benefício Social" {...register('social_benefit')} />
       </Row>
 
       <Row>
         <InputText
-          label="Nome Atendente"
-          placeholder="Nome Completo"
+          label="Nome atendente"
+          placeholder="Nome completo"
           {...register('attendant_name')}
         />
 
-        <InputText
-          label="Entidade Atendente"
-          {...register('attendant_entity')}
+        <Dropdown
+          name="attendant_entity"
+          label="Entidade atendente"
+          control={control}
+          options={options?.EntidadeAtendente}
         />
       </Row>
 
       <Row>
         <InputText
-          label="RG Atendente"
+          label="RG atendente"
           placeholder="RG"
           {...register('attendant_rg')}
         />
 
         <InputText
-          label="CPF Atendente"
+          label="CPF atendente"
           placeholder="CPF"
           {...register('attendant_cpf')}
         />
 
         <InputText
-          label="Telefone Atendente"
+          label="Telefone atendente"
           placeholder="Telefone"
           {...register('attendant_telephone')}
         />
@@ -175,6 +245,20 @@ export default function ClientsDetails({
           label="Área"
           placeholder="Área"
           {...register('property.area')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Hidrômetro"
+          placeholder="Hidrômetro"
+          {...register('property.hydrometer_number')}
+        />
+
+        <InputText
+          label="Hidrômetro antigo"
+          placeholder="Hidrômetro antigo"
+          {...register('property.old_hydro')}
         />
       </Row>
 
@@ -234,85 +318,335 @@ export default function ClientsDetails({
         />
 
         <InputText
-          label="Quantidade de cômodos"
-          placeholder="Quantidade de cômodos"
+          label="Qtd. cômodos"
+          placeholder="Qtd. cômodos"
           {...register('property.quantity_rooms')}
+        />
+
+        <InputText
+          label="Qtd. Economias"
+          placeholder="Qtd. Economias"
+          {...register('property.quantity_amount')}
         />
       </Row>
 
       <Row>
-        <InputText
-          label="Situação do imóvel"
-          placeholder="Situação do imóvel"
-          {...register('property.property_situation')}
+        <Dropdown
+          name="property.property_situation"
+          label="Situação imóvel"
+          control={control}
+          options={options?.SituacaoImovel}
         />
 
-        <InputText
-          label="Tipo do imóvel"
-          placeholder="Tipo do imóvel"
-          {...register('property.property_type')}
+        <Dropdown
+          name="property.property_type"
+          label="Tipo imóvel"
+          control={control}
+          options={options?.TipoImovel}
         />
 
-        <InputText
-          label="Estrutura do imóvel"
-          placeholder="Estrutura do imóvel"
-          {...register('property.structure_type')}
+        <Dropdown
+          name="property.structure_type"
+          label="Estrutura imóvel"
+          control={control}
+          options={options?.EstruturaImovel}
+        />
+      </Row>
+
+      <Row>
+        <Dropdown
+          name="property.bed"
+          label="Leito"
+          control={control}
+          options={options?.TipoLeitoPasseio}
+        />
+
+        <Dropdown
+          name="property.tour"
+          label="Passeio"
+          control={control}
+          options={options?.TipoLeitoPasseio}
+        />
+      </Row>
+
+      <Row>
+        <Dropdown
+          name="property.reservoir"
+          label="Reservatório"
+          control={control}
+          options={options?.Reservatorio}
+        />
+
+        <Dropdown
+          name="property.connection_type"
+          label="Tipo Ligação"
+          control={control}
+          options={options?.TipoLigacao}
         />
       </Row>
 
       <Title>Informações socioeconômico</Title>
 
       <Row>
-        <InputText
+        <Dropdown
+          name="social_information.scholarity"
           label="Escolaridade"
-          placeholder="Escolaridade"
-          {...register('social_information.scholarity')}
+          control={control}
+          options={options?.Escolaridade}
         />
 
-        <InputText
+        <Dropdown
+          name="social_information.provider"
           label="Provedora"
-          placeholder="Provedora"
-          {...register('social_information.provider')}
+          control={control}
+          options={options?.Provedora}
         />
       </Row>
 
       <Row>
         <InputText
-          label="Renda"
-          placeholder="Renda"
+          label="Renda familiar"
+          placeholder="Renda familiar"
           {...register('social_information.income')}
         />
 
-        <InputText
-          label="Benefício"
-          placeholder="Benefício"
-          {...register('social_information.benefit')}
+        <Dropdown
+          name="social_information.benefit"
+          label="Benefício familiar"
+          control={control}
+          options={options?.Beneficio}
         />
 
-        <InputText
+        <Dropdown
+          name="profession"
           label="Profissão"
-          placeholder="Profissão"
-          {...register('social_information.profission')}
+          control={control}
+          options={options?.Profissao}
         />
       </Row>
 
+      <Row>
+        <InputText
+          label="Nº Crianca (0 a 12 anos)"
+          placeholder="Qtd. crianças"
+          {...register('social_information.quantity_children')}
+        />
+
+        <InputText
+          label="Nº Adolescente (13 a 18 anos)"
+          placeholder="Qtd. adolescentes"
+          {...register('social_information.quantity_teenagers')}
+        />
+
+        {Number(watch('social_information.quantity_teenagers')) > 0 && (
+          <Dropdown
+            options={options?.SimNao}
+            name="social_information.teenager_contributes"
+            control={control}
+            label="Adolescente contribuinte?"
+          />
+        )}
+
+        <InputText
+          label="Nº Adulto (19 a 59 anos)"
+          placeholder="Qtd. adultos"
+          {...register('social_information.quantity_adults')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          label="Nº Idoso (60 anos ou mais)"
+          placeholder="Qtd. idosos"
+          {...register('social_information.quantity_elder')}
+        />
+
+        <InputText
+          label="Quantidade de pessoas trabalhando"
+          placeholder="Qtd. Trabalhando"
+          {...register('social_information.quantity_working')}
+        />
+
+        <Dropdown
+          name="social_information.race"
+          label="Grupo Racial"
+          control={control}
+          options={options?.Racial}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          disabled
+          label="Histórico de Doenças Transmitidas Pela Água"
+          placeholder="Histórico de Doenças Transmitidas Pela Água"
+          value={client.social_information.have_history_of_illness.join(', ')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
+          disabled
+          label="O que espera para a família tendo saneamento básico?"
+          placeholder="O que espera para a família tendo saneamento básico?"
+          value={client.what_awaits_your_family}
+        />
+      </Row>
+
+      <Title>Imagens</Title>
+
+      <Row style={{ justifyContent: 'center' }}>
+        {client.property.first_document_url && (
+          <Image
+            src={`${baseURL}files/${client.property.first_document_url}`}
+            alt="Documento 1"
+            onClick={() => {
+              setShowImage(true);
+              setUrlImage(
+                `${baseURL}files/${client.property.first_document_url}`,
+              );
+            }}
+          />
+        )}
+
+        {client.property.second_document_url && (
+          <Image
+            src={`${baseURL}files/${client.property.second_document_url}`}
+            alt="Documento 2"
+            onClick={() => {
+              setShowImage(true);
+              setUrlImage(
+                `${baseURL}files/${client.property.first_document_url}`,
+              );
+            }}
+          />
+        )}
+
+        {client.property.facade_url && (
+          <Image
+            src={`${baseURL}files/${client.property.facade_url}`}
+            alt="Fachada"
+            onClick={() => {
+              setShowImage(true);
+              setUrlImage(`${baseURL}files/${client.property.facade_url}`);
+            }}
+          />
+        )}
+
+        {client.property.additional_url && (
+          <Image
+            src={`${baseURL}files/${client.property.additional_url}`}
+            alt="Adicional"
+            onClick={() => {
+              setShowImage(true);
+              setUrlImage(`${baseURL}files/${client.property.additional_url}`);
+            }}
+          />
+        )}
+      </Row>
+
+      {client.property.signature_url ? (
+        <>
+          <Title>Assinatura</Title>
+
+          <Row style={{ justifyContent: 'center' }}>
+            <Image
+              src={`${baseURL}files/${client.property.signature_url}`}
+              alt="Assinatura"
+              style={{ width: '500px' }}
+            />
+          </Row>
+        </>
+      ) : (
+        <Title
+          style={{
+            color: '#c91919e4',
+            border: '1px solid #c91919e4',
+            textAlign: 'center',
+            padding: '0.3rem',
+            borderRadius: '5px',
+          }}
+        >
+          Sem assinatura cadastrada
+        </Title>
+      )}
+
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-        <ButtonDeletar>
-          Deletar
+        <ButtonDeletar
+          type="button"
+          onClick={() => {
+            setShowDeleted(true);
+          }}
+        >
+          Apagar
         </ButtonDeletar>
 
-        <ButtonCancel onClick={onRejected}>
+        <ButtonCancel
+          type="button"
+          onClick={() => {
+            setShowRejected(true);
+          }}
+        >
           Rejeitar
         </ButtonCancel>
 
-        <ButtonValidated onClick={onValidated}>
+        <ButtonValidated
+          type="button"
+          onClick={() => {
+            setShowQuest(true);
+          }}
+        >
           Validar
         </ButtonValidated>
 
-        <ButtonConfirm>
-          Salvar
+        <ButtonConfirm type="submit" onClick={handleSubmit(onUpdate)}>
+          Editar
         </ButtonConfirm>
       </Row>
+
+      {showImage && urlImage !== '' && (
+        <ModalImage
+          onClose={() => {
+            setShowImage(false);
+            setUrlImage('');
+          }}
+        >
+          <Image
+            src={urlImage}
+            alt=""
+            style={{ width: '500px', height: 'auto' }}
+          />
+        </ModalImage>
+      )}
+
+      {showQuest && (
+        <ModalQuest
+          onClose={() => setShowQuest(false)}
+          onConfirm={() => onValidated()}
+        >
+          Deseja validar este cliente?
+        </ModalQuest>
+      )}
+
+      {showRejected && (
+        <ModalQuest
+          onClose={() => setShowRejected(false)}
+          onConfirm={() => onRejected()}
+        >
+          Deseja rejeitar este cliente?
+        </ModalQuest>
+      )}
+
+      {showDeleted && (
+        <ModalQuest
+          onClose={() => setShowDeleted(false)}
+          onConfirm={() => onDelete()}
+        >
+          Deseja apagar este cliente?
+        </ModalQuest>
+      )}
     </Wrapper>
   );
-}
+};
+
+export default ClientsDetails;
