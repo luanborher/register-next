@@ -5,36 +5,35 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import React from 'react';
 
 interface TableProps {
   headers?: string[];
   children: React.ReactNode;
 }
 
-const TableComponent = ({ headers, children }: TableProps) => {
-  return (
-    <TableContainer component={Paper}>
-      <Table aria-label="custom pagination table">
-        {headers && (
-          <TableHead>
-            <TableRow>
-              {headers.map((header: string) => (
-                <TableCell
-                  key={header}
-                  align="left"
-                  className="pl-0 text-black text-xs md:text-sm xxl:base font-semibold"
-                >
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-        )}
+const TableComponent = ({ headers, children }: TableProps) => (
+  <TableContainer component={Paper}>
+    <Table aria-label="custom pagination table">
+      {headers && (
+        <TableHead>
+          <TableRow>
+            {headers.map((header: string) => (
+              <TableCell
+                key={header}
+                align="left"
+                className="pl-0 text-black text-xs md:text-sm xxl:base font-semibold"
+              >
+                {header}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+      )}
 
-        <TableBody>{children}</TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+      <TableBody>{children}</TableBody>
+    </Table>
+  </TableContainer>
+);
 
 export default TableComponent;

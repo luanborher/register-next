@@ -1,6 +1,11 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable react/function-component-definition */
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Users, LogOut, BarChartBig, Map, User, Settings } from 'lucide-react';
+import React from 'react';
+
+import { Users, LogOut, User } from 'lucide-react';
 
 import NavLink from '../Navbar/NavLink/NavLink';
 import Title from '../Navbar/Title/Title';

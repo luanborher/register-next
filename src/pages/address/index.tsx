@@ -1,12 +1,10 @@
-import Header from "@/components/Header/Header";
+import Header from '@/components/Header/Header';
 
-export default function IndexPage() {
-  return (
-    <main>
-      <Header
-        title="Contratos"
-        subtitle="Gerenciamento de contratos, comunidades e ruas"
-      />
-    </main>
-  );
-}
+const IndexPage = () => (
+  <Header
+    title="Contratos"
+    subtitle="Gerenciamento de contratos, comunidades e ruas"
+  />
+);
+
+export default IndexPage;

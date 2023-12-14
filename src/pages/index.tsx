@@ -1,24 +1,25 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+
 'use client';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { Button, FormContainer, InputContainer, MainContainer } from './styles';
-
 import api from '@/services/api';
 import { Login, User } from '@/interfaces/User';
+import { Button, FormContainer, InputContainer, MainContainer } from './styles';
 
-export default function LoginPage() {
+const LoginPage = () => {
   const { push } = useRouter();
 
   const { register, handleSubmit } = useForm<Login>();
 
-  const onSubmit: SubmitHandler<Login> = async (form) => {
+  const onSubmit: SubmitHandler<Login> = async form => {
     try {
       const { data } = await api.post<User>('/user/sessions', {
         ...form,
-        "device_token": "",
+        device_token: '',
       });
 
       localStorage.setItem('@register:accessToken', data.access_token);
@@ -68,4 +69,6 @@ export default function LoginPage() {
       </FormContainer>
     </MainContainer>
   );
-}
+};
+
+export default LoginPage;
