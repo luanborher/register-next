@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-import { Users, LogOut, User } from 'lucide-react';
+import { Users, LogOut, User, Map } from 'lucide-react';
 
 import NavLink from '../Navbar/NavLink/NavLink';
 import Title from '../Navbar/Title/Title';
@@ -50,7 +50,7 @@ export default function RootLayout({
             <Title text="CONFIGURAÇÕES" margin />
 
             <NavLink icon={User} text="Usuários" href="/users" />
-            {/* <NavLink icon={Map} text="Contratos" href="/address" /> */}
+            <NavLink icon={Map} text="Contratos" href="/address" />
             {/* <NavLink icon={Settings} text="Geral" href="/general" /> */}
           </div>
 

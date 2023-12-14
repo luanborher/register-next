@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 
@@ -6,7 +8,6 @@ import api, { baseURL } from '@/services/api';
 import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
 
-import { useState } from 'react';
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
@@ -52,6 +53,14 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
     try {
       await api.put(`/client/${client.id}`, {
         ...data,
+        social_information: {
+          ...data.social_information,
+          quantity_adults: Number(data.social_information?.quantity_adults || '0'),
+          quantity_elder: Number(data.social_information?.quantity_elder || '0'),
+          quantity_teenagers: Number(data.social_information?.quantity_teenagers || '0'),
+          quantity_children: Number(data.social_information?.quantity_children || '0'),
+          quantity_working: Number(data.social_information?.quantity_working || '0'),
+        },
       });
 
       handleSuccess('Cliente alterado com sucesso!');
@@ -124,6 +133,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       >
         <BackButton onClick={onClose}>
           <ChevronLeft color="#a5a5a5" size={22} />
+
           <BackText>Fechar</BackText>
         </BackButton>
       </Header>
@@ -143,11 +153,13 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       <Row>
         <InputText label="RG" placeholder="RG" {...register('rg')} />
 
-        {/* <InputText
-          label="Telefone"
-          placeholder="Telefone"
-          {...register('telephone')}
-        /> */}
+        {/*
+          <InputText
+            label="Telefone"
+            placeholder="Telefone"
+            {...register('telephone')}
+          />
+        */}
 
         <InputText
           label="Celular"
@@ -404,15 +416,15 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
           control={control}
           options={options?.Provedora}
         />
-      </Row>
 
-      <Row>
         <InputText
           label="Renda familiar"
           placeholder="Renda familiar"
           {...register('social_information.income')}
         />
+      </Row>
 
+      <Row>
         <Dropdown
           name="social_information.benefit"
           label="Benefício familiar"
@@ -426,16 +438,25 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
           control={control}
           options={options?.Profissao}
         />
+
+        <InputText
+          type="number"
+          label="Nº matriculados na escola"
+          placeholder="Nº matriculados na escola"
+          {...register('social_information.registered_people')}
+        />
       </Row>
 
       <Row>
         <InputText
+          type="number"
           label="Nº Crianca (0 a 12 anos)"
           placeholder="Qtd. crianças"
           {...register('social_information.quantity_children')}
         />
 
         <InputText
+          type="number"
           label="Nº Adolescente (13 a 18 anos)"
           placeholder="Qtd. adolescentes"
           {...register('social_information.quantity_teenagers')}
@@ -451,6 +472,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
         )}
 
         <InputText
+          type="number"
           label="Nº Adulto (19 a 59 anos)"
           placeholder="Qtd. adultos"
           {...register('social_information.quantity_adults')}
@@ -459,12 +481,14 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
       <Row>
         <InputText
+          type="number"
           label="Nº Idoso (60 anos ou mais)"
           placeholder="Qtd. idosos"
           {...register('social_information.quantity_elder')}
         />
 
         <InputText
+          type="number"
           label="Quantidade de pessoas trabalhando"
           placeholder="Qtd. Trabalhando"
           {...register('social_information.quantity_working')}
