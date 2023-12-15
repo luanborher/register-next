@@ -59,19 +59,14 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     try {
       const { data } = await api.get<Contract[]>('/general/contract');
 
-      setAddress(data?.map(contract => ({
-        name: contract.name,
-        id: contract.id,
-      })).reverse() || []);
+      if (type === 'contract') {
+        setAddress(data?.map(contract => ({
+          name: contract.name,
+          id: contract.id,
+        })).reverse() || []);
+      }
 
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
-
-        return 0;
-      });
-
-      setContracts(result);
+      setContracts(data);
     } catch (error) {
       handleError(error);
     }
@@ -81,19 +76,14 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     try {
       const { data } = await api.get<Community[]>('/general/community');
 
-      setAddress(data?.map(communitys => ({
-        name: communitys.name,
-        id: communitys.id,
-      })) || []);
+      if (type === 'community') {
+        setAddress(data?.map(communitys => ({
+          name: communitys.name,
+          id: communitys.id,
+        })).reverse() || []);
+      }
 
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
-
-        return 0;
-      });
-
-      setCommunity(result);
+      setCommunity(data);
     } catch (error) {
       handleError(error);
     }
@@ -103,10 +93,12 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     try {
       const { data } = await api.get<Street[]>('/general/street');
 
-      setAddress(data?.map(street => ({
-        name: street.name,
-        id: street.id,
-      })) || []);
+      if (type === 'street') {
+        setAddress(data?.map(street => ({
+          name: street.name,
+          id: street.id,
+        })).reverse() || []);
+      }
     } catch (error) {
       handleError(error);
     }
@@ -117,9 +109,11 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       getContract();
     }
     if (type === 'community') {
+      getContract();
       getCommunity();
     }
     if (type === 'street') {
+      getCommunity();
       getStreet();
     }
   }, []);
@@ -187,8 +181,10 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       }
       if (type === 'community') {
         getCommunity();
+        getContract();
       }
       if (type === 'street') {
+        getCommunity();
         getStreet();
       }
     } catch (error) {
@@ -233,7 +229,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
             name="contract_id"
             label="Contrato"
             control={control}
-            defaultValue={undefined}
             options={contracts?.map(contract => ({
               label: contract.name,
               value: contract.id,
@@ -247,11 +242,10 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
               name="community_id"
               label="Comunidade"
               control={control}
-              defaultValue={undefined}
-              options={community?.map(communitie => ({
+              options={community.length > 0 ? community.map(communitie => ({
                 label: communitie.name,
                 value: communitie.id,
-              })) || []}
+              })) : []}
             />
 
             <InputText label="CEP" placeholder="CEP" {...register('cep')} />
