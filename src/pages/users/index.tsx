@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
@@ -39,13 +38,18 @@ const IndexPage = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = usersDefault.filter(user => {
-      const name = user.name.toLowerCase();
+    setUsers([]);
 
-      return name.includes(search.toLowerCase());
-    });
+    if (search === '') {
+      setUsers(usersDefault);
+    } else {
+      const filtered = usersDefault.filter(user => {
+        const name = user.name.toLowerCase();
+        return name.includes(search.toLowerCase());
+      });
 
-    setUsers(filtered);
+      setUsers(filtered);
+    }
   }, [search]);
 
   const renderColors = (role: string) => {
@@ -82,6 +86,7 @@ const IndexPage = () => {
         <Row style={{ marginTop: '1rem' }}>
           <InputText
             placeholder="Pesquisa por nome"
+            value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </Row>
@@ -102,11 +107,7 @@ const IndexPage = () => {
         <div className="flex flex-col w-full max-h-full overflow-y-auto">
           <TableComponent>
             {users.map(row => (
-              <TableRow
-                key={row.name}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                className="hover:opacity-80 cursor-pointer border-b-2 border-shadow hover:bg-shadow scroll"
-              >
+              <TableRow>
                 <TableCell align="left" width={60} className="p-0">
                   <Image
                     src="https://ui-avatars.com/api/?name=register"
@@ -120,6 +121,7 @@ const IndexPage = () => {
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                     {row.name}
+
                     <span
                       className={`${renderColors(row.role)} ${renderFontColors(
                         row.role,
@@ -133,6 +135,7 @@ const IndexPage = () => {
                     {row.login}
                   </div>
                 </TableCell>
+
                 <TableCell align="right" width={40} className="p-0">
                   <TrashIcon size={24} className="text-secondary self-end" />
                 </TableCell>
