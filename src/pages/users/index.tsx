@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { MoreHorizontal } from 'lucide-react';
@@ -8,50 +9,62 @@ import Header from '@/components/Header/Header';
 import TableComponent from '@/components/Table/Table';
 import RootLayout from '@/components/RootLayout/Layout';
 
-export enum Roles {
-  ADMIN = 'ADMIN',
-  REGISTER = 'REGISTER',
-  DEVELOPER = 'DEVELOPER',
-  MASTER = 'MASTER',
-}
-
-function createData(name: string, role: Roles, email: string) {
-  return { name, role, email };
-}
-
-const rows = [
-  createData('Administrador ADM', Roles.ADMIN, 'administrador@gmail.com'),
-  createData('Caio Augusto', Roles.REGISTER, 'cacacaio@gmail.com'),
-  createData('Luan Viana', Roles.DEVELOPER, 'luan.borher@gmail.com'),
-  createData('Kelvin Mendes', Roles.MASTER, 'reidelas@gmail.com'),
-  createData('Caio Augusto', Roles.REGISTER, 'cacacaio@gmail.com'),
-  createData('Caio Augusto', Roles.REGISTER, 'cacacaio@gmail.com'),
-  createData('Caio Augusto', Roles.REGISTER, 'cacacaio@gmail.com'),
-  createData('Caio Augusto', Roles.REGISTER, 'cacacaio@gmail.com'),
-  createData('Juliana Maita', Roles.DEVELOPER, 'marialiceog2003@gmail.com'),
-];
+import { UserClass } from '@/interfaces/User';
+import api from '@/services/api';
+import { handleError } from '@/utils/message';
+import InputText from '@/components/Input/Input';
+import { Row } from './styles';
 
 const IndexPage = () => {
-  const renderColors = (role: Roles) => {
+  const [users, setUsers] = useState<UserClass[]>([]);
+  const [usersDefault, setUsersDefault] = useState<UserClass[]>([]);
+  const [search, setSearch] = useState<string>('');
+
+  const getUsers = async () => {
+    try {
+      const { data } = await api.get<UserClass[]>('/user');
+
+      setUsers(data);
+      setUsersDefault(data);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  useEffect(() => {
+    const filtered = usersDefault.filter(user => {
+      const name = user.name.toLowerCase();
+
+      return name.includes(search.toLowerCase());
+    });
+
+    setUsers(filtered);
+  }, [search]);
+
+  const renderColors = (role: string) => {
     const colors = {
       ADMIN: 'bg-role-1',
       REGISTER: 'bg-role-3',
       MASTER: 'bg-role-5',
       DEVELOPER: 'bg-role-7',
-    } as const;
+    } as any;
 
-    return colors[role];
+    return colors[role || 'REGISTER'];
   };
 
-  const renderFontColors = (role: Roles) => {
+  const renderFontColors = (role: string) => {
     const colors = {
       ADMIN: 'text-role-2',
       REGISTER: 'text-role-4',
       MASTER: 'text-role-6',
       DEVELOPER: 'text-role-8',
-    } as const;
+    } as any;
 
-    return colors[role];
+    return colors[role || 'REGISTER'];
   };
 
   return (
@@ -63,9 +76,16 @@ const IndexPage = () => {
           action
         />
 
+        <Row>
+          <InputText
+            placeholder="Pesquisa por nome"
+            onChange={e => setSearch(e.target.value)}
+          />
+        </Row>
+
         <div className="flex flex-col w-full max-h-full overflow-y-auto">
           <TableComponent>
-            {rows.map(row => (
+            {users.map(row => (
               <TableRow
                 key={row.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -94,7 +114,7 @@ const IndexPage = () => {
                   </div>
 
                   <div className="text-black text-xxs md:text-xs xxl:text-sm font-normal">
-                    {row.email}
+                    {row.login}
                   </div>
                 </TableCell>
                 <TableCell align="right" width={40} className="p-0">
