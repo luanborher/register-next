@@ -4,15 +4,15 @@ module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}'
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
-      }
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
     },
     colors: {
       // primary: '#2dd4bf',
@@ -31,7 +31,7 @@ module.exports = {
       'role-5': '#DBFBE7',
       'role-6': '#46BF64',
       'role-7': '#FCADAD',
-      'role-8': '#DF4343'
+      'role-8': '#DF4343',
     },
     borderRadius: {
       none: '0',
@@ -40,7 +40,7 @@ module.exports = {
       lg: '0.5rem',
       full: '9999px',
       large: '12px',
-      extra: '36px'
+      extra: '36px',
     },
     screens: {
       xs: '375px',
@@ -48,7 +48,7 @@ module.exports = {
       md: '1024px',
       lg: '1070px',
       xl: '1280px',
-      xxl: '1500px'
+      xxl: '1500px',
     },
     fontSize: {
       xxs: '0.6rem',
@@ -59,8 +59,8 @@ module.exports = {
       '2xl': '1.563rem',
       '3xl': '1.953rem',
       '4xl': '2.441rem',
-      '5xl': '3.052rem'
-    }
+      '5xl': '3.052rem',
+    },
   },
-  plugins: []
+  plugins: [],
 };

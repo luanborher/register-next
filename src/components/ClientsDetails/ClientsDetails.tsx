@@ -53,14 +53,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
     try {
       await api.put(`/client/${client.id}`, {
         ...data,
-        social_information: {
-          ...data.social_information,
-          quantity_adults: Number(data.social_information?.quantity_adults || '0'),
-          quantity_elder: Number(data.social_information?.quantity_elder || '0'),
-          quantity_teenagers: Number(data.social_information?.quantity_teenagers || '0'),
-          quantity_children: Number(data.social_information?.quantity_children || '0'),
-          quantity_working: Number(data.social_information?.quantity_working || '0'),
-        },
+        ...data.social_information,
+        ...data.property,
+        status: client.status,
+        social_information: undefined,
+        property: undefined,
       });
 
       handleSuccess('Cliente alterado com sucesso!');
