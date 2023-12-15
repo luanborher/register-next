@@ -104,7 +104,7 @@ const Search = ({
         ]}
       />
 
-      <InputText placeholder="Número" />
+      <InputText placeholder="Número" {...register('number')} />
     </div>
 
     <div className="flex flex-row gap-4 w-full mt-4 mb-4">

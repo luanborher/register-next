@@ -152,6 +152,7 @@ export interface User {
 
 export interface RecordsFilter {
   name: string;
+  number: string;
   street_id: string;
   community_id: string;
   contract_id: string;

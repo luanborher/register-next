@@ -55,6 +55,7 @@ const IndexPage = () => {
             limit: 10,
 
             name: getValues('name') || undefined,
+            number: getValues('number') || undefined,
             contract_id: getValues('contract_id') || undefined,
             street_id: getValues('street_id') || undefined,
             community_id: getValues('community_id') || undefined,
