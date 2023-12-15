@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft, Map, TrashIcon } from 'lucide-react';
 import { TableCell, TableRow } from '@mui/material';
 
-import { Filtered } from '@/interfaces/Records';
+import { Community, Contract, Street } from '@/interfaces/Records';
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
 
@@ -40,7 +40,8 @@ interface ClientsDetailsProps {
 }
 
 const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
-  const [filtered, setFiltered] = useState<Filtered>({} as Filtered);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [community, setCommunity] = useState<Community[]>([]);
   const [address, setAddress] = useState<{
     name: string;
     id: string;
@@ -48,43 +49,73 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
 
   const { register, handleSubmit, control } = useForm<FormProps>();
 
-  const getFiltered = async () => {
+  const getContract = async () => {
     try {
-      const { data } = await api.get<Filtered>('/general/filter', {
-        params: {
-          filter: 'NORMAL',
-        },
+      const { data } = await api.get<Contract[]>('/general/contract');
+
+      setAddress(data?.map(contract => ({
+        name: contract.name,
+        id: contract.id,
+      })).reverse() || []);
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+
+        return 0;
       });
 
-      if (type === 'contract') {
-        setAddress(data.contracts?.map(contract => ({
-          name: contract.name,
-          id: contract.id,
-        })) || []);
-      }
+      setContracts(result);
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
-      if (type === 'community') {
-        setAddress(data.communities?.map(community => ({
-          name: community.name,
-          id: community.id,
-        })) || []);
-      }
+  const getCommunity = async () => {
+    try {
+      const { data } = await api.get<Community[]>('/general/community');
 
-      if (type === 'street') {
-        setAddress(data.streets?.map(street => ({
-          name: street.name,
-          id: street.id,
-        })) || []);
-      }
+      setAddress(data?.map(communitys => ({
+        name: communitys.name,
+        id: communitys.id,
+      })) || []);
 
-      setFiltered(data);
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+
+        return 0;
+      });
+
+      setCommunity(result);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getStreet = async () => {
+    try {
+      const { data } = await api.get<Street[]>('/general/street');
+
+      setAddress(data?.map(street => ({
+        name: street.name,
+        id: street.id,
+      })) || []);
     } catch (error) {
       handleError(error);
     }
   };
 
   useEffect(() => {
-    getFiltered();
+    if (type === 'contract') {
+      getContract();
+    }
+    if (type === 'community') {
+      getCommunity();
+    }
+    if (type === 'street') {
+      getStreet();
+    }
   }, []);
 
   const onSaveContract: SubmitHandler<FormProps> = async data => {
@@ -94,7 +125,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       });
 
       handleSuccess('Cadastrado com sucesso!');
-      getFiltered();
+      getContract();
     } catch (error) {
       handleError(error);
     }
@@ -108,7 +139,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       });
 
       handleSuccess('Cadastrado com sucesso!');
-      getFiltered();
+      getCommunity();
     } catch (error) {
       handleError(error);
     }
@@ -123,7 +154,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       });
 
       handleSuccess('Cadastrado com sucesso!');
-      getFiltered();
+      getStreet();
     } catch (error) {
       handleError(error);
     }
@@ -167,7 +198,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
             label="Contrato"
             control={control}
             defaultValue={undefined}
-            options={filtered?.contracts?.map(contract => ({
+            options={contracts?.map(contract => ({
               label: contract.name,
               value: contract.id,
             })) || []}
@@ -181,7 +212,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
               label="Comunidade"
               control={control}
               defaultValue={undefined}
-              options={filtered?.communities?.map(communitie => ({
+              options={community?.map(communitie => ({
                 label: communitie.name,
                 value: communitie.id,
               })) || []}
