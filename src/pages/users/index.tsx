@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { MoreHorizontal } from 'lucide-react';
+import { TrashIcon, UserPlus } from 'lucide-react';
 
 import Header from '@/components/Header/Header';
 import TableComponent from '@/components/Table/Table';
@@ -13,12 +13,15 @@ import { UserClass } from '@/interfaces/User';
 import api from '@/services/api';
 import { handleError } from '@/utils/message';
 import InputText from '@/components/Input/Input';
-import { Row } from './styles';
+import Modal from '@/components/Modal/Modal';
+import ModalUsers from '@/components/ModalUsers/ModalUsers';
+import { ButtonConfirm, Row } from './styles';
 
 const IndexPage = () => {
   const [users, setUsers] = useState<UserClass[]>([]);
   const [usersDefault, setUsersDefault] = useState<UserClass[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const getUsers = async () => {
     try {
@@ -76,11 +79,24 @@ const IndexPage = () => {
           action
         />
 
-        <Row>
+        <Row style={{ marginTop: '1rem' }}>
           <InputText
             placeholder="Pesquisa por nome"
             onChange={e => setSearch(e.target.value)}
           />
+        </Row>
+
+        <Row
+          style={{
+            marginTop: '0.5rem',
+            marginBottom: '1rem',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <ButtonConfirm onClick={() => setShowModal(true)}>
+            <UserPlus />
+            Adicionar
+          </ButtonConfirm>
         </Row>
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto">
@@ -93,7 +109,7 @@ const IndexPage = () => {
               >
                 <TableCell align="left" width={60} className="p-0">
                   <Image
-                    src={`https://ui-avatars.com/api/?name=${row.name}`}
+                    src="https://ui-avatars.com/api/?name=register"
                     alt="User"
                     width={45}
                     height={45}
@@ -118,15 +134,18 @@ const IndexPage = () => {
                   </div>
                 </TableCell>
                 <TableCell align="right" width={40} className="p-0">
-                  <MoreHorizontal
-                    size={24}
-                    className="text-secondary self-end"
-                  />
+                  <TrashIcon size={24} className="text-secondary self-end" />
                 </TableCell>
               </TableRow>
             ))}
           </TableComponent>
         </div>
+
+        {showModal && (
+          <Modal>
+            <ModalUsers onClose={() => setShowModal(false)} />
+          </Modal>
+        )}
       </main>
     </RootLayout>
   );
