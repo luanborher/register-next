@@ -21,7 +21,8 @@ import {
   Filtered,
 } from '@/interfaces/Records';
 
-import { Content } from './styles';
+import Pagination from '@/components/Pagination/Pagination';
+import { ContainerPagination, Content } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
@@ -29,6 +30,9 @@ const IndexPage = () => {
 
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   const { register, getValues, setValue } = useForm<RecordsFilter>({
     defaultValues: {
@@ -43,7 +47,7 @@ const IndexPage = () => {
         '/client/filter/validated',
         {
           params: {
-            page: 1,
+            page,
             limit: 10,
 
             name: getValues('name') || undefined,
@@ -56,6 +60,7 @@ const IndexPage = () => {
         },
       );
 
+      setTotalPages(Math.ceil(data.totalCount / 10));
       setClientsList(data.data);
     } catch (error) {
       handleError(error);
@@ -64,7 +69,7 @@ const IndexPage = () => {
 
   useEffect(() => {
     getClients();
-  }, []);
+  }, [page]);
 
   const getFiltered = async () => {
     try {
@@ -183,6 +188,16 @@ const IndexPage = () => {
             ))}
           </TableComponent>
         </Content>
+
+        {totalPages > 1 && (
+          <ContainerPagination>
+            <Pagination
+              onChangePage={setPage}
+              page={page}
+              pageCount={totalPages}
+            />
+          </ContainerPagination>
+        )}
 
         {showDetails && clientSelected && (
           <Modal>

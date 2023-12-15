@@ -21,3 +21,12 @@ export const Content = styled.div`
     background: #8cd630;
   }
 `;
+
+export const ContainerPagination = styled.div`
+  width: 100%;
+  max-width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
