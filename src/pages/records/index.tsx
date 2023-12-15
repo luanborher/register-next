@@ -34,7 +34,7 @@ const IndexPage = () => {
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  const { register, getValues, setValue } = useForm<RecordsFilter>({
+  const { register, getValues, setValue, watch } = useForm<RecordsFilter>({
     defaultValues: {
       status: 'IN_REVIEW',
       situation: 'NORMAL',
@@ -128,6 +128,7 @@ const IndexPage = () => {
           onSubmit={getClients}
           filtered={filtered}
           setValue={setValue}
+          watch={watch}
         />
 
         <Content>
