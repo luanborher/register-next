@@ -40,7 +40,7 @@ const ModalUsers = ({ onClose }: ClientsDetailsProps) => {
     try {
       await api.post('/user', {
         ...data,
-        email: `${data.login}@email.com`,
+        email: `${data.login || 'email'}@email.com`,
         cpf: data.cpf.replace(/\D/g, '') || '00000000000',
         confirmPassword: undefined,
         company: 'Register',
