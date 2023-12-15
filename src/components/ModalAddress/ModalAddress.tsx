@@ -21,6 +21,7 @@ import {
   Title,
   Wrapper,
 } from './styles';
+import ModalQuest from '../ModalQuest/Modal';
 
 interface Option {
   label: string;
@@ -42,6 +43,11 @@ interface ClientsDetailsProps {
 const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [community, setCommunity] = useState<Community[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState<{
+    name: string;
+    id: string;
+  } | null>(null);
   const [address, setAddress] = useState<{
     name: string;
     id: string;
@@ -160,6 +166,36 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     }
   };
 
+  const onDelete = async () => {
+    try {
+      if (type === 'contract') {
+        await api.delete(`/general/contract/${deleteInfo?.id}`);
+      }
+      if (type === 'community') {
+        await api.delete(`/general/community/${deleteInfo?.id}`);
+      }
+      if (type === 'street') {
+        await api.delete(`/general/street/${deleteInfo?.id}`);
+      }
+
+      handleSuccess('Deletado com sucesso!');
+      setDeleteInfo(null);
+      setShowModal(false);
+
+      if (type === 'contract') {
+        getContract();
+      }
+      if (type === 'community') {
+        getCommunity();
+      }
+      if (type === 'street') {
+        getStreet();
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const renderTitle = () => {
     const titles = {
       contract: 'Cadastro de contrato',
@@ -264,12 +300,28 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
                   size={24}
                   color="#DF4343"
                   className="self-end"
+                  onClick={() => {
+                    setDeleteInfo(row);
+                    setShowModal(true);
+                  }}
                 />
               </TableCell>
             </TableRow>
           ))}
         </TableComponent>
       </div>
+
+      {showModal && deleteInfo && (
+        <ModalQuest
+          onClose={() => {
+            setDeleteInfo(null);
+            setShowModal(false);
+          }}
+          onConfirm={onDelete}
+        >
+          Deseja deletar esse cadastro?
+        </ModalQuest>
+      )}
     </Wrapper>
   );
 };

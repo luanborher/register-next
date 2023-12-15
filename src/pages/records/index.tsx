@@ -18,7 +18,9 @@ import {
   Records,
   Paginated,
   RecordsFilter,
-  Filtered,
+  Contract,
+  Community,
+  Street,
 } from '@/interfaces/Records';
 
 import Pagination from '@/components/Pagination/Pagination';
@@ -26,7 +28,9 @@ import { ContainerPagination, Content } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
-  const [filtered, setFiltered] = useState<Filtered>({} as Filtered);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [community, setCommunity] = useState<Community[]>([]);
+  const [streets, setStreets] = useState<Street[]>([]);
 
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -71,22 +75,73 @@ const IndexPage = () => {
     getClients();
   }, [page]);
 
-  const getFiltered = async () => {
+  const getContract = async () => {
     try {
-      const { data } = await api.get<Filtered>('/general/filter', {
-        params: {
-          filter: 'NORMAL',
-        },
+      const { data } = await api.get<Contract[]>('/general/contract');
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
       });
 
-      setFiltered(data);
+      setContracts(result);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getCommunity = async () => {
+    try {
+      const { data } = await api.get<Community[]>('/general/community');
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      setCommunity(result);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getStreet = async () => {
+    try {
+      const { data } = await api.get<Street[]>('/general/street');
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      setStreets(result);
     } catch (error) {
       handleError(error);
     }
   };
 
   useEffect(() => {
-    getFiltered();
+    getContract();
+    getCommunity();
+    getStreet();
   }, []);
 
   const openDetails = (client: Records) => {
@@ -126,7 +181,11 @@ const IndexPage = () => {
         <Search
           register={register}
           onSubmit={getClients}
-          filtered={filtered}
+          filtered={{
+            contracts,
+            communities: community,
+            streets,
+          }}
           setValue={setValue}
           watch={watch}
         />
