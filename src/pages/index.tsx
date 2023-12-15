@@ -9,7 +9,13 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 import api from '@/services/api';
 import { Login, User } from '@/interfaces/User';
-import { Button, FormContainer, InputContainer, MainContainer } from './styles';
+import {
+  Button,
+  FormContainer,
+  InputColumn,
+  InputContainer,
+  MainContainer,
+} from './styles';
 
 const LoginPage = () => {
   const { push } = useRouter();
@@ -33,7 +39,9 @@ const LoginPage = () => {
   };
 
   return (
-    <MainContainer>
+    <>
+      <MainContainer />
+
       <FormContainer onSubmit={handleSubmit(onSubmit)}>
         <Image
           src="/assets/logo.svg"
@@ -44,31 +52,33 @@ const LoginPage = () => {
           blurDataURL="/assets/logo.svg"
         />
 
-        <InputContainer>
-          <label htmlFor="login">Usuário</label>
+        <InputColumn>
+          <InputContainer>
+            <label htmlFor="login">Usuário</label>
 
-          <input
-            id="login"
-            type="text"
-            placeholder="Seu usuário"
-            {...register('login')}
-          />
-        </InputContainer>
+            <input
+              id="login"
+              type="text"
+              placeholder="Seu usuário"
+              {...register('login')}
+            />
+          </InputContainer>
 
-        <InputContainer>
-          <label htmlFor="password">Senha</label>
+          <InputContainer>
+            <label htmlFor="password">Senha</label>
 
-          <input
-            id="password"
-            type="password"
-            placeholder="Sua senha"
-            {...register('password')}
-          />
-        </InputContainer>
+            <input
+              id="password"
+              type="password"
+              placeholder="Sua senha"
+              {...register('password')}
+            />
+          </InputContainer>
+        </InputColumn>
 
         <Button type="submit">Entrar</Button>
       </FormContainer>
-    </MainContainer>
+    </>
   );
 };
 
