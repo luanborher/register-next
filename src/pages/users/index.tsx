@@ -10,10 +10,11 @@ import RootLayout from '@/components/RootLayout/Layout';
 
 import { UserClass } from '@/interfaces/User';
 import api from '@/services/api';
-import { handleError } from '@/utils/message';
+import { handleError, handleSuccess } from '@/utils/message';
 import InputText from '@/components/Input/Input';
 import Modal from '@/components/Modal/Modal';
 import ModalUsers from '@/components/ModalUsers/ModalUsers';
+import ModalQuest from '@/components/ModalQuest/Modal';
 import { ButtonConfirm, Row } from './styles';
 
 const IndexPage = () => {
@@ -21,6 +22,8 @@ const IndexPage = () => {
   const [usersDefault, setUsersDefault] = useState<UserClass[]>([]);
   const [search, setSearch] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState<string | null>(null);
 
   const getUsers = async () => {
     try {
@@ -36,6 +39,20 @@ const IndexPage = () => {
   useEffect(() => {
     getUsers();
   }, []);
+
+  const onDelete = async () => {
+    try {
+      await api.delete(`/user/${deleteInfo}`);
+
+      handleSuccess('Deletado com sucesso!');
+      setDeleteInfo(null);
+      setShowModal(false);
+
+      getUsers();
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   useEffect(() => {
     setUsers([]);
@@ -137,7 +154,15 @@ const IndexPage = () => {
                 </TableCell>
 
                 <TableCell align="right" width={40} className="p-0">
-                  <TrashIcon size={24} className="text-secondary self-end" />
+                  <TrashIcon
+                    size={24}
+                    style={{ cursor: 'pointer' }}
+                    className="text-secondary self-end"
+                    onClick={() => {
+                      setDeleteInfo(row.id);
+                      setShowModalDelete(true);
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -148,6 +173,18 @@ const IndexPage = () => {
           <Modal>
             <ModalUsers onClose={() => setShowModal(false)} />
           </Modal>
+        )}
+
+        {showModalDelete && deleteInfo && (
+          <ModalQuest
+            onClose={() => {
+              setDeleteInfo(null);
+              setShowModalDelete(false);
+            }}
+            onConfirm={onDelete}
+          >
+            Deseja deletar esse usuário?
+          </ModalQuest>
         )}
       </main>
     </RootLayout>
