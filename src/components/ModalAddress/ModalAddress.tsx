@@ -211,7 +211,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
         </ButtonConfirm>
       </Row>
 
-      <div className="flex flex-col w-full max-h-full overflow-y-auto">
+      <div style={{ marginTop: '1rem' }} className="flex flex-col w-full max-h-full overflow-y-auto">
         <TableComponent>
           {address.map(row => (
             <TableRow
