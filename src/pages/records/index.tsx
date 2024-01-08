@@ -222,6 +222,7 @@ const IndexPage = () => {
                   <div>
                     {row.property.street.name || ''},{' '}
                     {row.property.number || ''}
+                    {row.property.complement && `, ${row.property.complement}`}
                   </div>
                 </TableCell>
 
