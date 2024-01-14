@@ -125,7 +125,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
     <Wrapper>
       <Header
         title={client.name || ''}
-        subtitle={`${client.cpf} - ${renderStatus(client.status)}` || ''}
+        subtitle={`CPF: ${client.cpf} - Status: ${renderStatus(client.status)}` || ''}
         action
       >
         <BackButton onClick={onClose}>
@@ -149,14 +149,6 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
       <Row>
         <InputText label="RG" placeholder="RG" {...register('rg')} />
-
-        {/*
-          <InputText
-            label="Telefone"
-            placeholder="Telefone"
-            {...register('telephone')}
-          />
-        */}
 
         <InputText
           label="Celular"
