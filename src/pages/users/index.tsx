@@ -7,14 +7,15 @@ import { TrashIcon, UserPlus } from 'lucide-react';
 import Header from '@/components/Header/Header';
 import TableComponent from '@/components/Table/Table';
 import RootLayout from '@/components/RootLayout/Layout';
-
-import { UserClass } from '@/interfaces/User';
-import api from '@/services/api';
-import { handleError, handleSuccess } from '@/utils/message';
 import InputText from '@/components/Input/Input';
 import Modal from '@/components/Modal/Modal';
 import ModalUsers from '@/components/ModalUsers/ModalUsers';
 import ModalQuest from '@/components/ModalQuest/Modal';
+
+import { UserClass } from '@/interfaces/User';
+import { handleError, handleSuccess } from '@/utils/message';
+import api from '@/services/api';
+
 import { ButtonConfirm, Row } from './styles';
 
 const IndexPage = () => {
@@ -171,7 +172,10 @@ const IndexPage = () => {
 
         {showModal && (
           <Modal>
-            <ModalUsers onClose={() => setShowModal(false)} />
+            <ModalUsers
+              onClose={() => setShowModal(false)}
+              refetch={getUsers}
+            />
           </Modal>
         )}
 

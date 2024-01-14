@@ -111,3 +111,5 @@ export const Button = styled.button`
     background-color: #333;
   }
 `;
+
+export const Label = styled.label``;

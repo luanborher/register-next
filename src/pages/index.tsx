@@ -1,24 +1,24 @@
-/* eslint-disable no-console */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-
-'use client';
-
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import api from '@/services/api';
 import { Login, User } from '@/interfaces/User';
+import { handleError } from '@/utils/message';
+import { useAuth } from '@/hooks/useAuth';
+
 import {
   Button,
   FormContainer,
   InputColumn,
   InputContainer,
+  Label,
   MainContainer,
 } from './styles';
 
 const LoginPage = () => {
   const { push } = useRouter();
+  const { setUser } = useAuth();
 
   const { register, handleSubmit } = useForm<Login>();
 
@@ -32,9 +32,10 @@ const LoginPage = () => {
       localStorage.setItem('@register:accessToken', data.access_token);
       localStorage.setItem('@register:user', JSON.stringify(data.user));
 
+      setUser(data.user);
       push('/records');
     } catch (error) {
-      console.log(error);
+      handleError(error);
     }
   };
 
@@ -54,7 +55,7 @@ const LoginPage = () => {
 
         <InputColumn>
           <InputContainer>
-            <label htmlFor="login">Usuário</label>
+            <Label htmlFor="login">Usuário</Label>
 
             <input
               id="login"
@@ -65,7 +66,7 @@ const LoginPage = () => {
           </InputContainer>
 
           <InputContainer>
-            <label htmlFor="password">Senha</label>
+            <Label htmlFor="password">Senha</Label>
 
             <input
               id="password"

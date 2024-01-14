@@ -31,9 +31,10 @@ interface UserForm {
 
 interface ClientsDetailsProps {
   onClose: () => void;
+  refetch: () => void;
 }
 
-const ModalUsers = ({ onClose }: ClientsDetailsProps) => {
+const ModalUsers = ({ onClose, refetch }: ClientsDetailsProps) => {
   const { register, handleSubmit, control } = useForm<UserForm>();
 
   const onSubmit: SubmitHandler<UserForm> = async data => {
@@ -50,6 +51,7 @@ const ModalUsers = ({ onClose }: ClientsDetailsProps) => {
 
       handleSuccess('Cliente alterado com sucesso!');
 
+      refetch();
       onClose();
     } catch (error: any) {
       handleError(error);
