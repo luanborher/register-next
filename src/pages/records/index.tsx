@@ -10,9 +10,11 @@ import TableComponent from '@/components/Table/Table';
 import Modal from '@/components/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import ClientsDetails from '@/components/ClientsDetails/ClientsDetails';
+import Pagination from '@/components/Pagination/Pagination';
 
 import api from '@/services/api';
 import { handleError } from '@/utils/message';
+import { formatDate } from '@/utils/format';
 
 import {
   Records,
@@ -23,7 +25,6 @@ import {
   Street,
 } from '@/interfaces/Records';
 
-import Pagination from '@/components/Pagination/Pagination';
 import { ContainerPagination, Content } from './styles';
 
 const IndexPage = () => {
@@ -61,6 +62,7 @@ const IndexPage = () => {
             community_id: getValues('community_id') || undefined,
             situation_status: getValues('situation') || undefined,
             status: getValues('status') || undefined,
+            date: getValues('date') || undefined,
           },
         },
       );
@@ -199,6 +201,7 @@ const IndexPage = () => {
               'Endereço',
               'Comunidade',
               'Contrato',
+              'Data',
               'Status',
               'Ações',
             ]}
@@ -232,6 +235,12 @@ const IndexPage = () => {
 
                 <TableCell align="left" className="p-0">
                   <div>{row.property.street.community.contract.name || ''}</div>
+                </TableCell>
+
+                <TableCell align="left" className="p-0">
+                  <div>
+                    {(row.created_at && formatDate(row.created_at)) || ''}
+                  </div>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">

@@ -158,6 +158,7 @@ export interface RecordsFilter {
   contract_id: string;
   situation: string;
   status: string;
+  date: string;
 }
 
 export interface Filtered {

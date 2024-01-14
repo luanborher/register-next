@@ -9,6 +9,7 @@ import { Filtered, RecordsFilter } from '@/interfaces/Records';
 
 import Select from '../Select/Select';
 import InputText from '../Input/Input';
+import InputDate from '../InputDate/Input';
 
 import { Button, LabelButton } from './styles';
 
@@ -28,7 +29,7 @@ const Search = ({
   watch,
 }: SearchProps) => (
   <div className="flex flex-col w-full mt-8">
-    <div className="w-full flex flex-row gap-2">
+    <div className="w-full flex flex-row gap-4">
       <Select
         id="contract_id"
         placeholder="Contrato"
@@ -137,6 +138,8 @@ const Search = ({
       />
 
       <InputText placeholder="Buscar por nome" {...register('name')} />
+
+      <InputDate placeholder="Data de cadastro" {...register('date')} />
 
       <Button onClick={onSubmit}>
         <LabelButton>Buscar</LabelButton>
