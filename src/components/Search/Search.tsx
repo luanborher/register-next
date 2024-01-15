@@ -44,6 +44,11 @@ const Search = ({
             label: contract.name,
           })) || []),
         ]}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
       />
 
       <Select
@@ -73,6 +78,11 @@ const Search = ({
               }))) ||
             []),
         ]}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
       />
 
       <Select
@@ -103,9 +113,22 @@ const Search = ({
               }))) ||
             []),
         ]}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
       />
 
-      <InputText placeholder="Número" {...register('number')} />
+      <InputText
+        placeholder="Número"
+        {...register('number')}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
+      />
     </div>
 
     <div className="flex flex-row gap-4 w-full mt-4 mb-4">
@@ -121,6 +144,11 @@ const Search = ({
           { value: 'VAGO', label: 'Vago' },
           { value: 'NORMAL', label: 'Normal' },
         ]}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
       />
 
       <Select
@@ -135,11 +163,32 @@ const Search = ({
           { value: 'VALIDATED', label: 'Validado' },
           { value: 'REJECTED', label: 'Rejeitado' },
         ]}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
       />
 
-      <InputText placeholder="Buscar por nome" {...register('name')} />
+      <InputText
+        placeholder="Buscar por nome"
+        {...register('name')}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
+      />
 
-      <InputDate placeholder="Data de cadastro" {...register('date')} />
+      <InputDate
+        placeholder="Data de cadastro"
+        {...register('date')}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSubmit();
+          }
+        }}
+      />
 
       <Button onClick={onSubmit}>
         <LabelButton>Buscar</LabelButton>
