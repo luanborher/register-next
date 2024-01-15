@@ -8,6 +8,7 @@ import api, { baseURL } from '@/services/api';
 import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
 
+import { formatDateHours } from '@/utils/format';
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
@@ -125,7 +126,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
     <Wrapper>
       <Header
         title={client.name || ''}
-        subtitle={`CPF: ${client.cpf} - Status: ${renderStatus(client.status)}` || ''}
+        subtitle={`Cadastro: ${formatDateHours(client.created_at)} - Status: ${renderStatus(client.status)}` || ''}
         action
       >
         <BackButton onClick={onClose}>
