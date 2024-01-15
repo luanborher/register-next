@@ -566,19 +566,17 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
       <Row>
         <InputText
-          type="number"
           label="Nome do agente"
           placeholder="Nome do agente"
-          disabled
           value={client.user.name}
+          disabled
         />
 
         <InputText
-          type="number"
           label="Data de cadastro"
           placeholder="Data de cadastro"
-          disabled
           value={formatDateHours(client.created_at)}
+          disabled
         />
       </Row>
 
