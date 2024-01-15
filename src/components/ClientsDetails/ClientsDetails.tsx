@@ -126,7 +126,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
     <Wrapper>
       <Header
         title={client.name || ''}
-        subtitle={`Cadastro: ${formatDateHours(client.created_at)} - Status: ${renderStatus(client.status)}` || ''}
+        subtitle={`${formatDateHours(client.created_at)} - ${renderStatus(client.status)}` || ''}
         action
       >
         <BackButton onClick={onClose}>
@@ -560,6 +560,26 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
             }}
           />
         )}
+      </Row>
+
+      <Title>Dados de cadastros</Title>
+
+      <Row>
+        <InputText
+          type="number"
+          label="Nome do agente"
+          placeholder="Nome do agente"
+          disabled
+          value={client.user.name}
+        />
+
+        <InputText
+          type="number"
+          label="Data de cadastro"
+          placeholder="Data de cadastro"
+          disabled
+          value={formatDateHours(client.created_at)}
+        />
       </Row>
 
       {client.property.signature_url ? (
