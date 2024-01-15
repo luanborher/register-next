@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { MoreHorizontal } from 'lucide-react';
+import { FaDownload } from 'react-icons/fa6';
 
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
@@ -25,7 +26,8 @@ import {
   Street,
 } from '@/interfaces/Records';
 
-import { ContainerPagination, Content } from './styles';
+import ModalQuest from '@/components/ModalQuest/Modal';
+import { ContainerPagination, Content, ExportRow } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
@@ -35,6 +37,7 @@ const IndexPage = () => {
 
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showQuest, setShowQuest] = useState(false);
 
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -172,6 +175,16 @@ const IndexPage = () => {
     return colors[status || 'IN_REVIEW'];
   };
 
+  const handleDonwload = async () => {
+    try {
+      const { data } = await api.get('/export-data');
+
+      return data;
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     <RootLayout>
       <main className="flex flex-col gap-2 h-full">
@@ -192,6 +205,15 @@ const IndexPage = () => {
           setValue={setValue}
           watch={watch}
         />
+
+        <ExportRow>
+          <FaDownload
+            style={{ cursor: 'pointer' }}
+            color="#8cd630"
+            size={22}
+            onClick={() => setShowQuest(true)}
+          />
+        </ExportRow>
 
         <Content>
           <TableComponent
@@ -278,6 +300,15 @@ const IndexPage = () => {
               refetch={getClients}
             />
           </Modal>
+        )}
+
+        {showQuest && (
+          <ModalQuest
+            onClose={() => setShowQuest(false)}
+            onConfirm={handleDonwload}
+          >
+            Deseja exportar os dados?
+          </ModalQuest>
         )}
       </main>
     </RootLayout>
