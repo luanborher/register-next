@@ -4,13 +4,14 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-
 import { Users, LogOut, User, Map } from 'lucide-react';
+
+import { useAuth } from '@/hooks/useAuth';
 
 import NavLink from '../Navbar/NavLink/NavLink';
 import Title from '../Navbar/Title/Title';
 
-import { Container, MainContainer } from './styles';
+import { Container, MainContainer, NameContainer } from './styles';
 
 export default function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const { push } = useRouter();
+  const { user } = useAuth();
 
   const signOut = () => {
     localStorage.removeItem('@register:accessToken');
@@ -57,11 +59,11 @@ export default function RootLayout({
           <div className="w-full bg-gray px-4 xxl:px-6 py-5 rounded-large flex">
             <div className="flex flex-col w-full">
               <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-col items-center gap-2">
+                <NameContainer>
                   <span className="text-white text-xxs md:text-xs xxl:text-sm font-medium">
-                    Olá, <span className="text-primary">Administrador</span>
+                    Olá, <span className="text-primary">{user.name}</span>
                   </span>
-                </div>
+                </NameContainer>
 
                 <div
                   className="flex justify-center items-center w-[24px] h-[24px] xxl:w-[30px] xxl:h-[30px] bg-primary rounded-extra cursor-pointer hover:bg-primaryLight"
