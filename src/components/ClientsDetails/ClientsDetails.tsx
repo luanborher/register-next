@@ -136,6 +136,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       <Header
         title={client.name || ''}
         subtitle={`${formatDateHours(client.created_at)} - ${renderStatus(client.status)}` || ''}
+        id={client.property.registration}
         action
       >
         <BackButton onClick={onClose}>
