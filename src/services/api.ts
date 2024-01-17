@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import axios from 'axios';
 
-export const baseURL = 'https://lfz9pydotl.execute-api.us-east-1.amazonaws.com/';
+export const baseURL = 'https://9nr91px69f.execute-api.sa-east-1.amazonaws.com/';
 
 const api = axios.create({
   baseURL,
