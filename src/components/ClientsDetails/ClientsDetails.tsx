@@ -9,6 +9,7 @@ import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
 
 import { formatDateHours } from '@/utils/format';
+import { useAuth } from '@/hooks/useAuth';
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
@@ -35,6 +36,8 @@ interface ClientsDetailsProps {
 }
 
 const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
+  const { user } = useAuth();
+
   const date = new Date(client.birthDate);
 
   const [showImage, setShowImage] = useState(false);
@@ -121,6 +124,12 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
     return statusList[status || 'IN_REVIEW'];
   };
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      onClose();
+    }
+  });
 
   return (
     <Wrapper>
@@ -515,7 +524,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       <Row style={{ justifyContent: 'center' }}>
         {client.property.first_document_url && (
           <Image
-            src={`${baseURL}files/${client.property.first_document_url}`}
+            src={
+              client.property.first_document_url.includes('https')
+                ? client.property.first_document_url
+                : `${baseURL}files/${client.property.first_document_url}`
+            }
             alt="Documento 1"
             onClick={() => {
               setShowImage(true);
@@ -528,7 +541,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
         {client.property.second_document_url && (
           <Image
-            src={`${baseURL}files/${client.property.second_document_url}`}
+            src={
+              client.property.second_document_url.includes('https')
+                ? client.property.second_document_url
+                : `${baseURL}files/${client.property.second_document_url}`
+            }
             alt="Documento 2"
             onClick={() => {
               setShowImage(true);
@@ -541,7 +558,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
         {client.property.facade_url && (
           <Image
-            src={`${baseURL}files/${client.property.facade_url}`}
+            src={
+              client.property.facade_url.includes('https')
+                ? client.property.facade_url
+                : `${baseURL}files/${client.property.facade_url}`
+            }
             alt="Fachada"
             onClick={() => {
               setShowImage(true);
@@ -552,7 +573,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
         {client.property.additional_url && (
           <Image
-            src={`${baseURL}files/${client.property.additional_url}`}
+            src={
+              client.property.additional_url.includes('https')
+                ? client.property.additional_url
+                : `${baseURL}files/${client.property.additional_url}`
+            }
             alt="Adicional"
             onClick={() => {
               setShowImage(true);
@@ -586,7 +611,11 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
 
           <Row style={{ justifyContent: 'center' }}>
             <Image
-              src={`${baseURL}files/${client.property.signature_url}`}
+              src={
+                client.property.signature_url.includes('https')
+                  ? client.property.signature_url
+                  : `${baseURL}files/${client.property.signature_url}`
+              }
               alt="Assinatura"
               style={{ width: '500px' }}
             />
@@ -607,14 +636,16 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       )}
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-        <ButtonDeletar
-          type="button"
-          onClick={() => {
-            setShowDeleted(true);
-          }}
-        >
-          Apagar
-        </ButtonDeletar>
+        {(user.role === 'DEVELOPER' || user.role === 'MASTER') && (
+          <ButtonDeletar
+            type="button"
+            onClick={() => {
+              setShowDeleted(true);
+            }}
+          >
+            Apagar
+          </ButtonDeletar>
+        )}
 
         <ButtonCancel
           type="button"
