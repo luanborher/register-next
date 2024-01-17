@@ -177,7 +177,7 @@ const IndexPage = () => {
 
   const handleDonwload = async () => {
     try {
-      const { data } = await api.get<string>('/export-data');
+      const { data } = await api.get<string>('/client/export-data');
 
       window.open(data);
     } catch (error) {
