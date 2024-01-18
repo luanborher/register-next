@@ -45,7 +45,7 @@ const Dropdown = ({
         options={options}
         placeholder={placeholder}
         value={options.find(option => option.value === value)}
-        onChange={onChange}
+        onChange={e => onChange(e?.value)}
         isClearable
         noOptionsMessage={() => 'Nenhum resultado encontrado'}
         styles={{

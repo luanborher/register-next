@@ -298,6 +298,11 @@ const IndexPage = () => {
               client={clientSelected}
               onClose={() => setShowDetails(false)}
               refetch={getClients}
+              filtered={{
+                contracts,
+                communities: community,
+                streets,
+              }}
             />
           </Modal>
         )}

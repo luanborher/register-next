@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 
-import { Records } from '@/interfaces/Records';
+import { Filtered, Records } from '@/interfaces/Records';
 import api, { baseURL } from '@/services/api';
 import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
@@ -31,11 +31,12 @@ import {
 
 interface ClientsDetailsProps {
   client: Records;
+  filtered: Filtered;
   onClose: () => void;
   refetch: () => void;
 }
 
-const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
+const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsProps) => {
   const { user } = useAuth();
 
   const date = new Date(client.birthDate);
@@ -278,22 +279,40 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
       </Row>
 
       <Row>
-        <InputText
+        <Dropdown
+          name="property.street.community.contract_id"
           label="Contrato"
-          placeholder="Contrato"
-          {...register('property.street.community.contract.name')}
+          control={control}
+          options={[
+            ...(filtered?.contracts?.map(contract => ({
+              value: contract.id,
+              label: contract.name,
+            })) || []),
+          ]}
         />
 
-        <InputText
+        <Dropdown
+          name="property.street.community_id"
           label="Área Atuação"
-          placeholder="Área Atuação"
-          {...register('property.street.community.name')}
+          control={control}
+          options={[
+            ...(filtered?.communities?.map(communitie => ({
+              value: communitie.id,
+              label: communitie.name,
+            })) || []),
+          ]}
         />
 
-        <InputText
+        <Dropdown
+          name="property.street_id"
           label="Rua"
-          placeholder="Rua"
-          {...register('property.street.name')}
+          control={control}
+          options={[
+            ...(filtered?.streets?.map(street => ({
+              value: street.id,
+              label: street.name,
+            })) || []),
+          ]}
         />
       </Row>
 
@@ -537,6 +556,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
                 `${baseURL}files/${client.property.first_document_url}`,
               );
             }}
+            style={{ objectFit: 'contain' }}
           />
         )}
 
@@ -554,6 +574,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
                 `${baseURL}files/${client.property.second_document_url}`,
               );
             }}
+            style={{ objectFit: 'contain' }}
           />
         )}
 
@@ -569,6 +590,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
               setShowImage(true);
               setUrlImage(`${baseURL}files/${client.property.facade_url}`);
             }}
+            style={{ objectFit: 'contain' }}
           />
         )}
 
@@ -584,6 +606,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
               setShowImage(true);
               setUrlImage(`${baseURL}files/${client.property.additional_url}`);
             }}
+            style={{ objectFit: 'contain' }}
           />
         )}
       </Row>
@@ -618,7 +641,7 @@ const ClientsDetails = ({ client, onClose, refetch }: ClientsDetailsProps) => {
                   : `${baseURL}files/${client.property.signature_url}`
               }
               alt="Assinatura"
-              style={{ width: '500px' }}
+              style={{ width: '500px', objectFit: 'contain' }}
             />
           </Row>
         </>
