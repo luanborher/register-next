@@ -7,6 +7,7 @@ interface HeaderProps {
   profile?: boolean;
   title: string;
   subtitle?: string;
+  id?: string;
   action?: boolean;
   children?: React.ReactNode;
 }
@@ -14,6 +15,7 @@ interface HeaderProps {
 const Header = ({
   profile,
   title,
+  id,
   subtitle,
   action,
   children,
@@ -27,6 +29,12 @@ const Header = ({
       {subtitle && (
         <span className="text-black text-xs md:text-sm xxl:text-base font-medium">
           {subtitle}
+        </span>
+      )}
+
+      {id && (
+        <span className="text-black text-xs md:text-sm xxl:text-base font-medium">
+          {id}
         </span>
       )}
     </div>

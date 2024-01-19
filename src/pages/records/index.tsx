@@ -177,12 +177,32 @@ const IndexPage = () => {
 
   const handleDonwload = async () => {
     try {
-      const { data } = await api.get<string>('/export-data');
+      const { data } = await api.get<string>('/client/export-data');
 
       window.open(data);
     } catch (error) {
       handleError(error);
     }
+  };
+
+  const renderSituationColors = (status: string) => {
+    const colors = {
+      NORMAL: '#14dd46',
+      AUSENTE: '#FF9100',
+      VAGO: '#008cff',
+    } as any;
+
+    return colors[status || 'NORMAL'];
+  };
+
+  const renderSituation = (status: string) => {
+    const colors = {
+      VAGO: 'Vago',
+      NORMAL: 'Normal',
+      AUSENTE: 'Ausente',
+    } as any;
+
+    return colors[status || 'Normal'];
   };
 
   return (
@@ -218,8 +238,8 @@ const IndexPage = () => {
         <Content>
           <TableComponent
             headers={[
+              'Situação',
               'Nome',
-              'CPF',
               'Endereço',
               'Comunidade',
               'Contrato',
@@ -235,12 +255,18 @@ const IndexPage = () => {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 className="hover:opacity-80 cursor-pointer border-b-2 border-shadow hover:bg-shadow scroll"
               >
-                <TableCell align="left" height={55} className="p-0">
-                  <div>{row.name || '-- --'}</div>
+                <TableCell align="left" height={10} className="p-0">
+                  <div
+                    style={{
+                      color: renderSituationColors(row.situation_status),
+                    }}
+                  >
+                    {renderSituation(row.situation_status || '')}
+                  </div>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <div>{row.cpf || '___.___.___-__'}</div>
+                  <div>{row.name || '-- --'}</div>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
@@ -298,6 +324,11 @@ const IndexPage = () => {
               client={clientSelected}
               onClose={() => setShowDetails(false)}
               refetch={getClients}
+              filtered={{
+                contracts,
+                communities: community,
+                streets,
+              }}
             />
           </Modal>
         )}

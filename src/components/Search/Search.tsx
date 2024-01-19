@@ -138,7 +138,6 @@ const Search = ({
         onChange={e => {
           setValue('situation', e?.value || '');
         }}
-        defaultValue={{ value: 'NORMAL', label: 'Normal' }}
         options={[
           { value: 'AUSENTE', label: 'Ausente' },
           { value: 'VAGO', label: 'Vago' },
