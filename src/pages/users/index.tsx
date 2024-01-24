@@ -1,8 +1,9 @@
+/* eslint-disable operator-linebreak */
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { TrashIcon, UserPlus } from 'lucide-react';
+import { TrashIcon, UserPlus, Edit3Icon } from 'lucide-react';
 
 import Header from '@/components/Header/Header';
 import TableComponent from '@/components/Table/Table';
@@ -11,18 +12,25 @@ import InputText from '@/components/Input/Input';
 import Modal from '@/components/Modal/Modal';
 import ModalUsers from '@/components/ModalUsers/ModalUsers';
 import ModalQuest from '@/components/ModalQuest/Modal';
+import ModalUsersEdit from '@/components/ModalUsersEdit/ModalUsersEdit';
 
 import { UserClass } from '@/interfaces/User';
 import { handleError, handleSuccess } from '@/utils/message';
 import api from '@/services/api';
+import { useAuth } from '@/hooks/useAuth';
 
-import { ButtonConfirm, Row } from './styles';
+import { ActionsIcons, ButtonConfirm, Row } from './styles';
 
 const IndexPage = () => {
+  const { user } = useAuth();
+
   const [users, setUsers] = useState<UserClass[]>([]);
   const [usersDefault, setUsersDefault] = useState<UserClass[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [userInfo, setUser] = useState<UserClass>({} as UserClass);
+
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalEdit, setShowModalEdit] = useState<boolean>(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [deleteInfo, setDeleteInfo] = useState<string | null>(null);
 
@@ -61,8 +69,8 @@ const IndexPage = () => {
     if (search === '') {
       setUsers(usersDefault);
     } else {
-      const filtered = usersDefault.filter(user => {
-        const name = user.name.toLowerCase();
+      const filtered = usersDefault.filter(_user => {
+        const name = _user.name.toLowerCase();
         return name.includes(search.toLowerCase());
       });
 
@@ -154,16 +162,33 @@ const IndexPage = () => {
                   </div>
                 </TableCell>
 
-                <TableCell align="right" width={40} className="p-0">
-                  <TrashIcon
-                    size={24}
-                    style={{ cursor: 'pointer' }}
-                    className="text-secondary self-end"
-                    onClick={() => {
-                      setDeleteInfo(row.id);
-                      setShowModalDelete(true);
-                    }}
-                  />
+                <TableCell align="right" width={80} className="p-0">
+                  <ActionsIcons>
+                    {(user?.role === 'MASTER' ||
+                      user?.role === 'DEVELOPER') && (
+                      <>
+                        <Edit3Icon
+                          size={24}
+                          style={{ cursor: 'pointer' }}
+                          className="text-secondary self-end"
+                          onClick={() => {
+                            setUser(row);
+                            setShowModalEdit(true);
+                          }}
+                        />
+
+                        <TrashIcon
+                          size={24}
+                          style={{ cursor: 'pointer' }}
+                          className="text-secondary self-end"
+                          onClick={() => {
+                            setDeleteInfo(row.id);
+                            setShowModalDelete(true);
+                          }}
+                        />
+                      </>
+                    )}
+                  </ActionsIcons>
                 </TableCell>
               </TableRow>
             ))}
@@ -175,6 +200,19 @@ const IndexPage = () => {
             <ModalUsers
               onClose={() => setShowModal(false)}
               refetch={getUsers}
+            />
+          </Modal>
+        )}
+
+        {showModalEdit && userInfo?.id && (
+          <Modal>
+            <ModalUsersEdit
+              onClose={() => {
+                setUser({} as UserClass);
+                setShowModal(false);
+              }}
+              refetch={getUsers}
+              user={userInfo}
             />
           </Modal>
         )}
