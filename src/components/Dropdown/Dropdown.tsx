@@ -44,6 +44,7 @@ const Dropdown = ({
         name={name}
         options={options}
         placeholder={placeholder}
+        defaultValue={defaultValue}
         value={options.find(option => option.value === value)}
         onChange={e => onChange(e?.value)}
         isClearable

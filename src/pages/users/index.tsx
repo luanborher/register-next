@@ -38,8 +38,8 @@ const IndexPage = () => {
     try {
       const { data } = await api.get<UserClass[]>('/user');
 
-      setUsers(data);
-      setUsersDefault(data);
+      setUsers(data.reverse());
+      setUsersDefault(data.reverse());
     } catch (error) {
       handleError(error);
     }

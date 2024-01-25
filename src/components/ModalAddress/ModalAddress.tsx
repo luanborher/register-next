@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { ChevronLeft, Map, TrashIcon } from 'lucide-react';
+import { ChevronLeft, Map, TrashIcon, Edit3Icon } from 'lucide-react';
 import { TableCell, TableRow } from '@mui/material';
 
 import { Community, Contract, Street } from '@/interfaces/Records';
@@ -14,6 +14,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import TableComponent from '../Table/Table';
 
 import {
+  ActionsIcons,
   BackButton,
   BackText,
   ButtonConfirm,
@@ -22,6 +23,7 @@ import {
   Wrapper,
 } from './styles';
 import ModalQuest from '../ModalQuest/Modal';
+import ModalStreet from '../ModalStreet/ModalStreet';
 
 interface Option {
   label: string;
@@ -44,6 +46,13 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [community, setCommunity] = useState<Community[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [street, setStreet] = useState({} as {
+    name: string;
+    id: string;
+    cep?: string;
+    community?: Option;
+  });
   const [deleteInfo, setDeleteInfo] = useState<{
     name: string;
     id: string;
@@ -51,6 +60,8 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
   const [address, setAddress] = useState<{
     name: string;
     id: string;
+    cep?: string;
+    community?: Option;
   }[]>([]);
 
   const { register, handleSubmit, control } = useForm<FormProps>();
@@ -84,6 +95,8 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       }
 
       setCommunity(data);
+
+      return data;
     } catch (error) {
       handleError(error);
     }
@@ -91,12 +104,21 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
 
   const getStreet = async () => {
     try {
+      const result = await getCommunity();
+
+      setCommunity(result as Community[]);
+
       const { data } = await api.get<Street[]>('/general/street');
 
       if (type === 'street') {
-        setAddress(data?.map(street => ({
-          name: street.name,
-          id: street.id,
+        setAddress(data?.map(streets => ({
+          id: streets.id,
+          name: streets.name,
+          cep: streets.cep,
+          community: {
+            label: result?.find(c => c.id === streets.community_id)?.name || '',
+            value: streets.community_id || '',
+          },
         })).reverse() || []);
       }
     } catch (error) {
@@ -113,7 +135,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       getCommunity();
     }
     if (type === 'street') {
-      getCommunity();
       getStreet();
     }
   }, []);
@@ -135,7 +156,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     try {
       await api.post('/general/community', {
         name: data.name,
-        contract_id: data.contract_id.value,
+        contract_id: data.contract_id,
       });
 
       handleSuccess('Cadastrado com sucesso!');
@@ -150,7 +171,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       await api.post('/general/street', {
         name: data.name,
         cep: data.cep || '00000-000',
-        community_id: data.community_id.value,
+        community_id: data.community_id,
       });
 
       handleSuccess('Cadastrado com sucesso!');
@@ -289,16 +310,30 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
                   {row.name}
                 </div>
               </TableCell>
+
               <TableCell align="right" width={40} className="p-0">
-                <TrashIcon
-                  size={24}
-                  color="#DF4343"
-                  className="self-end"
-                  onClick={() => {
-                    setDeleteInfo(row);
-                    setShowModal(true);
-                  }}
-                />
+                <ActionsIcons>
+                  {type === 'street' && (
+                    <Edit3Icon
+                      size={24}
+                      className="self-end"
+                      onClick={() => {
+                        setStreet(row);
+                        setShowEdit(true);
+                      }}
+                    />
+                  )}
+
+                  <TrashIcon
+                    size={24}
+                    color="#DF4343"
+                    className="self-end"
+                    onClick={() => {
+                      setDeleteInfo(row);
+                      setShowModal(true);
+                    }}
+                  />
+                </ActionsIcons>
               </TableCell>
             </TableRow>
           ))}
@@ -315,6 +350,22 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
         >
           Deseja deletar esse cadastro?
         </ModalQuest>
+      )}
+
+      {showEdit && street?.id && (
+        <ModalStreet
+          onClose={() => {
+            setStreet({} as {
+              name: string;
+              id: string;
+              cep?: string;
+              community?: Option;
+            });
+            setShowEdit(false);
+          }}
+          onRefresh={() => getStreet()}
+          street={street}
+        />
       )}
     </Wrapper>
   );

@@ -95,3 +95,11 @@ export const ButtonConfirm = styled.button`
   color: #fff;
   font-weight: 500;
 `;
+
+export const ActionsIcons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+`;
