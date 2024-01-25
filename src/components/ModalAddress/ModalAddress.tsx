@@ -51,7 +51,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     name: string;
     id: string;
     cep?: string;
-    community?: Option;
   });
   const [deleteInfo, setDeleteInfo] = useState<{
     name: string;
@@ -61,7 +60,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     name: string;
     id: string;
     cep?: string;
-    community?: Option;
   }[]>([]);
 
   const { register, handleSubmit, control } = useForm<FormProps>();
@@ -115,10 +113,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
           id: streets.id,
           name: streets.name,
           cep: streets.cep,
-          community: {
-            label: result?.find(c => c.id === streets.community_id)?.name || '',
-            value: streets.community_id || '',
-          },
         })).reverse() || []);
       }
     } catch (error) {
@@ -359,7 +353,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
               name: string;
               id: string;
               cep?: string;
-              community?: Option;
             });
             setShowEdit(false);
           }}
