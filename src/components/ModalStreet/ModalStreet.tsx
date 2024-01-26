@@ -18,6 +18,7 @@ import {
 interface FormProps {
   name: string;
   cep: string;
+  community_id: string;
 }
 
 interface ModalProps {
@@ -27,6 +28,7 @@ interface ModalProps {
     name: string;
     id: string;
     cep?: string;
+    community_id?: string;
   };
 }
 
@@ -34,6 +36,7 @@ const ModalStreet = ({ onClose, onRefresh, street }: ModalProps) => {
   const { register, handleSubmit } = useForm<FormProps>({
     defaultValues: {
       name: street.name,
+      community_id: street.community_id,
       cep: street.cep,
     },
   });

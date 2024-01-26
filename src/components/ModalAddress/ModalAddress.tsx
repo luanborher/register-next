@@ -51,6 +51,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     name: string;
     id: string;
     cep?: string;
+    community_id?: string;
   });
   const [deleteInfo, setDeleteInfo] = useState<{
     name: string;
@@ -113,6 +114,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
           id: streets.id,
           name: streets.name,
           cep: streets.cep,
+          community_id: streets.community_id,
         })).reverse() || []);
       }
     } catch (error) {
@@ -353,6 +355,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
               name: string;
               id: string;
               cep?: string;
+              community_id?: string;
             });
             setShowEdit(false);
           }}
