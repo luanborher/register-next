@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import TableCell from '@mui/material/TableCell';
@@ -81,48 +82,6 @@ const IndexPage = () => {
     getClients();
   }, [page]);
 
-  const getContract = async () => {
-    try {
-      const { data } = await api.get<Contract[]>('/general/contract');
-
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-
-        return 0;
-      });
-
-      setContracts(result);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const getCommunity = async () => {
-    try {
-      const { data } = await api.get<Community[]>('/general/community');
-
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-
-        return 0;
-      });
-
-      setCommunity(result);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const getStreet = async () => {
     try {
       const { data } = await api.get<Street[]>('/general/street');
@@ -144,10 +103,54 @@ const IndexPage = () => {
     }
   };
 
+  const getCommunity = async () => {
+    try {
+      const { data } = await api.get<Community[]>('/general/community');
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      setCommunity(result);
+
+      await getStreet();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getContract = async () => {
+    try {
+      const { data } = await api.get<Contract[]>('/general/contract');
+
+      const result = data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      setContracts(result);
+
+      await getCommunity();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   useEffect(() => {
     getContract();
-    getCommunity();
-    getStreet();
   }, []);
 
   const openDetails = (client: Records) => {
@@ -157,9 +160,9 @@ const IndexPage = () => {
 
   const renderStatus = (status: string) => {
     const statusList = {
-      VALIDATED: 'Validado',
-      IN_REVIEW: 'Auditoria',
-      REJECTED: 'Rejeitado',
+      VALIDATED: 'VALIDADO',
+      IN_REVIEW: 'AUDITORIA',
+      REJECTED: 'REJEITADO',
     } as any;
 
     return statusList[status || 'IN_REVIEW'];
@@ -193,16 +196,6 @@ const IndexPage = () => {
     } as any;
 
     return colors[status || 'NORMAL'];
-  };
-
-  const renderSituation = (status: string) => {
-    const colors = {
-      VAGO: 'Vago',
-      NORMAL: 'Normal',
-      AUSENTE: 'Ausente',
-    } as any;
-
-    return colors[status || 'Normal'];
   };
 
   return (
@@ -261,28 +254,29 @@ const IndexPage = () => {
                       color: renderSituationColors(row.situation_status),
                     }}
                   >
-                    {renderSituation(row.situation_status || '')}
+                    {row.situation_status || ''}
                   </div>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <div>{row.name || '-- --'}</div>
+                  <div>{row.name.toUpperCase() || '-- --'}</div>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
                   <div>
-                    {row.property.street.name || ''},{' '}
-                    {row.property.number || ''}
-                    {row.property.complement && `, ${row.property.complement}`}
+                    {row.property.street.name.toUpperCase() || ''},{' '}
+                    {row.property.number.toUpperCase() || ''}
+                    {row.property.complement
+                      && `, ${row.property.complement.toUpperCase()}`}
                   </div>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <div>{row.property.street.community.name || ''}</div>
+                  <div>{row.property.street.community.name.toUpperCase() || ''}</div>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <div>{row.property.street.community.contract.name || ''}</div>
+                  <div>{row.property.street.community.contract.name.toUpperCase() || ''}</div>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">

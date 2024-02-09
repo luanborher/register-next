@@ -28,6 +28,7 @@ import {
   Wrapper,
   Image,
 } from './styles';
+import ModalDuplicates from '../ModalDuplicates/ModalDuplicates';
 
 interface ClientsDetailsProps {
   client: Records;
@@ -47,12 +48,26 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
   const [showRejected, setShowRejected] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
 
+  const [duplicates, setDuplicates] = useState<Records[]>([]);
+
   const { register, handleSubmit, control, watch } = useForm<Records>({
     defaultValues: {
       ...client,
       birthDate: date.toISOString().split('T')[0],
     },
   });
+
+  const getDuplicates = async (funcion: () => void) => {
+    try {
+      const { data } = await api.get<Records[]>(`/client/duplicates/${client.id}`);
+
+      setDuplicates(data);
+
+      funcion();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
 
   const onUpdate: SubmitHandler<Records> = async data => {
     try {
@@ -683,14 +698,14 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
         <ButtonValidated
           type="button"
           onClick={() => {
-            setShowQuest(true);
+            getDuplicates(() => setShowQuest(true));
           }}
         >
           Validar
         </ButtonValidated>
 
         <ButtonConfirm type="submit" onClick={handleSubmit(onUpdate)}>
-          Editar
+          Salvar
         </ButtonConfirm>
       </Row>
 
@@ -734,6 +749,19 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
         >
           Deseja apagar este cliente?
         </ModalQuest>
+      )}
+
+      {duplicates.length > 1 && (
+        <ModalDuplicates
+          onClose={() => {
+            setShowDeleted(false);
+            setShowRejected(false);
+            setShowQuest(false);
+            setDuplicates([]);
+          }}
+          onFunction={() => setDuplicates([])}
+          duplicates={duplicates}
+        />
       )}
     </Wrapper>
   );

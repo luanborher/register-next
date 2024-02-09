@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: ChildrenProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const localStorageUser = localStorage.getItem('@token:user');
+    const localStorageUser = localStorage.getItem('@register:user');
 
     if (localStorageUser) {
       setUser(JSON.parse(localStorageUser));
@@ -40,12 +40,12 @@ export const AuthProvider = ({ children }: ChildrenProps) => {
     setLoading(false);
   }, []);
 
-  const isAuthenticated = !!user.id;
+  const isAuthenticated = !!user?.id;
 
   const signOut = () => {
-    localStorage.removeItem('@token:user');
-    localStorage.removeItem('@token:accessToken');
-    localStorage.removeItem('@token:refreshToken');
+    localStorage.removeItem('@register:user');
+    localStorage.removeItem('@register:accessToken');
+    localStorage.removeItem('@register:refreshToken');
     setUser({} as User);
   };
 
