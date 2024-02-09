@@ -302,7 +302,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
               </TableCell>
 
               <TableCell align="left" className="pl-1 flex flex-col">
-                <div className="text-black text-xs md:text-sm xxl:base font-semibold">
+                <div>
                   {row.name}
                 </div>
               </TableCell>

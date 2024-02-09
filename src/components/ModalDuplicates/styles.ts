@@ -1,16 +1,12 @@
 import styled from 'styled-components';
 
-interface ModalProps {
-  zIndex?: number;
-}
-
-export const ModalContainer = styled.div<ModalProps>`
+export const ModalContainer = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: ${({ zIndex }) => zIndex || '99999'};
+  z-index: 99999;
 
   background-color: #1f2420c0;
 
@@ -20,7 +16,8 @@ export const ModalContainer = styled.div<ModalProps>`
 `;
 
 export const ModalContent = styled.div`
-  width: 450px;
+  width: 850px;
+  padding: 2rem 4rem;
 
   background-color: #fff;
 
@@ -30,42 +27,15 @@ export const ModalContent = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-`;
-
-export const ContainerHeader = styled.div`
-  width: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
   gap: 0.5rem;
-
-  padding: 2rem 1rem;
-
-  color: #000;
-  font-size: 1.4rem;
-  font-weight: 500;
-  text-align: center;
-`;
-
-export const ContainerTitle = styled.div`
-  width: 100%;
-
-  padding: 1rem 1rem 2rem 1rem;
-
-  border-bottom: 1px solid #e5e5e5;
-
-  color: #000;
-  font-size: 1.2rem;
-  font-weight: 500;
-  text-align: center;
 `;
 
 export const ContainerButtons = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 3rem;
 
   width: 100%;
 
@@ -114,4 +84,38 @@ export const ButtonConfirm = styled.button`
 
   color: #fff;
   font-weight: 500;
+`;
+
+export const ContainerTitle = styled.div`
+  width: 100%;
+
+  padding: 1rem 1rem 1rem 1rem;
+  margin-bottom: 1rem;
+
+  border-bottom: 1px solid #e5e5e5;
+
+  color: #000;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+`;
+
+export const ClientContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  margin: 2rem 0;
+`;
+
+export const ActionsIcons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 `;

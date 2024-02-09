@@ -15,10 +15,11 @@ interface ModalProps {
   children: React.ReactNode;
   onClose: () => void;
   onConfirm: () => void;
+  zIndex?: number;
 }
 
-const ModalQuest = ({ children, onClose, onConfirm }: ModalProps) => (
-  <ModalContainer>
+const ModalQuest = ({ children, onClose, onConfirm, zIndex }: ModalProps) => (
+  <ModalContainer zIndex={zIndex}>
     <ModalContent>
       <ContainerHeader>
         <FaInfoCircle color="#171717" size={36} /> Atenção!
