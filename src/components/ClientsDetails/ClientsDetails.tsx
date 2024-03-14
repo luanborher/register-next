@@ -70,6 +70,8 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
   };
 
   const onUpdate: SubmitHandler<Records> = async data => {
+    console.log({ ...data.property });
+
     try {
       await api.put(`/client/${client.id}`, {
         ...data,
