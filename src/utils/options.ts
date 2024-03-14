@@ -147,16 +147,12 @@ export const options = {
   ],
   Genero: [
     {
-      label: 'Cisgênero',
-      value: 'cis',
+      label: 'Masculino',
+      value: 'Masculino',
     },
     {
-      label: 'Transgênero',
-      value: 'trans',
-    },
-    {
-      label: 'Não Binário',
-      value: 'nonbinary',
+      label: 'Feminino',
+      value: 'Feminino',
     },
   ],
   SituacaoHabitacao: [
