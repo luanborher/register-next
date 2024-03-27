@@ -87,13 +87,8 @@ const IndexPage = () => {
       const { data } = await api.get<Street[]>('/general/street');
 
       const result = data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
         return 0;
       });
 
@@ -108,13 +103,8 @@ const IndexPage = () => {
       const { data } = await api.get<Community[]>('/general/community');
 
       const result = data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
         return 0;
       });
 
@@ -131,13 +121,8 @@ const IndexPage = () => {
       const { data } = await api.get<Contract[]>('/general/contract');
 
       const result = data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
         return 0;
       });
 
