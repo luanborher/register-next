@@ -23,10 +23,12 @@ interface User {
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [userInfo, setUser] = useState<User>({} as User);
-  const [search, setSearch] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const userReportsParams = {
-    date: search.toISOString(),
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
   };
 
   const { data: usersReportsData } = useQuery({
@@ -47,8 +49,15 @@ const IndexPage = () => {
             type="date"
             style={{ maxWidth: '300px' }}
             width={300}
-            value={format(search, 'yyyy-MM-dd')}
-            onChange={e => setSearch(new Date(e.target.value))}
+            value={format(startDate, 'yyyy-MM-dd')}
+            onChange={e => setStartDate(new Date(e.target.value))}
+          />
+          <InputText
+            type="date"
+            style={{ maxWidth: '300px' }}
+            width={300}
+            value={format(endDate, 'yyyy-MM-dd')}
+            onChange={e => setEndDate(new Date(e.target.value))}
           />
         </Row>
 
@@ -139,7 +148,7 @@ const IndexPage = () => {
             >
               <TableCell align="left" className="p-0">
                 <div className="text-primary text-xs md:text-sm xxl:base font-semibold">
-                  Total
+                  TOTAL
                 </div>
               </TableCell>
               <TableCell align="left" className="pl-1 flex flex-col">
@@ -197,7 +206,8 @@ const IndexPage = () => {
           <ModalUserReports
             onClose={() => setShowDetails(false)}
             user={userInfo}
-            date={search.toISOString() || ''}
+            startDate={startDate.toISOString() || ''}
+            endDate={endDate.toISOString() || ''}
           />
         </Modal>
       )}

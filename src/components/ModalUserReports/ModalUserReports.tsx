@@ -11,13 +11,20 @@ import { BackButton, BackText, Wrapper } from './styles';
 
 interface ClientsDetailsProps {
   user: { name: string; user_id: string };
-  date: string;
+  startDate: string;
+  endDate: string;
   onClose: () => void;
 }
 
-const ModalUserReports = ({ user, date, onClose }: ClientsDetailsProps) => {
+const ModalUserReports = ({
+  user,
+  startDate,
+  endDate,
+  onClose,
+}: ClientsDetailsProps) => {
   const userDetailsParams = {
-    date,
+    startDate,
+    endDate,
     user_id: user.user_id,
   };
 
