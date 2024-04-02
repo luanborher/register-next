@@ -27,7 +27,7 @@ const ModalComunity = ({ contract_id, name, onClose }: ClientsDetailsProps) => {
 
   return (
     <Wrapper>
-      <Header title={`${name}`} subtitle="Contagem de cadastros realizados">
+      <Header title={name} subtitle="Contagem de cadastros realizados" action>
         <BackButton onClick={onClose}>
           <ChevronLeft color="#a5a5a5" size={22} />
           <BackText>Fechar</BackText>
