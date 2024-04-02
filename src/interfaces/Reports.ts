@@ -24,3 +24,14 @@ export interface RegistersByDay {
   AUSENTE?: number;
   VAGO?: number;
 }
+
+// reports contracts
+
+export interface IContracts {
+  community_id: string;
+  community_name: string;
+  registers: number;
+  vagos: number;
+  ausentes: number;
+  total: number;
+}
