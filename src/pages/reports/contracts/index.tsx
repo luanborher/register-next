@@ -9,11 +9,15 @@ import TableComponent from '@/components/Table/Table';
 import api from '@/services/api';
 import { Contract } from '@/interfaces/Records';
 import { handleError } from '@/utils/message';
-import { Map } from 'lucide-react';
+import { ChevronLeft, Map } from 'lucide-react';
 import Modal from '@/components/Modal/Modal';
 import ModalComunity from '@/components/ModalComunity/ModalComunity';
+import { useRouter } from 'next/navigation';
+import { BackButton, BackText } from '../styles';
 
 const IndexPage = () => {
+  const { push } = useRouter();
+
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [selected, setSelected] = useState<Contract>({} as Contract);
@@ -38,7 +42,13 @@ const IndexPage = () => {
         <Header
           title="Relatórios de cadastros por contrato"
           subtitle="Contagem de cadastros realizados"
-        />
+          action
+        >
+          <BackButton onClick={() => push('/reports')}>
+            <ChevronLeft color="#a5a5a5" size={22} />
+            <BackText>Fechar</BackText>
+          </BackButton>
+        </Header>
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto">
           <TableComponent>

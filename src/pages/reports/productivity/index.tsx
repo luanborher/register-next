@@ -13,8 +13,10 @@ import { getUserReports } from '@/services/querys/reportsUserData';
 
 import ModalUserReports from '@/components/ModalUserReports/ModalUserReports';
 import Modal from '@/components/Modal/Modal';
-import { BookOpenCheck } from 'lucide-react';
+import { BookOpenCheck, ChevronLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Row } from './styles';
+import { BackButton, BackText } from '../styles';
 
 interface User {
   name: string;
@@ -22,6 +24,8 @@ interface User {
 }
 
 const IndexPage = () => {
+  const { push } = useRouter();
+
   const [showDetails, setShowDetails] = useState(false);
   const [userInfo, setUser] = useState<User>({} as User);
   const [startDate, setStartDate] = useState(new Date());
@@ -43,7 +47,13 @@ const IndexPage = () => {
         <Header
           title="Relatório de produtividade"
           subtitle="Contagem de cadastros realizados"
-        />
+          action
+        >
+          <BackButton onClick={() => push('/reports')}>
+            <ChevronLeft color="#a5a5a5" size={22} />
+            <BackText>Fechar</BackText>
+          </BackButton>
+        </Header>
 
         <Row style={{ margin: '1rem 0' }}>
           <InputText
