@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
@@ -7,14 +6,15 @@ import { Filtered, Records } from '@/interfaces/Records';
 import api, { baseURL } from '@/services/api';
 import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
-
 import { formatDateHours } from '@/utils/format';
 import { useAuth } from '@/hooks/useAuth';
+
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
 import ModalImage from '../ModalImage/Modal';
 import ModalQuest from '../ModalQuest/Modal';
+import ModalDuplicates from '../ModalDuplicates/ModalDuplicates';
 
 import {
   BackButton,
@@ -28,7 +28,6 @@ import {
   Wrapper,
   Image,
 } from './styles';
-import ModalDuplicates from '../ModalDuplicates/ModalDuplicates';
 
 interface ClientsDetailsProps {
   client: Records;
@@ -37,7 +36,12 @@ interface ClientsDetailsProps {
   refetch: () => void;
 }
 
-const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsProps) => {
+const ClientsDetails = ({
+  client,
+  filtered,
+  onClose,
+  refetch,
+}: ClientsDetailsProps) => {
   const { user } = useAuth();
 
   const date = new Date(client.birthDate);
@@ -47,7 +51,6 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
   const [showQuest, setShowQuest] = useState(false);
   const [showRejected, setShowRejected] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
-
   const [duplicates, setDuplicates] = useState<Records[]>([]);
 
   const { register, handleSubmit, control, watch } = useForm<Records>({
@@ -59,10 +62,11 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
 
   const getDuplicates = async (funcion: () => void) => {
     try {
-      const { data } = await api.get<Records[]>(`/client/duplicates/${client.id}`);
+      const { data } = await api.get<Records[]>(
+        `/client/duplicates/${client.id}`,
+      );
 
       setDuplicates(data);
-
       funcion();
     } catch (error: any) {
       handleError(error);
@@ -70,8 +74,6 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
   };
 
   const onUpdate: SubmitHandler<Records> = async data => {
-    console.log({ ...data.property });
-
     try {
       await api.put(`/client/${client.id}`, {
         ...data,
@@ -153,7 +155,11 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
     <Wrapper>
       <Header
         title={client.name || ''}
-        subtitle={`${formatDateHours(client.created_at)} - ${renderStatus(client.status)}` || ''}
+        subtitle={
+          `${formatDateHours(client.created_at)} - ${renderStatus(
+            client.status,
+          )}` || ''
+        }
         id={client.property.registration}
         action
       >
@@ -172,7 +178,6 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
           placeholder="Nome completo"
           {...register('name')}
         />
-
         <InputText label="CPF" placeholder="CPF" {...register('cpf')} />
       </Row>
 
@@ -184,7 +189,6 @@ const ClientsDetails = ({ client, filtered, onClose, refetch }: ClientsDetailsPr
           placeholder="Celular"
           {...register('phone')}
         />
-
         <InputText type="date" label="Nascimento" {...register('birthDate')} />
       </Row>
 
