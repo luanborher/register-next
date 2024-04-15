@@ -65,6 +65,7 @@ export const BackButton = styled.div`
   gap: 0.3rem;
 
   width: auto;
+  border: none;
 
   cursor: pointer;
 `;
