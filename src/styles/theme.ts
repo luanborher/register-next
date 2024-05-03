@@ -2,7 +2,7 @@ export const theme = {
   colors: {
     black: '#1c1c1c',
     white: '#ffffff',
-    primary: '#ffee00',
+    primary: '#8CD630',
     secondary: '#ff8000',
     gradient: 'linear-gradient(90deg, #f7971e 0%, #ffd200 100%)',
     graye7: '#e7e7e7',
