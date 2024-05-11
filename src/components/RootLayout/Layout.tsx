@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { Users, LogOut, User, Map, FileHeart } from 'lucide-react';
+import { Users, LogOut, User, Map, FileHeart, UserPlus } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
 
@@ -48,15 +48,15 @@ export default function RootLayout({
 
               <Title text="MENU PRINCIPAL" />
 
-              {/* <NavLink icon={BarChartBig} text="Dashboard" href="/home" /> */}
               <NavLink icon={Users} text="Cadastros" href="/records" />
+              <NavLink icon={UserPlus} text="Prateleira" href="/services" />
+              <NavLink icon={FileHeart} text="Inativas" href="/inativas" />
+              <NavLink icon={FileHeart} text="Relatórios" href="/reports" />
 
               <Title text="CONFIGURAÇÕES" margin />
 
               <NavLink icon={User} text="Usuários" href="/users" />
               <NavLink icon={Map} text="Contratos" href="/address" />
-              <NavLink icon={FileHeart} text="Relatórios" href="/reports" />
-              {/* <NavLink icon={Settings} text="Geral" href="/general" /> */}
             </div>
 
             <div className="w-full bg-gray px-4 xxl:px-6 py-5 rounded-large flex">
