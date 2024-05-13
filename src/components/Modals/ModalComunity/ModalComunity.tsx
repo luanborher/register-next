@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getContractsReports } from '@/services/querys/reportsUserData';
 
-import Header from '../Header/Header';
-import TableComponent from '../Table/Table';
+import Header from '../../Header/Header';
+import TableComponent from '../../Table/Table';
 
 import { BackButton, BackText, Wrapper } from './styles';
 

@@ -5,8 +5,8 @@ import { useState } from 'react';
 import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
 import TableComponent from '@/components/Table/Table';
-import Modal from '@/components/Modal/Modal';
-import ModalAddress from '@/components/ModalAddress/ModalAddress';
+import Modal from '@/components/Modals/Modal/Modal';
+import ModalAddress from '@/components/Modals/ModalAddress/ModalAddress';
 
 function createData(
   name: string,

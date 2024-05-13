@@ -31,14 +31,17 @@ export const ContainerPagination = styled.div`
   justify-content: center;
 `;
 
-export const ButtonImport = styled.div`
+export const ButtonImport = styled.label`
   display: flex;
   gap: 1rem;
-
   padding: 0.3rem 1rem;
-
   border: 1px solid #8cd630;
   border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eeeeee;
+  }
 `;
 
 export const ExportRow = styled.div`

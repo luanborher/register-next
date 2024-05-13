@@ -65,7 +65,11 @@ export const Column = styled.div`
   margin-top: 2rem;
 `;
 
-export const ButtonConfirm = styled.button`
+interface Props {
+  cancel?: boolean;
+}
+
+export const ButtonConfirm = styled.button<Props>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -76,12 +80,16 @@ export const ButtonConfirm = styled.button`
   width: 180px;
   height: 40px;
 
-  background-color: #8cd630;
-  border: none;
+  background-color: ${({ cancel }) => (cancel ? 'transparent' : '#8cd630')};
+  border: ${({ cancel }) => (cancel ? '2px solid #ff0000' : 'none')};
   border-radius: 6px;
 
-  color: #fff;
+  color: ${({ cancel }) => (cancel ? '#ff0000' : '#ffffff')};
   font-weight: 500;
+
+  &:hover {
+    background-color: ${({ cancel }) => (cancel ? '#FF000017' : '#8BD630D0')};
+  }
 `;
 
 export const Resume = styled.div`

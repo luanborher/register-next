@@ -9,7 +9,7 @@ import { FaDownload } from 'react-icons/fa6';
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
 import TableComponent from '@/components/Table/Table';
-import Modal from '@/components/Modal/Modal';
+import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import ClientsDetails from '@/components/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
@@ -27,7 +27,7 @@ import {
   Street,
 } from '@/interfaces/Records';
 
-import ModalQuest from '@/components/ModalQuest/Modal';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import { ContainerPagination, Content, ExportRow } from './styles';
 
 const IndexPage = () => {

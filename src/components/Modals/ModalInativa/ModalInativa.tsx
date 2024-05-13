@@ -16,8 +16,8 @@ import {
   Header,
   ButtonSection,
 } from './styles';
-import InputDate from '../InputDate/Input';
-import Select from '../Select/Select';
+import InputDate from '../../InputDate/Input';
+import Select from '../../Select/Select';
 
 interface Option {
   value: string;

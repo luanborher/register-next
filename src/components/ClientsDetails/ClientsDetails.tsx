@@ -12,9 +12,9 @@ import { useAuth } from '@/hooks/useAuth';
 import Header from '../Header/Header';
 import InputText from '../Input/Input';
 import Dropdown from '../Dropdown/Dropdown';
-import ModalImage from '../ModalImage/Modal';
-import ModalQuest from '../ModalQuest/Modal';
-import ModalDuplicates from '../ModalDuplicates/ModalDuplicates';
+import ModalImage from '../Modals/ModalImage/Modal';
+import ModalQuest from '../Modals/ModalQuest/Modal';
+import ModalDuplicates from '../Modals/ModalDuplicates/ModalDuplicates';
 
 import {
   BackButton,
