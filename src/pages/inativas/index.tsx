@@ -47,7 +47,7 @@ const IndexPage = () => {
               >
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {inativa.InativasSent?.[0]?.name || '--'}
+                    {inativa.InativasSent?.[0]?.name?.toLowerCase() || '--'}
                   </div>
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
@@ -57,25 +57,25 @@ const IndexPage = () => {
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {`${inativa.street}, ${inativa.number}${
+                    {`${inativa.street?.toLowerCase()}, ${inativa.number?.toLowerCase()}${
                       inativa.complement !== 'undefined'
-                        ? `, ${inativa.complement}`
+                        ? `, ${inativa.complement?.toLowerCase()}`
                         : ''
                     }`}
                   </div>
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {users?.find(
-                      user => user.id === inativa?.InativasSent?.[0]?.user_id,
-                    )?.name || ''}
+                    {users
+                      ?.find(u => u.id === inativa?.InativasSent?.[0]?.user_id)
+                      ?.name?.toLowerCase() || ''}
                   </div>
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                     {inativa.InativasSent?.[0]?.status === 'REVIEW'
-                      ? 'Em análise'
-                      : 'Pendente'}
+                      ? 'EM ANÁLISE'
+                      : 'PENDENTE'}
                   </div>
                 </TableCell>
               </TableRow>

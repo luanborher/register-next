@@ -101,6 +101,16 @@ const IndexPage = () => {
     }
   };
 
+  const onSelectedSectorAll = (sectors: IInativas[]) => {
+    if (sectorSelected?.length === inativas?.length) {
+      setSectorSelected([]);
+      setRoutesSelected([]);
+      setBlocksSelected([]);
+    } else {
+      setSectorSelected(sectors);
+    }
+  };
+
   const onSelectedRoute = (route: Route) => {
     if (routesSelected.includes(route)) {
       setRoutesSelected(routesSelected.filter(item => item !== route));
@@ -151,6 +161,18 @@ const IndexPage = () => {
         <SectionList>
           <Column>
             {inativas && inativas?.length > 0 && 'Setor'}
+            {inativas && inativas?.length > 0 && (
+              <div style={{ display: 'flex' }}>
+                <TableCell
+                  style={{ textAlign: 'left', width: '30px' }}
+                  onClick={() => onSelectedSectorAll(inativas)}
+                >
+                  <Square className="text-secondary self-center" />
+                  {sectorSelected?.length === inativas?.length && <Check />}
+                </TableCell>
+                Selecionar todos
+              </div>
+            )}
             <TableComponent>
               {inativas?.map((sector, i) => (
                 <TableCard key={+i} onClick={() => onSelectedSector(sector)}>
