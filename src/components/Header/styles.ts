@@ -11,7 +11,7 @@ export const InfoContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 1rem;
-  border: 2px solid;
+  border: none;
 `;
 
 export const Title = styled.span`
@@ -54,7 +54,7 @@ export const ProfileContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 400px;
-  border: 2px solid;
+  border: none;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -128,7 +128,7 @@ export const ActionContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 400px;
-  border: 2px solid;
+  border: none;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;

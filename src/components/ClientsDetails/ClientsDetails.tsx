@@ -151,15 +151,17 @@ const ClientsDetails = ({
     }
   });
 
+  const renderSubtitle = () => {
+    const createdAt = formatDateHours(client.created_at);
+    const status = renderStatus(client.status);
+    return `${createdAt} - ${status}`;
+  };
+
   return (
     <Wrapper>
       <Header
         title={client.name || ''}
-        subtitle={
-          `${formatDateHours(client.created_at)} - ${renderStatus(
-            client.status,
-          )}` || ''
-        }
+        subtitle={renderSubtitle()}
         id={client.property.registration}
         action
       >
