@@ -1,6 +1,6 @@
 import Header from '@/components/Header/Header';
 import InativasDetails from '@/components/InativasDetails/InativasDetails';
-import Modal from '@/components/Modal/Modal';
+import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import TableComponent from '@/components/Table/Table';
 import { Inativas } from '@/interfaces/inativas';

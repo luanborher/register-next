@@ -8,10 +8,10 @@ import { Community, Contract, Street } from '@/interfaces/Records';
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
 
-import Header from '../Header/Header';
-import InputText from '../Input/Input';
-import Dropdown from '../Dropdown/Dropdown';
-import TableComponent from '../Table/Table';
+import Header from '../../Header/Header';
+import InputText from '../../Input/Input';
+import Dropdown from '../../Dropdown/Dropdown';
+import TableComponent from '../../Table/Table';
 
 import {
   ActionsIcons,

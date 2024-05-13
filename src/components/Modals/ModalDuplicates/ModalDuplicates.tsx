@@ -7,7 +7,7 @@ import { Records } from '@/interfaces/Records';
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
 
-import TableComponent from '../Table/Table';
+import TableComponent from '../../Table/Table';
 
 import {
   ButtonCancel,

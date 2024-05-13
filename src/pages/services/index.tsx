@@ -3,14 +3,16 @@ import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
 import { getPrateleira } from '@/services/querys/inativas';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Square } from 'lucide-react';
+import { Square, BookOpenCheck } from 'lucide-react';
 import { useState } from 'react';
 import { Block, IInativas, Route } from '@/interfaces/prateleira';
-import ModalInativas from '@/components/ModalInativa/ModalInativa';
+import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
 import { addDays, format } from 'date-fns';
 import { FaDownload } from 'react-icons/fa';
+import ModalImport from '@/components/Modals/ModalImport/ModalImport';
+import { ButtonImport } from '../records/styles';
 import {
   TableCard,
   TableCell,
@@ -22,7 +24,6 @@ import {
   Resume,
   ExportRow,
 } from './styles';
-import { ButtonImport } from '../records/styles';
 
 interface Option {
   value: string;
@@ -33,11 +34,14 @@ const IndexPage = () => {
   const query = useQueryClient();
 
   const [showModal, setShowModal] = useState<boolean>(false);
+
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
   const [routesSelected, setRoutesSelected] = useState<Route[]>([]);
   const [blocksSelected, setBlocksSelected] = useState<Block[]>([]);
+
   const [date, setDate] = useState('');
   const [user, setUser] = useState<Option>();
+  const [file, setFile] = useState<File>();
 
   const { data: inativas } = useQuery({
     queryKey: ['prateleiraData'],
@@ -70,6 +74,50 @@ const IndexPage = () => {
     }
   };
 
+  const onSubmitImport = async () => {
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        await api.post('/inativa/import', formData);
+
+        setFile(undefined);
+        handleSuccess('Importação realizada sucesso.');
+        query.invalidateQueries({ queryKey: ['prateleiraData'] });
+      } catch (error) {
+        setFile(undefined);
+        handleError(error);
+      }
+    }
+  };
+
+  const onSelectedSector = (sector: IInativas) => {
+    if (sectorSelected.includes(sector)) {
+      setSectorSelected(sectorSelected.filter(item => item !== sector));
+      setRoutesSelected([]);
+      setBlocksSelected([]);
+    } else {
+      setSectorSelected(props => [...props, sector]);
+    }
+  };
+
+  const onSelectedRoute = (route: Route) => {
+    if (routesSelected.includes(route)) {
+      setRoutesSelected(routesSelected.filter(item => item !== route));
+      setBlocksSelected([]);
+    } else {
+      setRoutesSelected(props => [...props, route]);
+    }
+  };
+
+  const onSelectedBlock = (block: Block) => {
+    if (blocksSelected.includes(block)) {
+      setBlocksSelected(blocksSelected.filter(item => item !== block));
+    } else {
+      setBlocksSelected(props => [...props, block]);
+    }
+  };
+
   return (
     <RootLayout>
       <main>
@@ -86,40 +134,35 @@ const IndexPage = () => {
               color="#8cd630"
               size={22}
             />
+            <input
+              type="file"
+              accept=".xlsx, .xls, .csv, .xlsm"
+              hidden
+              onChange={e => {
+                if (e.target?.files?.[0]) {
+                  setFile(e.target.files[0]);
+                  e.target.value = '';
+                }
+              }}
+            />
           </ButtonImport>
         </ExportRow>
 
         <SectionList>
           <Column>
-            Setor
+            {inativas && inativas?.length > 0 && 'Setor'}
             <TableComponent>
-              {inativas?.map((sector, index) => (
-                <TableCard
-                  key={+index}
-                  onClick={() => {
-                    if (sectorSelected.includes(sector)) {
-                      setSectorSelected(
-                        sectorSelected.filter(item => item !== sector),
-                      );
-                      setRoutesSelected([]);
-                      setBlocksSelected([]);
-                      return;
-                    }
-
-                    setSectorSelected(props => [...props, sector]);
-                  }}
-                >
+              {inativas?.map((sector, i) => (
+                <TableCard key={+i} onClick={() => onSelectedSector(sector)}>
                   <TableCell style={{ textAlign: 'left', width: '30px' }}>
                     <Square className="text-secondary self-center" />
                     {sectorSelected.includes(sector) && <Check />}
                   </TableCell>
-
                   <TableCell style={{ textAlign: 'left' }}>
                     <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                       Setor: {sector.sector}
                     </div>
                   </TableCell>
-
                   <TableCell style={{ textAlign: 'left', paddingLeft: '1rem' }}>
                     <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                       Quantidade: {sector.count}
@@ -135,32 +178,17 @@ const IndexPage = () => {
             <TableComponent>
               {sectorSelected?.map(sector => (
                 <>
-                  {sector.routes?.map((route, indexRoute) => (
-                    <TableCard
-                      key={+indexRoute}
-                      onClick={() => {
-                        if (routesSelected.includes(route)) {
-                          setRoutesSelected(
-                            routesSelected.filter(item => item !== route),
-                          );
-                          setBlocksSelected([]);
-                          return;
-                        }
-
-                        setRoutesSelected(props => [...props, route]);
-                      }}
-                    >
+                  {sector.routes?.map((route, i) => (
+                    <TableCard key={+i} onClick={() => onSelectedRoute(route)}>
                       <TableCell style={{ textAlign: 'left', width: '30px' }}>
                         <Square className="text-secondary self-center" />
                         {routesSelected.includes(route) && <Check />}
                       </TableCell>
-
                       <TableCell style={{ textAlign: 'left' }}>
                         <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                           Rota: {route.route}
                         </div>
                       </TableCell>
-
                       <TableCell
                         style={{ textAlign: 'left', paddingLeft: '1rem' }}
                       >
@@ -180,31 +208,17 @@ const IndexPage = () => {
             <TableComponent>
               {routesSelected?.map(route => (
                 <>
-                  {route.blocks?.map((block, indexBlock) => (
-                    <TableCard
-                      key={+indexBlock}
-                      onClick={() => {
-                        if (blocksSelected.includes(block)) {
-                          setBlocksSelected(
-                            blocksSelected.filter(item => item !== block),
-                          );
-                          return;
-                        }
-
-                        setBlocksSelected(props => [...props, block]);
-                      }}
-                    >
+                  {route.blocks?.map((block, i) => (
+                    <TableCard key={+i} onClick={() => onSelectedBlock(block)}>
                       <TableCell style={{ textAlign: 'left', width: '30px' }}>
                         <Square className="text-secondary self-center" />
                         {blocksSelected.includes(block) && <Check />}
                       </TableCell>
-
                       <TableCell style={{ textAlign: 'left' }}>
                         <div className="text-black text-xs md:text-sm xxl:base font-semibold">
                           Quadra: {block.block}
                         </div>
                       </TableCell>
-
                       <TableCell
                         style={{ textAlign: 'left', paddingLeft: '1rem' }}
                       >
@@ -261,6 +275,25 @@ const IndexPage = () => {
           </ModalInativas>
         )}
       </main>
+
+      {file && (
+        <ModalImport>
+          <BookOpenCheck size={90} color="white" />
+          <div>{file?.name && file?.name}</div>
+          <ExportRow style={{ gap: '2rem', marginTop: '2rem' }}>
+            <ButtonConfirm
+              cancel
+              type="button"
+              onClick={() => setFile(undefined)}
+            >
+              Cancelar
+            </ButtonConfirm>
+            <ButtonConfirm type="button" onClick={onSubmitImport}>
+              Importar
+            </ButtonConfirm>
+          </ExportRow>
+        </ModalImport>
+      )}
     </RootLayout>
   );
 };

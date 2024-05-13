@@ -10,8 +10,8 @@ import api from '@/services/api';
 import { Contract } from '@/interfaces/Records';
 import { handleError } from '@/utils/message';
 import { ChevronLeft, Map } from 'lucide-react';
-import Modal from '@/components/Modal/Modal';
-import ModalComunity from '@/components/ModalComunity/ModalComunity';
+import Modal from '@/components/Modals/Modal/Modal';
+import ModalComunity from '@/components/Modals/ModalComunity/ModalComunity';
 import { useRouter } from 'next/navigation';
 import { BackButton, BackText } from '../styles';
 

@@ -11,8 +11,8 @@ import InputText from '@/components/Input/Input';
 
 import { getUserReports } from '@/services/querys/reportsUserData';
 
-import ModalUserReports from '@/components/ModalUserReports/ModalUserReports';
-import Modal from '@/components/Modal/Modal';
+import ModalUserReports from '@/components/Modals/ModalUserReports/ModalUserReports';
+import Modal from '@/components/Modals/Modal/Modal';
 import { BookOpenCheck, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Row } from './styles';

@@ -9,10 +9,10 @@ import Header from '@/components/Header/Header';
 import TableComponent from '@/components/Table/Table';
 import RootLayout from '@/components/RootLayout/Layout';
 import InputText from '@/components/Input/Input';
-import Modal from '@/components/Modal/Modal';
-import ModalUsers from '@/components/ModalUsers/ModalUsers';
-import ModalQuest from '@/components/ModalQuest/Modal';
-import ModalUsersEdit from '@/components/ModalUsersEdit/ModalUsersEdit';
+import Modal from '@/components/Modals/Modal/Modal';
+import ModalUsers from '@/components/Modals/ModalUsers/ModalUsers';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import ModalUsersEdit from '@/components/Modals/ModalUsersEdit/ModalUsersEdit';
 
 import { UserClass } from '@/interfaces/User';
 import { handleError, handleSuccess } from '@/utils/message';

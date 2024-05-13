@@ -19,5 +19,6 @@ export const theme = {
     gray16: '#161616',
     gray92: '#929292',
     green: '#00b32c',
+    error: '#ff0000',
   },
 } as const;

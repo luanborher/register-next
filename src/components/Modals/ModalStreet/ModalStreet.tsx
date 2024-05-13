@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
-import InputText from '../Input/Input';
+import InputText from '../../Input/Input';
 
 import {
   ButtonCancel,

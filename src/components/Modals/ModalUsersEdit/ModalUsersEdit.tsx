@@ -3,9 +3,11 @@ import { ChevronLeft } from 'lucide-react';
 
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
-import Header from '../Header/Header';
-import InputText from '../Input/Input';
-import Dropdown from '../Dropdown/Dropdown';
+import { UserClass } from '@/interfaces/User';
+
+import Header from '../../Header/Header';
+import InputText from '../../Input/Input';
+import Dropdown from '../../Dropdown/Dropdown';
 
 import {
   BackButton,
@@ -19,34 +21,35 @@ import {
 interface UserForm {
   name: string;
   login: string;
-  password: string;
-  confirmPassword: string;
   role: string;
-  phone: string;
-  cpf: string;
 }
 
 interface ClientsDetailsProps {
   onClose: () => void;
   refetch: () => void;
+  user: UserClass;
 }
 
-const ModalUsers = ({ onClose, refetch }: ClientsDetailsProps) => {
-  const { register, handleSubmit, control } = useForm<UserForm>();
+const ModalUsersEdit = ({ onClose, refetch, user }: ClientsDetailsProps) => {
+  const { register, handleSubmit, control } = useForm<UserForm>({
+    defaultValues: {
+      name: user?.name || '',
+      login: user?.login || '',
+      role: user?.role || '',
+    },
+  });
 
   const onSubmit: SubmitHandler<UserForm> = async data => {
     try {
-      await api.post('/user', {
-        ...data,
+      await api.put(`/user/${user?.id}`, {
+        name: data.name,
         email: `${data.login || 'email'}@email.com`,
-        cpf: data.cpf.replace(/\D/g, '') || '00000000000',
-        confirmPassword: undefined,
-        company: 'Register',
-        registration: '00000',
+        login: data.login,
         role: data.role,
+        active: true,
       });
 
-      handleSuccess('Usuário adicionado com sucesso!');
+      handleSuccess('usuário alterado com sucesso!');
 
       refetch();
       onClose();
@@ -78,22 +81,6 @@ const ModalUsers = ({ onClose, refetch }: ClientsDetailsProps) => {
       </Row>
 
       <Row>
-        <InputText
-          label="Senha"
-          type="password"
-          placeholder="Senha"
-          {...register('password')}
-        />
-
-        <InputText
-          label="Confirme a senha"
-          type="password"
-          placeholder="Confirme a senha"
-          {...register('confirmPassword')}
-        />
-      </Row>
-
-      <Row>
         <Dropdown
           name="role"
           label="Permissão"
@@ -105,14 +92,6 @@ const ModalUsers = ({ onClose, refetch }: ClientsDetailsProps) => {
             { value: 'DEVELOPER', label: 'Desenvolvedor' },
           ]}
         />
-
-        <InputText
-          label="Celular"
-          placeholder="Celular"
-          {...register('phone')}
-        />
-
-        <InputText label="CPF" placeholder="CPF" {...register('cpf')} />
       </Row>
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
@@ -124,4 +103,4 @@ const ModalUsers = ({ onClose, refetch }: ClientsDetailsProps) => {
   );
 };
 
-export default ModalUsers;
+export default ModalUsersEdit;
