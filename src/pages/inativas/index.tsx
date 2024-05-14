@@ -13,6 +13,8 @@ import { getUser } from '@/services/querys/user';
 import { TableCell, TableRow } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { INACTIVE_OPTIONS } from '@/utils/options';
+import { useForm } from 'react-hook-form';
 import { Field } from './styles';
 
 interface Option {
@@ -27,14 +29,24 @@ const option = {
 
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const [status, setStatus] = useState<Option>(option);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
-  const [name, setName] = useState('');
-  const [pde, setPDE] = useState('');
+
   // const [date, setDate] = useState('');
 
+  const { register, setValue, watch } = useForm({
+    defaultValues: {
+      status: option,
+      name: '',
+      pde: '',
+      type: {
+        label: '',
+        value: '',
+      },
+    },
+  });
+
   const inativasParam = {
-    status: status.value,
+    status: watch('status').value,
   };
 
   const { data: inativasList } = useQuery({
@@ -44,8 +56,11 @@ const IndexPage = () => {
 
   const inativas = inativasList?.filter(
     item =>
-      item.pde.includes(pde) &&
-      item.InativasSent?.[0]?.name.toLowerCase().includes(name.toLowerCase()),
+      item.pde.includes(watch('pde')) &&
+      item.InativasSent?.[0]?.name
+        .toLowerCase()
+        .includes(watch('name').toLowerCase()) &&
+      item.InativasSent?.[0]?.type.includes(watch('type')?.value),
   );
 
   const { data: users } = useQuery({
@@ -60,27 +75,36 @@ const IndexPage = () => {
 
         <div className="w-full flex flex-row gap-4 mt-4">
           <InputText
+            type="text"
             placeholder="Buscar por nome"
-            value={name}
-            onChange={e => setName(e.target.value)}
+            {...register('name')}
           />
 
           <InputText
+            type="text"
             placeholder="Buscar por PDE"
-            value={pde}
-            onChange={e => setPDE(e.target.value)}
+            {...register('pde')}
           />
 
           <Select
             id="status"
             placeholder="Status"
-            onChange={e => e && setStatus(e)}
-            value={status}
+            onChange={e => e && setValue('status', e)}
+            defaultValue={option}
             options={[
               { value: 'REVIEW', label: 'Em análise' },
               { value: 'SENT', label: 'Pendente' },
             ]}
           />
+
+          <Select
+            id="type"
+            refetch={() => setValue('type', {} as Option)}
+            placeholder="Tipo"
+            onChange={e => e && setValue('type', e)}
+            options={INACTIVE_OPTIONS}
+          />
+
           {/*
           <InputText
             type="date"
@@ -91,7 +115,7 @@ const IndexPage = () => {
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
           <TableComponent
-            headers={['Nome', 'PDE', 'Endereço', 'Agente', 'Status']}
+            headers={['Nome', 'PDE', 'Endereço', 'Agente', 'Tipo', 'Status']}
           >
             {inativas?.map(inativa => (
               <TableRow
@@ -105,6 +129,7 @@ const IndexPage = () => {
                     {inativa.InativasSent?.[0]?.name?.toUpperCase() || '--'}
                   </Field>
                 </TableCell>
+
                 <TableCell
                   align="left"
                   width={110}
@@ -112,6 +137,7 @@ const IndexPage = () => {
                 >
                   <Field>{inativa.pde || '--'}</Field>
                 </TableCell>
+
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <Field>
                     {`${inativa.street?.toUpperCase()}, ${inativa.number?.toUpperCase()}${
@@ -121,6 +147,7 @@ const IndexPage = () => {
                     }`}
                   </Field>
                 </TableCell>
+
                 <TableCell align="left" className="pl-1 flex flex-col">
                   <Field>
                     {users
@@ -128,6 +155,13 @@ const IndexPage = () => {
                       ?.name?.toUpperCase() || ''}
                   </Field>
                 </TableCell>
+
+                <TableCell align="left" className="pl-1 flex flex-col">
+                  <Field>
+                    {inativa?.InativasSent?.[0]?.type.toUpperCase() || '--'}
+                  </Field>
+                </TableCell>
+
                 <TableCell
                   align="left"
                   width={120}

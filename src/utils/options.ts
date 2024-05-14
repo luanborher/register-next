@@ -500,3 +500,54 @@ export const options = {
     },
   ],
 };
+
+export const INACTIVE_OPTIONS = [
+  {
+    label: 'Executado',
+    value: 'Executado',
+  },
+  {
+    label: 'Não executado',
+    value: 'Não executado',
+  },
+  {
+    label: 'Já ativo',
+    value: 'Já ativo',
+  },
+  {
+    label: 'Vago',
+    value: 'Vago',
+  },
+  {
+    label: 'Não aceitou',
+    value: 'Não aceitou',
+  },
+  {
+    label: 'Corte no asfalto',
+    value: 'Corte no asfalto',
+  },
+  {
+    label: 'Ausente',
+    value: 'Ausente',
+  },
+  {
+    label: 'Não localizado',
+    value: 'Não localizado',
+  },
+  {
+    label: 'Comércio',
+    value: 'Comércio',
+  },
+  {
+    label: 'Demolido',
+    value: 'Demolido',
+  },
+  {
+    label: 'Corte no passeio',
+    value: 'Corte no passeio',
+  },
+  {
+    label: 'Unificado',
+    value: 'Unificado',
+  },
+];
