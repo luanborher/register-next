@@ -2,8 +2,7 @@ import { ChevronLeft, Map } from 'lucide-react';
 import { TableCell, TableRow } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
-import { getContractsReports } from '@/services/querys/reportsUserData';
-
+import { getContractsReports } from '@/services/querys/reports';
 import Header from '../../Header/Header';
 import TableComponent from '../../Table/Table';
 

@@ -11,12 +11,12 @@ const GlobalStyle = createGlobalStyle`
       }
 
       ::-webkit-scrollbar-track {
-        background: #444444;
+        background: #cccccc;
         border-radius: 10px;
       }
 
       ::-webkit-scrollbar-thumb {
-        background: #cccccc;
+        background: #8CD630;
         border-radius: 10px;
       }
     }

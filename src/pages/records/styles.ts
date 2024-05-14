@@ -51,3 +51,11 @@ export const ExportRow = styled.div`
   padding-bottom: 10px;
   color: #8cd630;
 `;
+
+export const Field = styled.div`
+  color: black;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+`;

@@ -1,5 +1,8 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable implicit-arrow-linebreak */
 import Header from '@/components/Header/Header';
 import InativasDetails from '@/components/InativasDetails/InativasDetails';
+import InputText from '@/components/Input/Input';
 import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import Select from '@/components/Select/Select';
@@ -10,30 +13,40 @@ import { getUser } from '@/services/querys/user';
 import { TableCell, TableRow } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { Field } from './styles';
 
 interface Option {
   value: string;
   label: string;
 }
 
+const option = {
+  label: 'Em análise',
+  value: 'REVIEW',
+} as Option;
+
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const [status, setStatus] = useState<Option>({
-    label: 'Em análise',
-    value: 'REVIEW',
-  });
-  const [clientSelected, setClientSelected] = useState<Inativas>(
-    {} as Inativas,
-  );
+  const [status, setStatus] = useState<Option>(option);
+  const [selected, setSelected] = useState<Inativas>({} as Inativas);
+  const [name, setName] = useState('');
+  const [pde, setPDE] = useState('');
+  // const [date, setDate] = useState('');
 
   const inativasParam = {
     status: status.value,
   };
 
-  const { data: inativas } = useQuery({
+  const { data: inativasList } = useQuery({
     queryKey: ['inativasData', inativasParam],
     queryFn: async () => getInativas(inativasParam),
   });
+
+  const inativas = inativasList?.filter(
+    item =>
+      item.pde.includes(pde) &&
+      item.InativasSent?.[0]?.name.toLowerCase().includes(name.toLowerCase()),
+  );
 
   const { data: users } = useQuery({
     queryKey: ['usersData'],
@@ -45,19 +58,38 @@ const IndexPage = () => {
       <main className="flex flex-col gap-2 h-full">
         <Header title="Listagem de inativas" action />
 
-        <div className="w-full flex flex-row gap-4">
+        <div className="w-full flex flex-row gap-4 mt-4">
+          <InputText
+            placeholder="Buscar por nome"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+
+          <InputText
+            placeholder="Buscar por PDE"
+            value={pde}
+            onChange={e => setPDE(e.target.value)}
+          />
+
           <Select
             id="status"
             placeholder="Status"
             onChange={e => e && setStatus(e)}
+            value={status}
             options={[
               { value: 'REVIEW', label: 'Em análise' },
               { value: 'SENT', label: 'Pendente' },
             ]}
           />
+          {/*
+          <InputText
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+          /> */}
         </div>
 
-        <div className="flex flex-col w-full max-h-full overflow-y-auto">
+        <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
           <TableComponent
             headers={['Nome', 'PDE', 'Endereço', 'Agente', 'Status']}
           >
@@ -65,51 +97,57 @@ const IndexPage = () => {
               <TableRow
                 onClick={() => {
                   setShowDetails(true);
-                  setClientSelected(inativa);
+                  setSelected(inativa);
                 }}
               >
                 <TableCell align="left" className="pl-1 flex flex-col">
-                  <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {inativa.InativasSent?.[0]?.name?.toLowerCase() || '--'}
-                  </div>
+                  <Field>
+                    {inativa.InativasSent?.[0]?.name?.toUpperCase() || '--'}
+                  </Field>
+                </TableCell>
+                <TableCell
+                  align="left"
+                  width={110}
+                  className="pl-1 flex flex-col"
+                >
+                  <Field>{inativa.pde || '--'}</Field>
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
-                  <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {inativa.pde || '--'}
-                  </div>
-                </TableCell>
-                <TableCell align="left" className="pl-1 flex flex-col">
-                  <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                    {`${inativa.street?.toLowerCase()}, ${inativa.number?.toLowerCase()}${
+                  <Field>
+                    {`${inativa.street?.toUpperCase()}, ${inativa.number?.toUpperCase()}${
                       inativa.complement !== 'undefined'
-                        ? `, ${inativa.complement?.toLowerCase()}`
+                        ? `, ${inativa.complement?.toUpperCase()}`
                         : ''
                     }`}
-                  </div>
+                  </Field>
                 </TableCell>
                 <TableCell align="left" className="pl-1 flex flex-col">
-                  <div className="text-black text-xs md:text-sm xxl:base font-semibold">
+                  <Field>
                     {users
                       ?.find(u => u.id === inativa?.InativasSent?.[0]?.user_id)
-                      ?.name?.toLowerCase() || ''}
-                  </div>
+                      ?.name?.toUpperCase() || ''}
+                  </Field>
                 </TableCell>
-                <TableCell align="left" className="pl-1 flex flex-col">
-                  <div className="text-black text-xs md:text-sm xxl:base font-semibold">
+                <TableCell
+                  align="left"
+                  width={120}
+                  className="pl-1 flex flex-col"
+                >
+                  <Field>
                     {inativa.InativasSent?.[0]?.status === 'REVIEW'
                       ? 'EM ANÁLISE'
                       : 'PENDENTE'}
-                  </div>
+                  </Field>
                 </TableCell>
               </TableRow>
             ))}
           </TableComponent>
         </div>
       </main>
-      {showDetails && clientSelected && (
+      {showDetails && selected && (
         <Modal>
           <InativasDetails
-            client={clientSelected}
+            client={selected}
             onClose={() => setShowDetails(false)}
           />
         </Modal>
