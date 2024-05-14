@@ -78,7 +78,7 @@ const IndexPage = () => {
 
   const onSubmit = async () => {
     try {
-      const { data } = await api.post('/inativa/send', {
+      await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
           sector: item?.sector,
           route: item?.route,
