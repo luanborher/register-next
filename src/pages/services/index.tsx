@@ -4,7 +4,7 @@ import RootLayout from '@/components/RootLayout/Layout';
 import { getPrateleira } from '@/services/querys/inativas';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Square, BookOpenCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Block, IInativas, Route } from '@/interfaces/prateleira';
 import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
 import api from '@/services/api';
@@ -12,6 +12,8 @@ import { handleError, handleSuccess } from '@/utils/message';
 import { addDays, format } from 'date-fns';
 import { FaDownload } from 'react-icons/fa';
 import ModalImport from '@/components/Modals/ModalImport/ModalImport';
+import { useReactToPrint } from 'react-to-print';
+import ComponentToPrint from '@/components/FileComponent/FileComponent';
 import { ButtonImport } from '../records/styles';
 import {
   TableCard,
@@ -23,6 +25,9 @@ import {
   ButtonConfirm,
   Resume,
   ExportRow,
+  Hidden,
+  ImportRow,
+  ActionSection,
 } from './styles';
 
 interface Option {
@@ -32,8 +37,9 @@ interface Option {
 
 const IndexPage = () => {
   const query = useQueryClient();
+  const componentRef = useRef<HTMLDivElement>(null);
 
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState(false);
 
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
   const [routesSelected, setRoutesSelected] = useState<Route[]>([]);
@@ -48,9 +54,31 @@ const IndexPage = () => {
     queryFn: async () => getPrateleira(),
   });
 
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current as HTMLDivElement,
+  });
+
+  const clear = {
+    all: () => {
+      setUser(undefined);
+      setShowModal(false);
+      setDate('');
+      setSectorSelected([]);
+      setRoutesSelected([]);
+      setBlocksSelected([]);
+    },
+    sector: () => {
+      setRoutesSelected([]);
+      setBlocksSelected([]);
+    },
+    route: () => {
+      setBlocksSelected([]);
+    },
+  } as any;
+
   const onSubmit = async () => {
     try {
-      await api.post('/inativa/send', {
+      const { data } = await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
           sector: item?.sector,
           route: item?.route,
@@ -60,15 +88,10 @@ const IndexPage = () => {
         user_id: user?.value || '',
       });
 
-      setShowModal(false);
-      handleSuccess('Ordem de serviço enviada.');
+      clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
-
-      setUser(undefined);
-      setDate('');
-      setSectorSelected([]);
-      setRoutesSelected([]);
-      setBlocksSelected([]);
+      handleSuccess('Ordem de serviço enviada.');
+      handlePrint();
     } catch (error) {
       handleError(error);
     }
@@ -79,6 +102,7 @@ const IndexPage = () => {
       try {
         const formData = new FormData();
         formData.append('file', file);
+
         await api.post('/inativa/import', formData);
 
         setFile(undefined);
@@ -94,38 +118,31 @@ const IndexPage = () => {
   const onSelectedSector = (sector: IInativas) => {
     if (sectorSelected.includes(sector)) {
       setSectorSelected(sectorSelected.filter(item => item !== sector));
-      setRoutesSelected([]);
-      setBlocksSelected([]);
-    } else {
-      setSectorSelected(props => [...props, sector]);
+      return clear.sector();
     }
+    setSectorSelected(props => [...props, sector]);
   };
 
   const onSelectedSectorAll = (sectors: IInativas[]) => {
     if (sectorSelected?.length === inativas?.length) {
-      setSectorSelected([]);
-      setRoutesSelected([]);
-      setBlocksSelected([]);
-    } else {
-      setSectorSelected(sectors);
+      return clear.sector();
     }
+    setSectorSelected(sectors);
   };
 
   const onSelectedRoute = (route: Route) => {
     if (routesSelected.includes(route)) {
       setRoutesSelected(routesSelected.filter(item => item !== route));
-      setBlocksSelected([]);
-    } else {
-      setRoutesSelected(props => [...props, route]);
+      return clear.route();
     }
+    setRoutesSelected(props => [...props, route]);
   };
 
   const onSelectedBlock = (block: Block) => {
     if (blocksSelected.includes(block)) {
-      setBlocksSelected(blocksSelected.filter(item => item !== block));
-    } else {
-      setBlocksSelected(props => [...props, block]);
+      return setBlocksSelected(blocksSelected.filter(item => item !== block));
     }
+    setBlocksSelected(props => [...props, block]);
   };
 
   return (
@@ -256,18 +273,11 @@ const IndexPage = () => {
           </Column>
 
           {blocksSelected?.length > 0 && (
-            <TableComponent
-              style={{
-                justifyContent: 'flex-end',
-                alignItems: 'end',
-                marginTop: '4rem',
-                paddingLeft: '2rem',
-              }}
-            >
-              <ButtonConfirm type="button" onClick={() => setShowModal(true)}>
+            <ActionSection>
+              <ButtonConfirm onClick={() => setShowModal(true)}>
                 Criar roteiro
               </ButtonConfirm>
-            </TableComponent>
+            </ActionSection>
           )}
         </SectionList>
 
@@ -301,21 +311,19 @@ const IndexPage = () => {
       {file && (
         <ModalImport>
           <BookOpenCheck size={90} color="white" />
-          <div>{file?.name && file?.name}</div>
-          <ExportRow style={{ gap: '2rem', marginTop: '2rem' }}>
-            <ButtonConfirm
-              cancel
-              type="button"
-              onClick={() => setFile(undefined)}
-            >
+          <div>{file?.name || 'Arquivo selecionado'}</div>
+          <ImportRow>
+            <ButtonConfirm cancel onClick={() => setFile(undefined)}>
               Cancelar
             </ButtonConfirm>
-            <ButtonConfirm type="button" onClick={onSubmitImport}>
-              Importar
-            </ButtonConfirm>
-          </ExportRow>
+            <ButtonConfirm onClick={onSubmitImport}>Importar</ButtonConfirm>
+          </ImportRow>
         </ModalImport>
       )}
+
+      <Hidden>
+        <ComponentToPrint ref={componentRef} blocks={blocksSelected} />
+      </Hidden>
     </RootLayout>
   );
 };
