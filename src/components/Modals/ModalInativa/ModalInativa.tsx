@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getUser } from '@/services/querys/user';
-import InputDate from '../../InputDate/Input';
+import InputText from '@/components/Input/Input';
 import Select from '../../Select/Select';
 import {
   ModalContent,
@@ -73,7 +73,8 @@ const ModalInativas = ({
           </Field>
           <FieldData>
             <Label>Data da OS</Label>
-            <InputDate
+            <InputText
+              type="date"
               style={{ width: '200px' }}
               value={date}
               onChange={e => setDate(e.target.value)}
