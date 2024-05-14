@@ -28,7 +28,7 @@ import {
 } from '@/interfaces/Records';
 
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
-import { ContainerPagination, Content, ExportRow } from './styles';
+import { ContainerPagination, Content, ExportRow, Field } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
@@ -234,46 +234,50 @@ const IndexPage = () => {
                 className="hover:opacity-80 cursor-pointer border-b-2 border-shadow hover:bg-shadow scroll"
               >
                 <TableCell align="left" height={10} className="p-0">
-                  <div
+                  <Field
                     style={{
                       color: renderSituationColors(row.situation_status),
                     }}
                   >
                     {row.situation_status || ''}
-                  </div>
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <div>{row.name.toUpperCase() || '-- --'}</div>
+                  <Field title={row.name}>{row.name.toUpperCase() || '-- --'}</Field>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <div>
+                  <Field>
                     {row.property.street.name.toUpperCase() || ''},{' '}
                     {row.property.number.toUpperCase() || ''}
                     {row.property.complement
                       && `, ${row.property.complement.toUpperCase()}`}
-                  </div>
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <div>{row.property.street.community.name.toUpperCase() || ''}</div>
+                  <Field title={row.property.street.community.name}>
+                    {row.property.street.community.name.toUpperCase() || ''}
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <div>{row.property.street.community.contract.name.toUpperCase() || ''}</div>
+                  <Field title={row.property.street.community.contract.name}>
+                    {row.property.street.community.contract.name.toUpperCase() || ''}
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <div>
+                  <Field>
                     {(row.created_at && formatDate(row.created_at)) || ''}
-                  </div>
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <div style={{ color: renderColors(row.status) }}>
+                  <Field style={{ color: renderColors(row.status) }}>
                     {renderStatus(row.status)}
-                  </div>
+                  </Field>
                 </TableCell>
 
                 <TableCell align="right" width={40} className="p-0">
