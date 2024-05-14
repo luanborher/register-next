@@ -9,12 +9,11 @@ import RootLayout from '@/components/RootLayout/Layout';
 import TableComponent from '@/components/Table/Table';
 import InputText from '@/components/Input/Input';
 
-import { getUserReports } from '@/services/querys/reportsUserData';
-
 import ModalUserReports from '@/components/Modals/ModalUserReports/ModalUserReports';
 import Modal from '@/components/Modals/Modal/Modal';
 import { BookOpenCheck, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getUserReports } from '@/services/querys/reports';
 import { Row } from './styles';
 import { BackButton, BackText } from '../styles';
 
