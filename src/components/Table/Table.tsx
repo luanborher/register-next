@@ -19,12 +19,8 @@ const TableComponent = ({ headers, children }: TableProps) => (
         <TableHead>
           <TableRow>
             {headers.map((header: string) => (
-              <TableCell
-                key={header}
-                align="left"
-                className="pl-0 text-black text-xs md:text-sm xxl:base font-semibold"
-              >
-                {header}
+              <TableCell key={header} align="left">
+                <strong>{header}</strong>
               </TableCell>
             ))}
           </TableRow>
