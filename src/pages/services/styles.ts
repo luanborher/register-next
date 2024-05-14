@@ -4,28 +4,21 @@ export const TableComponent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
   height: calc(100vh - 18rem);
-
   overflow-y: auto;
   padding-right: 0.5rem;
-
   color: black;
 `;
 
 export const TableCard = styled.div`
   position: relative;
-
   display: flex;
   flex-direction: row;
-
   width: 250px;
   padding: 1rem 0 1rem 1rem;
-
   border: ${({ theme }) => `1px solid ${theme.colors.graya1}`};
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
-
   cursor: pointer;
 
   &:hover {
@@ -35,7 +28,6 @@ export const TableCard = styled.div`
 
 export const TableCell = styled.div`
   position: relative;
-
   display: flex;
   flex-direction: row;
 `;
@@ -105,10 +97,37 @@ export const Resume = styled.div`
   }
 `;
 
+export const ActionSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: end;
+  gap: 0.5rem;
+  height: calc(100vh - 18rem);
+  overflow-y: auto;
+  padding-right: 0 0.5rem 0 2rem;
+  margin-top: 4rem;
+  color: black;
+`;
+
 export const ExportRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
   padding-bottom: 10px;
   color: #8cd630;
+`;
+
+export const ImportRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 2rem;
+  padding-bottom: 10px;
+  margin-top: 2rem;
+  color: #8cd630;
+`;
+
+export const Hidden = styled.div`
+  display: none;
 `;

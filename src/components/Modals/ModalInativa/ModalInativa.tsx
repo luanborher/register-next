@@ -1,9 +1,9 @@
-/* eslint-disable operator-linebreak */
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { X } from 'lucide-react';
-import { handleError } from '@/utils/message';
-import { UserClass } from '@/interfaces/User';
-import api from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
+import { getUser } from '@/services/querys/user';
+import InputDate from '../../InputDate/Input';
+import Select from '../../Select/Select';
 import {
   ModalContent,
   ModalContainer,
@@ -16,8 +16,6 @@ import {
   Header,
   ButtonSection,
 } from './styles';
-import InputDate from '../../InputDate/Input';
-import Select from '../../Select/Select';
 
 interface Option {
   value: string;
@@ -43,21 +41,13 @@ const ModalInativas = ({
   user,
   children,
 }: ModalProps) => {
-  const [users, setUsers] = useState<UserClass[]>([]);
-
-  const getUsers = async () => {
-    try {
-      const { data } = await api.get<UserClass[]>('/user');
-
-      setUsers(data.reverse());
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const { data: users } = useQuery({
+    queryKey: ['usersList'],
+    queryFn: async () => {
+      const data = await getUser();
+      return data.reverse();
+    },
+  });
 
   return (
     <ModalContainer>
@@ -65,9 +55,7 @@ const ModalInativas = ({
         <ClosePosition>
           <X onClick={onClose} />
         </ClosePosition>
-
         <Header>Finalizar envio de OS</Header>
-
         <RowSection>
           <Field>
             <Label>Selecione um agente</Label>
@@ -75,13 +63,14 @@ const ModalInativas = ({
               placeholder="Selecione..."
               value={user}
               onChange={e => e && setUser(e)}
-              options={users?.map(userI => ({
-                value: userI?.id || '',
-                label: userI?.name || '',
-              }))}
+              options={
+                users?.map(userI => ({
+                  value: userI?.id || '',
+                  label: userI?.name || '',
+                })) || []
+              }
             />
           </Field>
-
           <FieldData>
             <Label>Data da OS</Label>
             <InputDate
@@ -91,14 +80,12 @@ const ModalInativas = ({
             />
           </FieldData>
         </RowSection>
-
         <RowSection>
           <Field>
             <Label>Resumo</Label>
             {children}
           </Field>
         </RowSection>
-
         <ButtonSection>
           <ButtonConfirm type="button" onClick={onFunction}>
             Enviar roteiro
