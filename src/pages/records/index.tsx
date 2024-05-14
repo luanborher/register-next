@@ -11,7 +11,7 @@ import Search from '@/components/Search/Search';
 import TableComponent from '@/components/Table/Table';
 import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
-import ClientsDetails from '@/components/ClientsDetails/ClientsDetails';
+import ClientsDetails from '@/components/Details/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
 
 import api from '@/services/api';

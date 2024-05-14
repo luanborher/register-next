@@ -9,7 +9,6 @@ import { Filtered, RecordsFilter } from '@/interfaces/Records';
 
 import Select from '../Select/Select';
 import InputText from '../Input/Input';
-import InputDate from '../InputDate/Input';
 
 import { Button, LabelButton } from './styles';
 
@@ -179,7 +178,8 @@ const Search = ({
         }}
       />
 
-      <InputDate
+      <InputText
+        type="date"
         placeholder="Data de cadastro"
         {...register('date')}
         onKeyDown={e => {

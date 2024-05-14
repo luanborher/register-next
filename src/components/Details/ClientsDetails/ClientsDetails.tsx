@@ -9,12 +9,12 @@ import { options } from '@/utils/options';
 import { formatDateHours } from '@/utils/format';
 import { useAuth } from '@/hooks/useAuth';
 
-import Header from '../Header/Header';
-import InputText from '../Input/Input';
-import Dropdown from '../Dropdown/Dropdown';
-import ModalImage from '../Modals/ModalImage/Modal';
-import ModalQuest from '../Modals/ModalQuest/Modal';
-import ModalDuplicates from '../Modals/ModalDuplicates/ModalDuplicates';
+import Header from '../../Header/Header';
+import InputText from '../../Input/Input';
+import Dropdown from '../../Dropdown/Dropdown';
+import ModalImage from '../../Modals/ModalImage/Modal';
+import ModalQuest from '../../Modals/ModalQuest/Modal';
+import ModalDuplicates from '../../Modals/ModalDuplicates/ModalDuplicates';
 
 import {
   BackButton,
