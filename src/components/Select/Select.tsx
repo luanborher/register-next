@@ -20,6 +20,7 @@ interface SelectProps
   id?: string;
   name?: string;
   options: Option[];
+  refetch?: () => void;
 }
 
 const Select = ({
@@ -30,6 +31,7 @@ const Select = ({
   value,
   placeholder,
   onChange,
+  refetch,
   ...rest
 }: SelectProps) => (
   <Wrapper>
@@ -42,6 +44,7 @@ const Select = ({
       value={value}
       onChange={onChange}
       isClearable
+      onMenuClose={refetch}
       noOptionsMessage={() => 'Nenhum resultado encontrado'}
       styles={{
         control: (prev, { isFocused }) => ({

@@ -68,6 +68,7 @@ export interface InativasSent {
   hydroPicNew: string;
   serviceDonePic: string;
   signature: string;
+  type: string;
   created_at: Date;
   updated_at: Date;
 }
