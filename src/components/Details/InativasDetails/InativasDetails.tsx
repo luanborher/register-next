@@ -1,59 +1,80 @@
 import { useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
-import { Inativas } from '@/interfaces/inativas';
+import { Inativas, InativasSent } from '@/interfaces/inativas';
+import { useRef, useState } from 'react';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import { handleError, handleSuccess } from '@/utils/message';
+import api from '@/services/api';
+import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
+import { useReactToPrint } from 'react-to-print';
 import Header from '../../Header/Header';
 import InputText from '../../Input/Input';
-import { BackButton, BackText, Row, Title, Wrapper, Image } from './styles';
+import {
+  BackButton,
+  BackText,
+  Row,
+  Title,
+  Wrapper,
+  Image,
+  ButtonValidated,
+  Hidden,
+  ButtonDownload,
+} from './styles';
 
 interface DetailsProps {
   client: Inativas;
+  inativa: InativasSent;
   onClose: () => void;
 }
 
-const InativasDetails = ({ client, onClose }: DetailsProps) => {
+const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const [showQuest, setShowQuest] = useState(false);
+
   const { register } = useForm({
     defaultValues: {
-      ...client?.InativasSent?.[0],
-      pde: client?.pde,
-      street: client?.street,
-      neighborhood: client?.neighborhood,
-      type: client?.type,
-      community: client?.community,
-      cep: client?.cep,
-      economy_count: client?.economy_count,
-      property_type: client?.property_type,
-      situation: client?.situation,
-      hidrometerOld: client?.hidrometer,
-      fornecimento: client?.fornecimento,
-      bill_quantity: client?.bill_quantity,
-      total_value: client?.total_value,
-      proposal: client?.proposal,
-      total_value_corrected: client?.total_value_corrected,
-      consulted_status: client?.consulted_status,
-      village: client?.village,
-      sublocal: client?.sublocal,
-      local: client?.local,
-      block: client?.block,
-      route: client?.route,
-      sector: client?.sector,
-      group: client?.group,
-      atc: client?.atc,
+      ...inativa,
+      ...client,
+      name: inativa.name,
+      number: inativa.number,
+      complement: inativa.complement,
     },
+  });
+
+  const onValidated = async () => {
+    try {
+      await api.put(`/inativa/${inativa.id}`, {
+        status: 'VALIDATED',
+      });
+
+      handleSuccess('Serviço validado com sucesso.');
+      setShowQuest(false);
+      onClose();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current as HTMLDivElement,
   });
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') onClose();
   });
 
-  const status = { REVIEW: 'Em análise', SENT: 'Pendente' } as any;
-  const title = client.InativasSent?.[0]?.name || '';
-  const date = client.InativasSent?.[0]?.date || '';
+  const status = {
+    REVIEW: 'Em análise',
+    SENT: 'Pendente',
+    VALIDATED: 'Validado',
+  } as any;
 
   return (
     <Wrapper>
       <Header
-        title={title}
-        subtitle={`${date} - ${status[client.status || 'REVIEW']}` || ''}
+        title={inativa?.name || ''}
+        subtitle={`${inativa?.date || ''} - ${status[client.status]}`}
         action
       >
         <BackButton onClick={onClose}>
@@ -70,21 +91,17 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Nome completo"
           {...register('name')}
         />
-
         <InputText label="PDE" placeholder="PDE" {...register('pde')} />
-
         <InputText
           label="Tipo de serviço"
           placeholder="Tipo de serviço"
           {...register('type')}
-        />
+        />{' '}
       </Row>
 
       <Row>
         <InputText label="RG" placeholder="RG" {...register('rg')} />
-
         <InputText label="CPF" placeholder="CPF" {...register('cpf')} />
-
         <InputText
           label="Data de Nascimento"
           placeholder="Data de Nascimento"
@@ -98,13 +115,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Telefone 1"
           {...register('phone1')}
         />
-
         <InputText
           label="Telefone 2"
           placeholder="Telefone 2"
           {...register('phone2')}
         />
-
         <InputText
           label="Entidade atendente"
           placeholder="Atentende"
@@ -116,9 +131,7 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
 
       <Row>
         <InputText label="Rua" placeholder="Rua" {...register('street')} />
-
         <InputText type="number" label="Numero" {...register('number')} />
-
         <InputText
           label="Complemento"
           placeholder="Complemento"
@@ -132,13 +145,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Comunidade"
           {...register('community')}
         />
-
         <InputText
           label="Bairro"
           placeholder="Bairro"
           {...register('neighborhood')}
         />
-
         <InputText label="CEP" placeholder="CEP" {...register('cep')} />
       </Row>
 
@@ -148,13 +159,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Referência"
           {...register('reference')}
         />
-
         <InputText
           label="Entre números"
           placeholder="Entre números"
           {...register('betweenNumbers')}
         />
-
         <InputText
           label="Leitura"
           placeholder="Leitura"
@@ -168,13 +177,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Situação imóvel"
           {...register('situation')}
         />
-
         <InputText
           label="Tipo imóvel"
           placeholder="Tipo imóvel"
           {...register('property_type')}
         />
-
         <InputText
           label="Qtd. Economias"
           placeholder="Qtd. Economias"
@@ -188,13 +195,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Fornecimento"
           {...register('fornecimento')}
         />
-
         <InputText
           label="Hidrômetro antigo"
           placeholder="Hidrômetro antigo"
-          {...register('hidrometerOld')}
+          {...register('hidrometer')}
         />
-
         <InputText
           label="Hidrômetro novo"
           placeholder="Hidrômetro novo"
@@ -210,13 +215,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Provedora"
           {...register('headedFamily')}
         />
-
         <InputText
           label="Renda familiar"
           placeholder="Renda familiar"
           {...register('income')}
         />
-
         <InputText
           label="Possui caixa d'aguá"
           placeholder="Possui caixa d'aguá"
@@ -230,13 +233,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Tempo de ocupação"
           {...register('occupancyTime')}
         />
-
         <InputText
           label="Qtd. Adultos"
           placeholder="Qtd. Adultos"
           {...register('qntAdults')}
         />
-
         <InputText
           label="Qtd. Crianças"
           placeholder="Qtd. Crianças"
@@ -252,13 +253,11 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
           placeholder="Quantidade de contas"
           {...register('bill_quantity')}
         />
-
         <InputText
           label="Valor total"
           placeholder="Valor total"
           {...register('total_value')}
         />
-
         <InputText
           label="Proposta"
           placeholder="Proposta"
@@ -269,10 +268,9 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
       <Row>
         <InputText
           label="Valor total corrigido"
-          placeholder="Valor total corrigido"
+          placeholder="Valor corrigido"
           {...register('total_value_corrected')}
         />
-
         <InputText
           label="Status consultado"
           placeholder="Status consultado"
@@ -282,99 +280,60 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
 
       <Row>
         <InputText label="ATC" placeholder="ATC" {...register('atc')} />
-
         <InputText label="Grupo" placeholder="Grupo" {...register('group')} />
-
         <InputText label="Setor" placeholder="Setor" {...register('sector')} />
-
         <InputText label="Rota" placeholder="Rota" {...register('route')} />
       </Row>
 
       <Row>
         <InputText label="Quadra" placeholder="Quadra" {...register('block')} />
-
         <InputText label="Local" placeholder="Local" {...register('local')} />
-
         <InputText
           label="Sublocal"
           placeholder="Sublocal"
           {...register('sublocal')}
         />
-
         <InputText label="Vila" placeholder="Vila" {...register('village')} />
       </Row>
 
       <Title>Imagens</Title>
 
       <Row style={{ justifyContent: 'center' }}>
-        {client.InativasSent?.[0]?.facadePic && (
-          <Image
-            src={client.InativasSent?.[0]?.facadePic}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.facadePic && (
+          <Image src={inativa?.facadePic} alt="img_campo" />
         )}
-
-        {client.InativasSent?.[0]?.documentPic1 && (
-          <Image
-            src={client.InativasSent?.[0]?.documentPic1}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.documentPic1 && (
+          <Image src={inativa?.documentPic1} alt="img_campo" />
         )}
-
-        {client.InativasSent?.[0]?.documentPic2 && (
-          <Image
-            src={client.InativasSent?.[0]?.documentPic2}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.documentPic2 && (
+          <Image src={inativa?.documentPic2} alt="img_campo" />
         )}
       </Row>
 
       <Row style={{ justifyContent: 'center' }}>
-        {client.InativasSent?.[0]?.hydroPicOld && (
-          <Image
-            src={client.InativasSent?.[0]?.hydroPicOld}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.hydroPicOld && (
+          <Image src={inativa?.hydroPicOld} alt="img_campo" />
         )}
-
-        {client.InativasSent?.[0]?.hydroPicNew && (
-          <Image
-            src={client.InativasSent?.[0]?.hydroPicNew}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.hydroPicNew && (
+          <Image src={inativa?.hydroPicNew} alt="img_campo" />
         )}
-
-        {client.InativasSent?.[0]?.serviceDonePic && (
-          <Image
-            src={client.InativasSent?.[0]?.serviceDonePic}
-            alt="Documento 1"
-            style={{ objectFit: 'contain' }}
-          />
+        {inativa?.serviceDonePic && (
+          <Image src={inativa?.serviceDonePic} alt="img_campo" />
         )}
       </Row>
 
-      {client.InativasSent?.[0]?.signature ? (
+      {inativa?.signature ? (
         <>
           <Title>Assinatura</Title>
 
           <Row style={{ justifyContent: 'center' }}>
-            <Image
-              src={client.InativasSent?.[0]?.signature}
-              alt="Assinatura"
-              style={{ width: '500px', objectFit: 'contain' }}
-            />
+            <Image src={inativa?.signature} style={{ width: '500px' }} />
           </Row>
         </>
       ) : (
         <Title
           style={{
             color: '#c91919e4',
-            border: '1px solid #c91919e4',
             textAlign: 'center',
             padding: '0.3rem',
             borderRadius: '5px',
@@ -385,21 +344,54 @@ const InativasDetails = ({ client, onClose }: DetailsProps) => {
       )}
 
       <Title>Dados de cadastros</Title>
+
       <Row>
         <InputText
           label="Nome do agente"
           placeholder="Nome do agente"
-          value={client.InativasSent?.[0]?.user_id}
+          value={inativa?.user_id}
           disabled
         />
-
         <InputText
           label="Data de cadastro"
           placeholder="Data de cadastro"
-          value={client.InativasSent?.[0]?.date}
+          value={inativa?.date}
           disabled
         />
       </Row>
+
+      <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
+        <ButtonDownload type="button" onClick={handlePrint}>
+          Baixar ficha
+        </ButtonDownload>
+
+        {client.status === 'REVIEW' && (
+          <ButtonValidated type="button" onClick={() => setShowQuest(true)}>
+            Validar
+          </ButtonValidated>
+        )}
+      </Row>
+
+      {showQuest && (
+        <ModalQuest onClose={() => setShowQuest(false)} onConfirm={onValidated}>
+          Deseja validar esse serviço?
+        </ModalQuest>
+      )}
+
+      <Hidden>
+        <FichaCampo
+          ref={componentRef}
+          inativas={[
+            {
+              ...client,
+              name: inativa.name,
+              hidrometer: inativa.hydrometer || client.hidrometer,
+              number: inativa.number,
+              complement: inativa.complement,
+            },
+          ]}
+        />
+      </Hidden>
     </Wrapper>
   );
 };

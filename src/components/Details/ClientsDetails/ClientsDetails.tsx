@@ -724,11 +724,7 @@ const ClientsDetails = ({
             setUrlImage('');
           }}
         >
-          <Image
-            src={urlImage}
-            alt=""
-            style={{ width: '500px', height: 'auto' }}
-          />
+          <Image src={urlImage} style={{ width: '500px', height: 'auto' }} />
         </ModalImage>
       )}
 

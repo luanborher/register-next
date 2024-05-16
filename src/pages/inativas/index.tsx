@@ -7,7 +7,7 @@ import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import Select from '@/components/Select/Select';
 import TableComponent from '@/components/Table/Table';
-import { Inativas } from '@/interfaces/inativas';
+import { Inativas, InativasSent } from '@/interfaces/inativas';
 import { getInativas } from '@/services/querys/inativas';
 import { getUser } from '@/services/querys/user';
 import { TableCell, TableRow } from '@mui/material';
@@ -30,14 +30,14 @@ const option = {
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
-
-  // const [date, setDate] = useState('');
+  const [inativa, setInativa] = useState<InativasSent>({} as InativasSent);
 
   const { register, setValue, watch } = useForm({
     defaultValues: {
       status: option,
       name: '',
       pde: '',
+      date: '',
       type: {
         label: '',
         value: '',
@@ -54,19 +54,40 @@ const IndexPage = () => {
     queryFn: async () => getInativas(inativasParam),
   });
 
+  const normalizeText = (texto: string) => {
+    return texto
+      ?.normalize('NFD')
+      ?.replace(/[\u0300-\u036f]/g, '')
+      ?.replace(/[^\w\s]/gi, '');
+  };
+
   const inativas = inativasList?.filter(
     item =>
       item.pde.includes(watch('pde')) &&
-      item.InativasSent?.[0]?.name
+      normalizeText(item.InativasSent?.[0]?.name)
         .toLowerCase()
-        .includes(watch('name').toLowerCase()) &&
-      item.InativasSent?.[0]?.type.includes(watch('type')?.value),
+        .includes(normalizeText(watch('name')).toLowerCase()) &&
+      normalizeText(item.InativasSent?.[0]?.type).includes(
+        normalizeText(watch('type')?.value || ''),
+      ),
   );
+
+  console.log(watch('date'));
 
   const { data: users } = useQuery({
     queryKey: ['usersData'],
     queryFn: async () => getUser(),
   });
+
+  const renderSituationColors = (status: string) => {
+    const colors = {
+      VALIDATED: '#14dd46',
+      SENT: '#FF9100',
+      REVIEW: '#008cff',
+    } as any;
+
+    return colors[status || 'NORMAL'];
+  };
 
   return (
     <RootLayout>
@@ -88,7 +109,7 @@ const IndexPage = () => {
 
           <Select
             id="status"
-            placeholder="Status"
+            placeholder="Selecione..."
             onChange={e => e && setValue('status', e)}
             defaultValue={option}
             options={[
@@ -100,17 +121,10 @@ const IndexPage = () => {
           <Select
             id="type"
             refetch={() => setValue('type', {} as Option)}
-            placeholder="Tipo"
+            placeholder="Selecione..."
             onChange={e => e && setValue('type', e)}
             options={INACTIVE_OPTIONS}
           />
-
-          {/*
-          <InputText
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-          /> */}
         </div>
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
@@ -121,6 +135,7 @@ const IndexPage = () => {
               <TableRow
                 onClick={() => {
                   setShowDetails(true);
+                  setInativa(inativa?.InativasSent?.[0]);
                   setSelected(inativa);
                 }}
               >
@@ -167,7 +182,13 @@ const IndexPage = () => {
                   width={120}
                   className="pl-1 flex flex-col"
                 >
-                  <Field>
+                  <Field
+                    style={{
+                      color: renderSituationColors(
+                        inativa.InativasSent?.[0]?.status || 'VALIDATED',
+                      ),
+                    }}
+                  >
                     {inativa.InativasSent?.[0]?.status === 'REVIEW'
                       ? 'EM ANÁLISE'
                       : 'PENDENTE'}
@@ -178,9 +199,11 @@ const IndexPage = () => {
           </TableComponent>
         </div>
       </main>
+
       {showDetails && selected && (
         <Modal>
           <InativasDetails
+            inativa={inativa}
             client={selected}
             onClose={() => setShowDetails(false)}
           />

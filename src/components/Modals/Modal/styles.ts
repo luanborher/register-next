@@ -18,11 +18,10 @@ export const ModalContainer = styled.div`
   bottom: 0;
   left: 16.666%;
   z-index: 999;
-
-  background-color: #fff;
+  background-color: #f5f5f5;
   border-radius: 36px;
   padding: 2rem;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.05);
-
   animation: ${fadeIn} 0.6s;
+  overflow-x: hidden;
 `;

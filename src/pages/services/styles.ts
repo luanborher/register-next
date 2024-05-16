@@ -20,6 +20,24 @@ export const TableCard = styled.div`
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
   cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+export const SelectedAllCard = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 250px;
+  padding: 0.5rem 1rem;
+  border: ${({ theme }) => `1px solid ${theme.colors.primary}`};
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 10px;
+  cursor: pointer;
+  user-select: none;
 
   &:hover {
     opacity: 0.8;
@@ -30,6 +48,23 @@ export const TableCell = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
+  text-align: left;
+`;
+
+export const Quantity = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  padding-left: 1rem;
+`;
+
+export const CheckBox = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  width: 30px;
 `;
 
 export const SectionList = styled.div`
@@ -130,4 +165,11 @@ export const ImportRow = styled.div`
 
 export const Hidden = styled.div`
   display: none;
+`;
+
+export const Label = styled.label`
+  display: flex;
+  flex-direction: row;
+  color: black;
+  font-size: 0.9rem;
 `;

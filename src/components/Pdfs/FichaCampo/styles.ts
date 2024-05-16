@@ -55,6 +55,13 @@ export const InfoRow = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   padding-left: 1rem;
   margin-bottom: -2px;
+
+  .row {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
 `;
 
 export const Title = styled.div`

@@ -33,14 +33,25 @@ export const ContainerPagination = styled.div`
 
 export const ButtonImport = styled.label`
   display: flex;
+  align-items: center;
   gap: 1rem;
   padding: 0.3rem 1rem;
   border: 1px solid #8cd630;
   border-radius: 6px;
   cursor: pointer;
 
+  .icon {
+    color: #8cd630;
+    size: 22px;
+    cursor: pointer;
+  }
+
   &:hover {
     background-color: #eeeeee;
+  }
+
+  input {
+    display: none;
   }
 `;
 

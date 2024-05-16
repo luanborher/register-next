@@ -13,7 +13,10 @@ import { addDays, format } from 'date-fns';
 import { FaDownload } from 'react-icons/fa';
 import ModalImport from '@/components/Modals/ModalImport/ModalImport';
 import { useReactToPrint } from 'react-to-print';
-import ComponentToPrint from '@/components/FileComponent/FileComponent';
+import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
+import OrdensServico from '@/components/Pdfs/OrdensServico/OrdensServico';
+import { ResponseInativas } from '@/interfaces/inativas';
+import Loading from '@/components/Modals/Loading/Loading';
 import { ButtonImport } from '../records/styles';
 import {
   TableCard,
@@ -28,6 +31,10 @@ import {
   Hidden,
   ImportRow,
   ActionSection,
+  SelectedAllCard,
+  CheckBox,
+  Quantity,
+  Label,
 } from './styles';
 
 interface Option {
@@ -38,12 +45,15 @@ interface Option {
 const IndexPage = () => {
   const query = useQueryClient();
   const componentRef = useRef<HTMLDivElement>(null);
+  const orderRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
   const [routesSelected, setRoutesSelected] = useState<Route[]>([]);
   const [blocksSelected, setBlocksSelected] = useState<Block[]>([]);
+  const [response, setInativas] = useState<ResponseInativas[]>([]);
 
   const [date, setDate] = useState('');
   const [user, setUser] = useState<Option>();
@@ -78,7 +88,8 @@ const IndexPage = () => {
 
   const onSubmit = async () => {
     try {
-      await api.post('/inativa/send', {
+      setLoading(true);
+      const { data } = await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
           sector: item?.sector,
           route: item?.route,
@@ -88,10 +99,15 @@ const IndexPage = () => {
         user_id: user?.value || '',
       });
 
+      setInativas(data.flat());
       clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
       handleSuccess('Ordem de serviço enviada.');
-      handlePrint();
+
+      setTimeout(() => {
+        handlePrint();
+        setLoading(false);
+      }, 2000);
     } catch (error) {
       handleError(error);
     }
@@ -124,9 +140,7 @@ const IndexPage = () => {
   };
 
   const onSelectedSectorAll = (sectors: IInativas[]) => {
-    if (sectorSelected?.length === inativas?.length) {
-      return clear.sector();
-    }
+    if (sectorSelected?.length === inativas?.length) return clear.all();
     setSectorSelected(sectors);
   };
 
@@ -156,20 +170,13 @@ const IndexPage = () => {
         <ExportRow>
           <ButtonImport>
             Importar inativas
-            <FaDownload
-              style={{ cursor: 'pointer' }}
-              color="#8cd630"
-              size={22}
-            />
+            <FaDownload className="icon" />
             <input
               type="file"
               accept=".xlsx, .xls, .csv, .xlsm"
-              hidden
               onChange={e => {
-                if (e.target?.files?.[0]) {
-                  setFile(e.target.files[0]);
-                  e.target.value = '';
-                }
+                setFile(e?.target?.files?.[0]);
+                e.target.value = '';
               }}
             />
           </ButtonImport>
@@ -178,35 +185,30 @@ const IndexPage = () => {
         <SectionList>
           <Column>
             {inativas && inativas?.length > 0 && 'Setor'}
+
             {inativas && inativas?.length > 0 && (
-              <div style={{ display: 'flex' }}>
-                <TableCell
-                  style={{ textAlign: 'left', width: '30px' }}
-                  onClick={() => onSelectedSectorAll(inativas)}
-                >
-                  <Square className="text-secondary self-center" />
+              <SelectedAllCard onClick={() => onSelectedSectorAll(inativas)}>
+                <CheckBox>
+                  <Square />
                   {sectorSelected?.length === inativas?.length && <Check />}
-                </TableCell>
+                </CheckBox>
                 Selecionar todos
-              </div>
+              </SelectedAllCard>
             )}
+
             <TableComponent>
               {inativas?.map((sector, i) => (
                 <TableCard key={+i} onClick={() => onSelectedSector(sector)}>
-                  <TableCell style={{ textAlign: 'left', width: '30px' }}>
-                    <Square className="text-secondary self-center" />
+                  <CheckBox>
+                    <Square />
                     {sectorSelected.includes(sector) && <Check />}
+                  </CheckBox>
+                  <TableCell>
+                    <Label>Setor: {sector.sector}</Label>
                   </TableCell>
-                  <TableCell style={{ textAlign: 'left' }}>
-                    <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                      Setor: {sector.sector}
-                    </div>
-                  </TableCell>
-                  <TableCell style={{ textAlign: 'left', paddingLeft: '1rem' }}>
-                    <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                      Quantidade: {sector.count}
-                    </div>
-                  </TableCell>
+                  <Quantity>
+                    <Label>Quantidade: {sector.count}</Label>
+                  </Quantity>
                 </TableCard>
               ))}
             </TableComponent>
@@ -219,22 +221,16 @@ const IndexPage = () => {
                 <>
                   {sector.routes?.map((route, i) => (
                     <TableCard key={+i} onClick={() => onSelectedRoute(route)}>
-                      <TableCell style={{ textAlign: 'left', width: '30px' }}>
-                        <Square className="text-secondary self-center" />
+                      <CheckBox>
+                        <Square />
                         {routesSelected.includes(route) && <Check />}
+                      </CheckBox>
+                      <TableCell>
+                        <Label>Rota: {route.route}</Label>
                       </TableCell>
-                      <TableCell style={{ textAlign: 'left' }}>
-                        <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                          Rota: {route.route}
-                        </div>
-                      </TableCell>
-                      <TableCell
-                        style={{ textAlign: 'left', paddingLeft: '1rem' }}
-                      >
-                        <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                          Quantidade: {route.count}
-                        </div>
-                      </TableCell>
+                      <Quantity>
+                        <Label>Quantidade: {route.count}</Label>
+                      </Quantity>
                     </TableCard>
                   ))}
                 </>
@@ -249,22 +245,16 @@ const IndexPage = () => {
                 <>
                   {route.blocks?.map((block, i) => (
                     <TableCard key={+i} onClick={() => onSelectedBlock(block)}>
-                      <TableCell style={{ textAlign: 'left', width: '30px' }}>
-                        <Square className="text-secondary self-center" />
+                      <CheckBox>
+                        <Square />
                         {blocksSelected.includes(block) && <Check />}
+                      </CheckBox>
+                      <TableCell>
+                        <Label>Quadra: {block.block}</Label>
                       </TableCell>
-                      <TableCell style={{ textAlign: 'left' }}>
-                        <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                          Quadra: {block.block}
-                        </div>
-                      </TableCell>
-                      <TableCell
-                        style={{ textAlign: 'left', paddingLeft: '1rem' }}
-                      >
-                        <div className="text-black text-xs md:text-sm xxl:base font-semibold">
-                          Quantidade: {block.count}
-                        </div>
-                      </TableCell>
+                      <Quantity>
+                        <Label>Quantidade: {block.count}</Label>
+                      </Quantity>
                     </TableCard>
                   ))}
                 </>
@@ -322,8 +312,14 @@ const IndexPage = () => {
       )}
 
       <Hidden>
-        <ComponentToPrint ref={componentRef} blocks={blocksSelected} />
+        <FichaCampo ref={componentRef} inativas={response} />
       </Hidden>
+
+      <Hidden>
+        <OrdensServico ref={orderRef} />
+      </Hidden>
+
+      {loading && <Loading />}
     </RootLayout>
   );
 };
