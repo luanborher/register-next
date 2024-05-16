@@ -4,7 +4,7 @@ import RootLayout from '@/components/RootLayout/Layout';
 import { getPrateleira } from '@/services/querys/inativas';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Square, BookOpenCheck } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Block, IInativas, Route } from '@/interfaces/prateleira';
 import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
 import api from '@/services/api';
@@ -88,6 +88,7 @@ const IndexPage = () => {
 
   const onSubmit = async () => {
     try {
+      setInativas([]);
       setLoading(true);
       const { data } = await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
@@ -103,15 +104,18 @@ const IndexPage = () => {
       clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
       handleSuccess('Ordem de serviço enviada.');
-
-      setTimeout(() => {
-        handlePrint();
-        setLoading(false);
-      }, 2000);
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (response && response?.length > 0) {
+      handlePrint();
+    }
+  }, [response]);
 
   const onSubmitImport = async () => {
     if (file) {
@@ -312,7 +316,11 @@ const IndexPage = () => {
       )}
 
       <Hidden>
-        <FichaCampo ref={componentRef} inativas={response} />
+        <FichaCampo
+          ref={componentRef}
+          inativas={response}
+          contract="PIRITUBA - EXTREMO NORTE"
+        />
       </Hidden>
 
       <Hidden>

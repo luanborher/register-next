@@ -382,6 +382,7 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
       <Hidden>
         <FichaCampo
           ref={componentRef}
+          contract="PIRITUBA - EXTREMO NORTE"
           inativas={[
             {
               ...client,

@@ -15,7 +15,7 @@ export const Content = styled.div`
   width: 100%;
   height: 290px;
   border: 2px solid black;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 export const Header = styled.div`
@@ -77,20 +77,19 @@ export const Terms = styled.div`
   width: 100%;
   height: 100px;
   font-size: 0.7rem;
-  text-align: center;
   padding: 0.45rem 1rem;
 `;
 
 export const Footer = styled.div`
   width: 100%;
-  height: 230px;
+  height: 190px;
   border: 2px solid black;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 
 export const Materiais = styled.div`
   width: 100%;
-  height: 19px;
+  height: 17px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -99,7 +98,7 @@ export const Materiais = styled.div`
 export const Item = styled.div`
   width: 100%;
   height: 100%;
-  font-size: 0.9rem;
+  font-size: 0.8275rem;
   padding: 0 1rem;
   display: flex;
   align-items: flex-start;
@@ -107,7 +106,7 @@ export const Item = styled.div`
 
 export const Describe = styled.div`
   width: 100%;
-  height: 32.6px;
+  height: 31px;
   display: flex;
   flex-direction: row;
 `;
@@ -117,7 +116,7 @@ export const DescribeRow = styled.div`
   height: 100%;
   display: flex;
   flex-direction: row;
-  align-items: end;
+  align-items: center;
   padding: 0 1rem;
   font-size: 0.9rem;
   border-bottom: 1px solid black;
@@ -136,4 +135,12 @@ export const DescribeColumn = styled.div`
   color: #535353;
   font-size: 0.8rem;
   justify-content: center;
+`;
+
+export const Separator = styled.div`
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid black;
+  border-style: dashed;
+  margin-bottom: 15px;
 `;
