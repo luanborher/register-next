@@ -13,4 +13,5 @@ export const Label = styled.label`
   font-size: 1rem;
   font-weight: 500;
   color: #3b3b3b;
+  padding-left: 10px;
 `;

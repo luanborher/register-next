@@ -1,4 +1,4 @@
-export interface Inativas {
+export interface ResponseInativas {
   id: string;
   pde: string;
   community: string;
@@ -28,8 +28,11 @@ export interface Inativas {
   sublocal: string;
   village: string;
   status: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Inativas extends ResponseInativas {
   InativasSent: InativasSent[];
 }
 
@@ -69,6 +72,6 @@ export interface InativasSent {
   serviceDonePic: string;
   signature: string;
   type: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
 }

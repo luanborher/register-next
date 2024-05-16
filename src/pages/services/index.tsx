@@ -15,6 +15,8 @@ import ModalImport from '@/components/Modals/ModalImport/ModalImport';
 import { useReactToPrint } from 'react-to-print';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
 import OrdensServico from '@/components/Pdfs/OrdensServico/OrdensServico';
+import { ResponseInativas } from '@/interfaces/inativas';
+import Loading from '@/components/Modals/Loading/Loading';
 import { ButtonImport } from '../records/styles';
 import {
   TableCard,
@@ -46,10 +48,12 @@ const IndexPage = () => {
   const orderRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
   const [routesSelected, setRoutesSelected] = useState<Route[]>([]);
   const [blocksSelected, setBlocksSelected] = useState<Block[]>([]);
+  const [response, setInativas] = useState<ResponseInativas[]>([]);
 
   const [date, setDate] = useState('');
   const [user, setUser] = useState<Option>();
@@ -84,7 +88,8 @@ const IndexPage = () => {
 
   const onSubmit = async () => {
     try {
-      await api.post('/inativa/send', {
+      setLoading(true);
+      const { data } = await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
           sector: item?.sector,
           route: item?.route,
@@ -94,10 +99,15 @@ const IndexPage = () => {
         user_id: user?.value || '',
       });
 
+      setInativas(data.flat());
       clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
       handleSuccess('Ordem de serviço enviada.');
-      handlePrint();
+
+      setTimeout(() => {
+        handlePrint();
+        setLoading(false);
+      }, 2000);
     } catch (error) {
       handleError(error);
     }
@@ -302,12 +312,14 @@ const IndexPage = () => {
       )}
 
       <Hidden>
-        <FichaCampo ref={componentRef} blocks={blocksSelected} />
+        <FichaCampo ref={componentRef} inativas={response} />
       </Hidden>
 
       <Hidden>
         <OrdensServico ref={orderRef} />
       </Hidden>
+
+      {loading && <Loading />}
     </RootLayout>
   );
 };
