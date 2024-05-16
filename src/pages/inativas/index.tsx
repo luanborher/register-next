@@ -54,19 +54,30 @@ const IndexPage = () => {
     queryFn: async () => getInativas(inativasParam),
   });
 
+  const normalizeText = (texto: string) => {
+    return texto
+      ?.normalize('NFD')
+      ?.replace(/[\u0300-\u036f]/g, '')
+      ?.replace(/[^\w\s]/gi, '');
+  };
+
   const inativas = inativasList?.filter(
     item =>
       item.pde.includes(watch('pde')) &&
-      item.InativasSent?.[0]?.name
+      normalizeText(item.InativasSent?.[0]?.name)
         .toLowerCase()
-        .includes(watch('name').toLowerCase()) &&
-      item.InativasSent?.[0]?.type.includes(watch('type')?.value),
+        .includes(normalizeText(watch('name')).toLowerCase()) &&
+      normalizeText(item.InativasSent?.[0]?.type).includes(
+        normalizeText(watch('type')?.value || ''),
+      ),
   );
 
   const { data: users } = useQuery({
     queryKey: ['usersData'],
     queryFn: async () => getUser(),
   });
+
+  console.log(inativas, watch());
 
   return (
     <RootLayout>
