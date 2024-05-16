@@ -44,7 +44,8 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
 
   const onValidated = async () => {
     try {
-      await api.put(`/inativa/${inativa.id}`, {
+      await api.put(`/inativa`, {
+        id: inativa.id,
         status: 'VALIDATED',
       });
 
