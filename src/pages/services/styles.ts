@@ -4,7 +4,7 @@ export const TableComponent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  height: calc(100vh - 18rem);
+  height: calc(100vh - 21rem);
   overflow-y: auto;
   padding-right: 0.5rem;
   color: black;
@@ -86,9 +86,7 @@ export const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
   color: black;
-
   margin-top: 2rem;
 `;
 
@@ -101,16 +99,12 @@ export const ButtonConfirm = styled.button<Props>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-
   gap: 0.5rem;
-
   width: 180px;
   height: 40px;
-
   background-color: ${({ cancel }) => (cancel ? 'transparent' : '#8cd630')};
   border: ${({ cancel }) => (cancel ? '2px solid #ff0000' : 'none')};
   border-radius: 6px;
-
   color: ${({ cancel }) => (cancel ? '#ff0000' : '#ffffff')};
   font-weight: 500;
 
@@ -122,7 +116,6 @@ export const ButtonConfirm = styled.button<Props>`
 export const Resume = styled.div`
   width: 100%;
   padding: 1rem;
-
   border: 2px solid #e4e4e4;
   border-radius: 8px;
 
@@ -171,5 +164,10 @@ export const Label = styled.label`
   display: flex;
   flex-direction: row;
   color: black;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+
+  strong {
+    font-weight: 500;
+    margin-right: 4px;
+  }
 `;
