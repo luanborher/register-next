@@ -90,6 +90,7 @@ const IndexPage = () => {
     try {
       setInativas([]);
       setLoading(true);
+
       const { data } = await api.post('/inativa/send', {
         routes: blocksSelected?.map(item => ({
           sector: item?.sector,
@@ -100,9 +101,13 @@ const IndexPage = () => {
         user_id: user?.value || '',
       });
 
-      setInativas(data.flat());
+      const response = data?.flat() || [];
+
+      setInativas(response);
+
       clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
+
       handleSuccess('Ordem de serviço enviada.');
     } catch (error) {
       handleError(error);
@@ -135,6 +140,11 @@ const IndexPage = () => {
     }
   };
 
+  const onSelectedSectorAll = (sectors: IInativas[]) => {
+    if (sectorSelected?.length === inativas?.length) return clear.all();
+    setSectorSelected(sectors);
+  };
+
   const onSelectedSector = (sector: IInativas) => {
     if (sectorSelected.includes(sector)) {
       setSectorSelected(sectorSelected.filter(item => item !== sector));
@@ -143,9 +153,10 @@ const IndexPage = () => {
     setSectorSelected(props => [...props, sector]);
   };
 
-  const onSelectedSectorAll = (sectors: IInativas[]) => {
-    if (sectorSelected?.length === inativas?.length) return clear.all();
-    setSectorSelected(sectors);
+  const onSelectedRouteAll = () => {
+    const routes = sectorSelected?.flatMap(item => item.routes);
+    if (routesSelected?.length === routes?.length) return clear.sector();
+    setRoutesSelected(routes);
   };
 
   const onSelectedRoute = (route: Route) => {
@@ -154,6 +165,12 @@ const IndexPage = () => {
       return clear.route();
     }
     setRoutesSelected(props => [...props, route]);
+  };
+
+  const onSelectedBlockAll = () => {
+    const blocks = routesSelected?.flatMap(item => item.blocks);
+    if (blocksSelected?.length === blocks?.length) return clear.route();
+    setBlocksSelected(blocks);
   };
 
   const onSelectedBlock = (block: Block) => {
@@ -208,10 +225,14 @@ const IndexPage = () => {
                     {sectorSelected.includes(sector) && <Check />}
                   </CheckBox>
                   <TableCell>
-                    <Label>Setor: {sector.sector}</Label>
+                    <Label>
+                      <strong>Setor: </strong> {sector.sector}
+                    </Label>
                   </TableCell>
                   <Quantity>
-                    <Label>Quantidade: {sector.count}</Label>
+                    <Label>
+                      <strong>Quantidade: </strong> {sector.count}
+                    </Label>
                   </Quantity>
                 </TableCard>
               ))}
@@ -220,6 +241,20 @@ const IndexPage = () => {
 
           <Column>
             {sectorSelected?.length > 0 && 'Rota'}
+
+            {sectorSelected?.length > 0 && (
+              <SelectedAllCard onClick={onSelectedRouteAll}>
+                <CheckBox>
+                  <Square />
+                  {routesSelected?.length ===
+                    sectorSelected?.flatMap(item => item.routes)?.length && (
+                    <Check />
+                  )}
+                </CheckBox>
+                Selecionar todos
+              </SelectedAllCard>
+            )}
+
             <TableComponent>
               {sectorSelected?.map(sector => (
                 <>
@@ -230,10 +265,14 @@ const IndexPage = () => {
                         {routesSelected.includes(route) && <Check />}
                       </CheckBox>
                       <TableCell>
-                        <Label>Rota: {route.route}</Label>
+                        <Label>
+                          <strong>Rota: </strong> {route.route}
+                        </Label>
                       </TableCell>
                       <Quantity>
-                        <Label>Quantidade: {route.count}</Label>
+                        <Label>
+                          <strong>Quantidade: </strong> {route.count}
+                        </Label>
                       </Quantity>
                     </TableCard>
                   ))}
@@ -244,6 +283,20 @@ const IndexPage = () => {
 
           <Column>
             {routesSelected?.length > 0 && 'Quadra'}
+
+            {routesSelected?.length > 0 && (
+              <SelectedAllCard onClick={onSelectedBlockAll}>
+                <CheckBox>
+                  <Square />
+                  {blocksSelected?.length ===
+                    routesSelected?.flatMap(item => item.blocks)?.length && (
+                    <Check />
+                  )}
+                </CheckBox>
+                Selecionar todos
+              </SelectedAllCard>
+            )}
+
             <TableComponent>
               {routesSelected?.map(route => (
                 <>
@@ -254,10 +307,14 @@ const IndexPage = () => {
                         {blocksSelected.includes(block) && <Check />}
                       </CheckBox>
                       <TableCell>
-                        <Label>Quadra: {block.block}</Label>
+                        <Label>
+                          <strong>Quadra: </strong> {block.block}
+                        </Label>
                       </TableCell>
                       <Quantity>
-                        <Label>Quantidade: {block.count}</Label>
+                        <Label>
+                          <strong>Quantidade: </strong> {block.count}
+                        </Label>
                       </Quantity>
                     </TableCard>
                   ))}
