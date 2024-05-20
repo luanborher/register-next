@@ -55,6 +55,8 @@ export const InfoRow = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   padding-left: 1rem;
   margin-bottom: -2px;
+  flex-direction: row;
+  font-size: 0.9rem;
 
   .row {
     display: -webkit-box;
@@ -65,6 +67,7 @@ export const InfoRow = styled.div`
 `;
 
 export const Title = styled.div`
+  display: flex;
   width: 100%;
   height: 25px;
   border-bottom: 2px solid black;
@@ -143,4 +146,37 @@ export const Separator = styled.div`
   border-bottom: 1px solid black;
   border-style: dashed;
   margin-bottom: 15px;
+`;
+
+export const Name = styled.div`
+  width: 100%;
+  height: 40px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+`;
+
+export const HeaderList = styled.div`
+  width: 100%;
+  height: auto;
+  border: 2px solid black;
+  margin-bottom: 15px;
+`;
+
+export const Column = styled.div`
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid black;
+`;
+
+export const Row = styled.div`
+  display: flex;
+  width: 100%;
+  height: 25px;
+  border-bottom: 2px solid black;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-align: center;
 `;

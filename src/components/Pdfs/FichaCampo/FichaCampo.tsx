@@ -1,5 +1,6 @@
 import React from 'react';
 import { ResponseInativas } from '@/interfaces/inativas';
+import { formatCod } from '@/utils/codification';
 import {
   Content,
   Describe,
@@ -17,15 +18,21 @@ import {
   Separator,
   Terms,
   Title,
+  Name,
+  HeaderList,
+  Column,
+  Row,
 } from './styles';
 
 interface ComponentToPrintProps {
   inativas: ResponseInativas[];
   contract: string;
+  date: string;
+  user?: string;
 }
 
 const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
-  ({ inativas, contract }, ref) => (
+  ({ inativas, contract, date, user }, ref) => (
     <Files ref={ref}>
       {inativas?.map(
         (
@@ -37,8 +44,6 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
             hidrometer,
             number,
             street,
-            atc,
-            group,
             block,
             local,
             route,
@@ -87,7 +92,15 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                 <InfoRow>
                   <div className="row">
                     Cod.:{' '}
-                    {`${atc}.${group}.${sector}.${route}.${block}.${local}.${sublocal}.${village}`}
+                    <span>
+                      {`${formatCod(sector, 3)}.${formatCod(
+                        route,
+                        3,
+                      )}.${formatCod(block, 4)}.${formatCod(
+                        local,
+                        4,
+                      )}.${formatCod(sublocal, 4)}.${formatCod(village, 4)}`}
+                    </span>
                   </div>
                   <div className="row">Setor: {sector}</div>
                   <div className="row">Serviço: {type.toUpperCase()}</div>
@@ -116,7 +129,7 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                     __________________________________________________________________
                   </DescribeRow>
                   <DescribeRow style={{ width: '235px', border: 'none' }}>
-                    Data: ___________________
+                    Data: {date}
                   </DescribeRow>
                 </Describe>
               </Terms>
@@ -161,7 +174,15 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                 <InfoRow>
                   <div className="row">
                     Cod.:{' '}
-                    {`${atc}.${group}.${sector}.${route}.${block}.${local}.${sublocal}.${village}`}
+                    <span>
+                      {`${formatCod(sector, 3)}.${formatCod(
+                        route,
+                        3,
+                      )}.${formatCod(block, 4)}.${formatCod(
+                        local,
+                        4,
+                      )}.${formatCod(sublocal, 4)}.${formatCod(village, 4)}`}
+                    </span>
                   </div>
                   <div className="row">Setor: {sector}</div>
                   <div className="row">Serviço: {type.toUpperCase()}</div>
@@ -260,12 +281,12 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
               <Describe>
                 <DescribeRow>Assinatura cliente:</DescribeRow>
                 <DescribeRow style={{ paddingLeft: '15rem' }}>
-                  Data:
+                  Data: {date}
                 </DescribeRow>
               </Describe>
               <Describe>
                 <DescribeRow style={{ borderBottom: 'none' }}>
-                  Assinatura funcionário:
+                  Funcionário: {user}
                 </DescribeRow>
                 <DescribeRow
                   style={{ paddingLeft: '15rem', borderBottom: 'none' }}
@@ -276,6 +297,104 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
             </Footer>
           </Main>
         ),
+      )}
+
+      {user && (
+        <Main>
+          <HeaderList>
+            <Header>
+              <Logo src="/assets/logos.png" />
+              <div>
+                PROGRAMA ÁGUA LEGAL - {date} <br /> vistoria de consumo
+              </div>
+              <Logo src="/assets/Sabesp.svg" />
+            </Header>
+
+            <Name>Funcionário: {user}</Name>
+          </HeaderList>
+
+          <Content style={{ borderBottom: 'none', height: 'auto' }}>
+            <Row>
+              <Column style={{ fontWeight: '500', maxWidth: '40px' }}>
+                QTD
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '100px' }}>
+                PDE
+              </Column>
+              <Column style={{ maxWidth: '150px', fontWeight: '500' }}>
+                Tipo de serviço
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '40px' }}>
+                Setor
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '40px' }}>
+                Rota
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '50px' }}>
+                Quadra
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '40px' }}>
+                Local
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '58px' }}>
+                Sublocal
+              </Column>
+              <Column style={{ fontWeight: '500', maxWidth: '40px' }}>
+                Vila
+              </Column>
+              <Column
+                style={{
+                  borderRight: 'none',
+                  fontWeight: '500',
+                }}
+              >
+                Retorno
+              </Column>
+            </Row>
+            {inativas?.map(
+              (
+                { pde, type, block, local, route, sector, sublocal, village },
+                index,
+              ) => (
+                <Row key={+index}>
+                  <Column style={{ maxWidth: '40px' }}>1</Column>
+                  <Column style={{ maxWidth: '100px' }}>{pde}</Column>
+                  <Column style={{ maxWidth: '150px' }}>{type}</Column>
+                  <Column style={{ maxWidth: '40px' }}>
+                    {formatCod(sector, 3)}
+                  </Column>
+                  <Column style={{ maxWidth: '40px' }}>
+                    {formatCod(route, 3)}
+                  </Column>
+                  <Column style={{ maxWidth: '50px' }}>
+                    {formatCod(block, 4)}
+                  </Column>
+                  <Column style={{ maxWidth: '40px' }}>
+                    {formatCod(local, 4)}
+                  </Column>
+                  <Column style={{ maxWidth: '58px' }}>
+                    {formatCod(sublocal, 4)}
+                  </Column>
+                  <Column style={{ maxWidth: '40px' }}>
+                    {formatCod(village, 4)}
+                  </Column>
+                  <Column style={{ borderRight: 'none' }} />
+                </Row>
+              ),
+            )}
+          </Content>
+
+          <Footer style={{ height: '80px' }}>
+            <Describe style={{ height: '100%' }}>
+              <DescribeRow style={{ borderBottom: 'none' }}>
+                Funcionário: ___________________________________________
+              </DescribeRow>
+              <DescribeRow style={{ borderBottom: 'none' }}>
+                Atendente: ___________________________________________
+              </DescribeRow>
+            </Describe>
+          </Footer>
+        </Main>
       )}
     </Files>
   ),
