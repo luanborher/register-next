@@ -14,7 +14,6 @@ import { FaDownload } from 'react-icons/fa';
 import ModalImport from '@/components/Modals/ModalImport/ModalImport';
 import { useReactToPrint } from 'react-to-print';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
-import OrdensServico from '@/components/Pdfs/OrdensServico/OrdensServico';
 import { ResponseInativas } from '@/interfaces/inativas';
 import Loading from '@/components/Modals/Loading/Loading';
 import { ButtonImport } from '../records/styles';
@@ -45,7 +44,6 @@ interface Option {
 const IndexPage = () => {
   const query = useQueryClient();
   const componentRef = useRef<HTMLDivElement>(null);
-  const orderRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -70,9 +68,7 @@ const IndexPage = () => {
 
   const clear = {
     all: () => {
-      setUser(undefined);
       setShowModal(false);
-      setDate('');
       setSectorSelected([]);
       setRoutesSelected([]);
       setBlocksSelected([]);
@@ -377,11 +373,9 @@ const IndexPage = () => {
           ref={componentRef}
           inativas={response}
           contract="PIRITUBA - EXTREMO NORTE"
+          date={date ? format(addDays(date, 1), 'dd/MM/yyyy') : '__/__/____'}
+          user={user?.label}
         />
-      </Hidden>
-
-      <Hidden>
-        <OrdensServico ref={orderRef} />
       </Hidden>
 
       {loading && <Loading />}
