@@ -149,13 +149,19 @@ export const Separator = styled.div`
 `;
 
 export const Name = styled.div`
+  display: flex;
   width: 100%;
   height: 40px;
+`;
+
+export const NameColumn = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0 1rem;
-  display: flex;
-  align-items: center;
 `;
 
 export const HeaderList = styled.div`

@@ -22,17 +22,19 @@ import {
   HeaderList,
   Column,
   Row,
+  NameColumn,
 } from './styles';
 
 interface ComponentToPrintProps {
   inativas: ResponseInativas[];
   contract: string;
   date: string;
+  total?: number;
   user?: string;
 }
 
 const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
-  ({ inativas, contract, date, user }, ref) => (
+  ({ inativas, contract, date, user, total }, ref) => (
     <Files ref={ref}>
       {inativas?.map(
         (
@@ -304,13 +306,14 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
           <HeaderList>
             <Header>
               <Logo src="/assets/logos.png" />
-              <div>
-                PROGRAMA ÁGUA LEGAL - {date} <br /> vistoria de consumo
-              </div>
+              <div>VISITA DE INATIVA/CONSUMO ZERO - {date}</div>
               <Logo src="/assets/Sabesp.svg" />
             </Header>
 
-            <Name>Funcionário: {user}</Name>
+            <Name>
+              <NameColumn>Funcionário: {user}</NameColumn>
+              <NameColumn>Quantidade: {total}</NameColumn>
+            </Name>
           </HeaderList>
 
           <Content style={{ borderBottom: 'none', height: 'auto' }}>

@@ -53,6 +53,7 @@ const IndexPage = () => {
   const [blocksSelected, setBlocksSelected] = useState<Block[]>([]);
   const [response, setInativas] = useState<ResponseInativas[]>([]);
 
+  const [total, settotal] = useState(0);
   const [date, setDate] = useState('');
   const [user, setUser] = useState<Option>();
   const [file, setFile] = useState<File>();
@@ -99,11 +100,11 @@ const IndexPage = () => {
 
       const response = data?.flat() || [];
 
+      settotal(blocksSelected?.reduce((t, o) => t + o.count, 0));
       setInativas(response);
 
       clear.all();
       query.invalidateQueries({ queryKey: ['prateleiraData'] });
-
       handleSuccess('Ordem de serviço enviada.');
     } catch (error) {
       handleError(error);
@@ -373,6 +374,7 @@ const IndexPage = () => {
           ref={componentRef}
           inativas={response}
           contract="PIRITUBA - EXTREMO NORTE"
+          total={total || 0}
           date={date ? format(addDays(date, 1), 'dd/MM/yyyy') : '__/__/____'}
           user={user?.label}
         />
