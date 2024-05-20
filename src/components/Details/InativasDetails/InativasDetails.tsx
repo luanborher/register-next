@@ -383,6 +383,7 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
         <FichaCampo
           ref={componentRef}
           contract="PIRITUBA - EXTREMO NORTE"
+          date={client.created_at || '__/__/____'}
           inativas={[
             {
               ...client,
