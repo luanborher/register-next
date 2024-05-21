@@ -39,7 +39,7 @@ const IndexPage = () => {
       pde: '',
       date: '',
       type: {
-        label: '',
+        label: 'Todos',
         value: '',
       },
     },
@@ -49,45 +49,59 @@ const IndexPage = () => {
     status: watch('status').value,
   };
 
-  const { data: inativasList } = useQuery({
-    queryKey: ['inativasData', inativasParam],
-    queryFn: async () => getInativas(inativasParam),
-  });
-
-  const normalizeText = (texto: string) => {
+  const normalize = (texto: string) => {
     return texto
       ?.normalize('NFD')
       ?.replace(/[\u0300-\u036f]/g, '')
-      ?.replace(/[^\w\s]/gi, '');
+      ?.replace(/[^\w\s]/gi, '')
+      ?.replace(' ', '')
+      ?.toLowerCase();
   };
 
-  const inativas = inativasList?.filter(
-    item =>
-      item.pde.includes(watch('pde')) &&
-      normalizeText(item.InativasSent?.[0]?.name)
-        .toLowerCase()
-        .includes(normalizeText(watch('name')).toLowerCase()) &&
-      normalizeText(item.InativasSent?.[0]?.type).includes(
-        normalizeText(watch('type')?.value || ''),
-      ),
-  );
+  const { data: inativasList } = useQuery({
+    queryKey: ['inativasData', inativasParam],
+    queryFn: async () => {
+      const data = await getInativas(inativasParam);
 
-  console.log(watch('date'));
+      return data.map(item => ({
+        ...item,
+        filter: normalize(item.InativasSent?.[0]?.type),
+        userName: normalize(item.InativasSent?.[0]?.name),
+      }));
+    },
+  });
+
+  const inativas = inativasList?.filter(item => {
+    if (watch('type')?.value !== '') {
+      return (
+        item.pde.includes(watch('pde')) &&
+        normalize(item.userName)?.includes(normalize(watch('name'))) &&
+        item?.filter === normalize(watch('type')?.value)
+      );
+    }
+
+    return (
+      item.pde.includes(watch('pde')) &&
+      normalize(item.userName)?.includes(normalize(watch('name')))
+    );
+  });
 
   const { data: users } = useQuery({
     queryKey: ['usersData'],
     queryFn: async () => getUser(),
   });
 
-  const renderSituationColors = (status: string) => {
-    const colors = {
-      VALIDATED: '#14dd46',
-      SENT: '#FF9100',
-      REVIEW: '#008cff',
-    } as any;
+  const colors = {
+    VALIDATED: '#14dd46',
+    SENT: '#FF9100',
+    REVIEW: '#008cff',
+  } as any;
 
-    return colors[status || 'NORMAL'];
-  };
+  const status = {
+    VALIDATED: 'VALIDADO',
+    SENT: 'PENDENTE',
+    REVIEW: 'EM ANÁLISE',
+  } as any;
 
   return (
     <RootLayout>
@@ -112,18 +126,21 @@ const IndexPage = () => {
             placeholder="Selecione..."
             onChange={e => e && setValue('status', e)}
             defaultValue={option}
+            isClearable={false}
             options={[
               { value: 'REVIEW', label: 'Em análise' },
               { value: 'SENT', label: 'Pendente' },
+              { value: 'VALIDATED', label: 'Validados' },
             ]}
           />
 
           <Select
             id="type"
-            refetch={() => setValue('type', {} as Option)}
             placeholder="Selecione..."
             onChange={e => e && setValue('type', e)}
-            options={INACTIVE_OPTIONS}
+            isClearable={false}
+            defaultValue={{ value: '', label: 'Todos' }}
+            options={[{ value: '', label: 'Todos' }, ...INACTIVE_OPTIONS]}
           />
         </div>
 
@@ -184,14 +201,13 @@ const IndexPage = () => {
                 >
                   <Field
                     style={{
-                      color: renderSituationColors(
-                        inativa.InativasSent?.[0]?.status || 'VALIDATED',
-                      ),
+                      color:
+                        colors[
+                          inativa.InativasSent?.[0]?.status || 'VALIDATED'
+                        ],
                     }}
                   >
-                    {inativa.InativasSent?.[0]?.status === 'REVIEW'
-                      ? 'EM ANÁLISE'
-                      : 'PENDENTE'}
+                    {status[inativa.InativasSent?.[0]?.status]}
                   </Field>
                 </TableCell>
               </TableRow>
