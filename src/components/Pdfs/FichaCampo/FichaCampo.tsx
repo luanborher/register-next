@@ -53,6 +53,7 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
             sublocal,
             village,
             complement,
+            consulted_status,
           },
           index,
         ) => (
@@ -105,7 +106,9 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                     </span>
                   </div>
                   <div className="row">Setor: {sector}</div>
-                  <div className="row">Serviço: {type.toUpperCase()}</div>
+                  <div className="row">
+                    Serviço: {consulted_status.toUpperCase()}
+                  </div>
                 </InfoRow>
               </Info>
 
@@ -187,7 +190,9 @@ const FichaCampo = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                     </span>
                   </div>
                   <div className="row">Setor: {sector}</div>
-                  <div className="row">Serviço: {type.toUpperCase()}</div>
+                  <div className="row">
+                    Serviço: {consulted_status.toUpperCase()}
+                  </div>
                 </InfoRow>
               </Info>
 
