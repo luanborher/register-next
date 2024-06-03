@@ -10,12 +10,12 @@ import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
 import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
 import { addDays, format } from 'date-fns';
-import { FaDownload } from 'react-icons/fa';
 import ModalImport from '@/components/Modals/ModalImport/ModalImport';
 import { useReactToPrint } from 'react-to-print';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
 import { ResponseInativas } from '@/interfaces/inativas';
 import Loading from '@/components/Modals/Loading/Loading';
+import { FaFileImport } from 'react-icons/fa6';
 import { ButtonImport } from '../records/styles';
 import {
   TableCard,
@@ -188,7 +188,7 @@ const IndexPage = () => {
         <ExportRow>
           <ButtonImport>
             Importar inativas
-            <FaDownload className="icon" />
+            <FaFileImport className="icon" />
             <input
               type="file"
               accept=".xlsx, .xls, .csv, .xlsm"

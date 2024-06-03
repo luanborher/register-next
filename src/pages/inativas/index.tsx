@@ -15,7 +15,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { INACTIVE_OPTIONS } from '@/utils/options';
 import { useForm } from 'react-hook-form';
-import { Field } from './styles';
+import { FaDatabase } from 'react-icons/fa';
+import api from '@/services/api';
+import { handleError } from '@/utils/message';
+import Loading from '@/components/Modals/Loading/Loading';
+import { ButtonImport, ExportRow, Field } from './styles';
 
 interface Option {
   value: string;
@@ -29,6 +33,7 @@ const option = {
 
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
   const [inativa, setInativa] = useState<InativasSent>({} as InativasSent);
 
@@ -44,6 +49,18 @@ const IndexPage = () => {
       },
     },
   });
+
+  const onGenerateCodification = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get<string>('/client/export-cod');
+      window.open(data, '_blank');
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const inativasParam = {
     status: watch('status').value,
@@ -144,6 +161,13 @@ const IndexPage = () => {
           />
         </div>
 
+        <ExportRow>
+          <ButtonImport onClick={onGenerateCodification}>
+            <FaDatabase className="icon" />
+            Gerar codificação
+          </ButtonImport>
+        </ExportRow>
+
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
           <TableComponent
             headers={['Nome', 'PDE', 'Endereço', 'Agente', 'Tipo', 'Status']}
@@ -225,6 +249,8 @@ const IndexPage = () => {
           />
         </Modal>
       )}
+
+      {loading && <Loading />}
     </RootLayout>
   );
 };
