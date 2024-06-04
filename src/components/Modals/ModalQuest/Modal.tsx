@@ -15,10 +15,17 @@ interface ModalProps {
   children: React.ReactNode;
   onClose: () => void;
   onConfirm: () => void;
+  loading?: boolean;
   zIndex?: number;
 }
 
-const ModalQuest = ({ children, onClose, onConfirm, zIndex }: ModalProps) => (
+const ModalQuest = ({
+  children,
+  onClose,
+  onConfirm,
+  loading,
+  zIndex,
+}: ModalProps) => (
   <ModalContainer zIndex={zIndex}>
     <ModalContent>
       <ContainerHeader>
@@ -30,7 +37,9 @@ const ModalQuest = ({ children, onClose, onConfirm, zIndex }: ModalProps) => (
       <ContainerButtons>
         <ButtonCancel onClick={onClose}>Fechar</ButtonCancel>
 
-        <ButtonConfirm onClick={onConfirm}>Confirmar</ButtonConfirm>
+        <ButtonConfirm onClick={onConfirm} disabled={loading}>
+          Confirmar
+        </ButtonConfirm>
       </ContainerButtons>
     </ModalContent>
   </ModalContainer>

@@ -24,10 +24,32 @@ import {
 } from './styles';
 import ModalQuest from '../ModalQuest/Modal';
 import ModalStreet from '../ModalStreet/ModalStreet';
+import Loading from '../Loading/Loading';
 
 interface Option {
   label: string;
   value: string;
+}
+
+interface IStreet {
+  name: string;
+  id: string;
+  cep?: string | null;
+  community_id?: string | null;
+  contract_id?: string | null;
+}
+
+interface IInfo {
+  name: string;
+  id: string;
+}
+
+interface IAdreess {
+  name: string;
+  id: string;
+  cep?: string;
+  community_id?: string | null;
+  contract_id?: string | null;
 }
 
 interface FormProps {
@@ -47,21 +69,10 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
   const [community, setCommunity] = useState<Community[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [street, setStreet] = useState({} as {
-    name: string;
-    id: string;
-    cep?: string;
-    community_id?: string;
-  });
-  const [deleteInfo, setDeleteInfo] = useState<{
-    name: string;
-    id: string;
-  } | null>(null);
-  const [address, setAddress] = useState<{
-    name: string;
-    id: string;
-    cep?: string;
-  }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [street, setStreet] = useState({} as IStreet);
+  const [deleteInfo, setDeleteInfo] = useState<IInfo | null>(null);
+  const [address, setAddress] = useState<IAdreess[]>([]);
 
   const { register, handleSubmit, control } = useForm<FormProps>();
 
@@ -90,6 +101,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
         setAddress(data?.map(communitys => ({
           name: communitys.name,
           id: communitys.id,
+          contract_id: communitys.contract_id,
         })).reverse() || []);
       }
 
@@ -122,10 +134,8 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     }
   };
 
-  useEffect(() => {
-    if (type === 'contract') {
-      getContract();
-    }
+  const onReset = () => {
+    if (type === 'contract') getContract();
     if (type === 'community') {
       getContract();
       getCommunity();
@@ -133,10 +143,15 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     if (type === 'street') {
       getStreet();
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    onReset();
+  }, [type]);
 
   const onSaveContract: SubmitHandler<FormProps> = async data => {
     try {
+      setLoading(true);
       await api.post('/general/contract', {
         name: data.name,
       });
@@ -145,11 +160,14 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       getContract();
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onSaveCommunities: SubmitHandler<FormProps> = async data => {
     try {
+      setLoading(true);
       await api.post('/general/community', {
         name: data.name,
         contract_id: data.contract_id,
@@ -159,11 +177,14 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       getCommunity();
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onSaveStreet: SubmitHandler<FormProps> = async data => {
     try {
+      setLoading(true);
       await api.post('/general/street', {
         name: data.name,
         cep: data.cep || '00000-000',
@@ -174,38 +195,23 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       getStreet();
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const onDelete = async () => {
     try {
-      if (type === 'contract') {
-        await api.delete(`/general/contract/${deleteInfo?.id}`);
-      }
-      if (type === 'community') {
-        await api.delete(`/general/community/${deleteInfo?.id}`);
-      }
-      if (type === 'street') {
-        await api.delete(`/general/street/${deleteInfo?.id}`);
-      }
-
+      setLoading(true);
+      await api.delete(`/general/${type}/${deleteInfo?.id}`);
       handleSuccess('Deletado com sucesso!');
       setDeleteInfo(null);
       setShowModal(false);
-
-      if (type === 'contract') {
-        getContract();
-      }
-      if (type === 'community') {
-        getCommunity();
-        getContract();
-      }
-      if (type === 'street') {
-        getCommunity();
-        getStreet();
-      }
+      onReset();
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -219,15 +225,17 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
     return titles[type || 'contract'];
   };
 
+  const functions = {
+    contract: onSaveContract,
+    community: onSaveCommunities,
+    street: onSaveStreet,
+  } as any;
+
   return (
-    <Wrapper>
-      <Header
-        title={renderTitle()}
-        action
-      >
+    <Wrapper onSubmit={handleSubmit(functions[type])}>
+      <Header title={renderTitle()} action>
         <BackButton onClick={onClose}>
           <ChevronLeft color="#a5a5a5" size={22} />
-
           <BackText>Fechar</BackText>
         </BackButton>
       </Header>
@@ -271,20 +279,7 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
       </Row>
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-        <ButtonConfirm
-          type="submit"
-          onClick={() => {
-            if (type === 'contract') {
-              handleSubmit(onSaveContract)();
-            }
-            if (type === 'community') {
-              handleSubmit(onSaveCommunities)();
-            }
-            if (type === 'street') {
-              handleSubmit(onSaveStreet)();
-            }
-          }}
-        >
+        <ButtonConfirm type="submit" disabled={loading}>
           Salvar
         </ButtonConfirm>
       </Row>
@@ -309,7 +304,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
 
               <TableCell align="right" width={40} className="p-0">
                 <ActionsIcons>
-                  {type === 'street' && (
                     <Edit3Icon
                       size={24}
                       className="self-end"
@@ -318,7 +312,6 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
                         setShowEdit(true);
                       }}
                     />
-                  )}
 
                   <TrashIcon
                     size={24}
@@ -338,11 +331,12 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
 
       {showModal && deleteInfo && (
         <ModalQuest
+          onConfirm={onDelete}
+          loading={loading}
           onClose={() => {
             setDeleteInfo(null);
             setShowModal(false);
           }}
-          onConfirm={onDelete}
         >
           Deseja deletar esse cadastro?
         </ModalQuest>
@@ -350,19 +344,17 @@ const ModalAddress = ({ onClose, type }: ClientsDetailsProps) => {
 
       {showEdit && street?.id && (
         <ModalStreet
+          onRefresh={onReset}
+          street={street}
+          type={type}
           onClose={() => {
-            setStreet({} as {
-              name: string;
-              id: string;
-              cep?: string;
-              community_id?: string;
-            });
+            setStreet({} as any);
             setShowEdit(false);
           }}
-          onRefresh={() => getStreet()}
-          street={street}
         />
       )}
+
+      {loading && <Loading />}
     </Wrapper>
   );
 };
