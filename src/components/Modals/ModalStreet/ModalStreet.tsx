@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import api from '@/services/api';
@@ -17,48 +17,64 @@ import {
 
 interface FormProps {
   name: string;
-  cep: string;
-  community_id: string;
+  cep?: string;
+  community_id?: string | null;
+  contract_id?: string | null;
 }
 
 interface ModalProps {
   onClose: () => void;
   onRefresh: () => void;
+  type: string;
   street: {
     name: string;
     id: string;
-    cep?: string;
-    community_id?: string;
+    cep?: string | null;
+    community_id?: string | null;
+    contract_id?: string | null;
   };
 }
 
-const ModalStreet = ({ onClose, onRefresh, street }: ModalProps) => {
+const ModalStreet = ({ onClose, onRefresh, street, type }: ModalProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const { register, handleSubmit } = useForm<FormProps>({
     defaultValues: {
-      name: street.name,
-      community_id: street.community_id,
-      cep: street.cep,
+      ...(type === 'street' && {
+        name: street.name,
+        community_id: street.community_id || '',
+        cep: street.cep || '',
+      }),
+      ...(type === 'community' && {
+        name: street.name,
+        contract_id: street.contract_id || '',
+      }),
+      ...(type === 'contract' && {
+        name: street.name,
+      }),
     },
   });
 
   const onSubmit: SubmitHandler<FormProps> = async data => {
     try {
-      await api.put(`/general/street/${street.id}`, {
-        ...data,
-      });
+      setLoading(true);
 
-      handleSuccess('Rua atualizada com sucesso!');
+      await api.put(`/general/${type}/${street.id}`, data);
+
+      handleSuccess('Dados atualizada com sucesso!');
       onRefresh();
       onClose();
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <ModalContainer>
       <ModalContent>
-        <ContainerTitle>Editar informações da rua</ContainerTitle>
+        <ContainerTitle>Editar informações</ContainerTitle>
 
         <InputText
           label="Nome"
@@ -66,12 +82,13 @@ const ModalStreet = ({ onClose, onRefresh, street }: ModalProps) => {
           {...register('name', { required: true })}
         />
 
-        <InputText label="CEP" placeholder="CEP" {...register('cep')} />
+        {type === 'street' && (
+          <InputText label="CEP" placeholder="CEP" {...register('cep')} />
+        )}
 
         <ContainerButtons>
           <ButtonCancel onClick={onClose}>Fechar</ButtonCancel>
-
-          <ButtonConfirm type="submit" onClick={handleSubmit(onSubmit)}>
+          <ButtonConfirm type="submit" onClick={handleSubmit(onSubmit)} disabled={loading}>
             Confirmar
           </ButtonConfirm>
         </ContainerButtons>

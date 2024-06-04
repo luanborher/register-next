@@ -34,10 +34,11 @@ export const ContainerPagination = styled.div`
 export const ButtonImport = styled.label`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 0.3rem 1rem;
   border: 1px solid #8cd630;
   border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
 
   .icon {
@@ -61,6 +62,7 @@ export const ExportRow = styled.div`
   justify-content: end;
   padding-bottom: 10px;
   color: #8cd630;
+  gap: 1.5rem;
 `;
 
 export const Field = styled.div`

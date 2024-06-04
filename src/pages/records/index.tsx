@@ -28,7 +28,9 @@ import {
 } from '@/interfaces/Records';
 
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
-import { ContainerPagination, Content, ExportRow, Field } from './styles';
+import { FaDatabase } from 'react-icons/fa';
+import Loading from '@/components/Modals/Loading/Loading';
+import { ButtonImport, ContainerPagination, Content, ExportRow, Field } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
@@ -39,6 +41,7 @@ const IndexPage = () => {
   const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -138,6 +141,18 @@ const IndexPage = () => {
     getContract();
   }, []);
 
+  const onGenerateCodification = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get<string>('/client/export-cod');
+      window.open(data, '_blank');
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openDetails = (client: Records) => {
     setClientSelected(client);
     setShowDetails(true);
@@ -205,12 +220,21 @@ const IndexPage = () => {
         />
 
         <ExportRow>
-          <FaDownload
-            style={{ cursor: 'pointer' }}
-            color="#8cd630"
-            size={22}
-            onClick={() => setShowQuest(true)}
-          />
+          <ButtonImport>
+            <FaDatabase
+              className="icon"
+              onClick={onGenerateCodification}
+            />
+            Exportar codificação
+          </ButtonImport>
+
+          <ButtonImport>
+            <FaDownload
+              className="icon"
+              onClick={() => setShowQuest(true)}
+            />
+            Exportar cadastros
+          </ButtonImport>
         </ExportRow>
 
         <Content>
@@ -324,6 +348,8 @@ const IndexPage = () => {
             Deseja exportar os dados?
           </ModalQuest>
         )}
+
+        {loading && <Loading />}
       </main>
     </RootLayout>
   );
