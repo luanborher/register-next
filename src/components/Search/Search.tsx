@@ -1,16 +1,9 @@
 /* eslint-disable operator-linebreak */
-import {
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from 'react-hook-form';
-
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormWatch } from 'react-hook-form';
 import { Filtered, RecordsFilter } from '@/interfaces/Records';
-
 import Select from '../Select/Select';
 import InputText from '../Input/Input';
-
-import { Button, LabelButton } from './styles';
 
 interface SearchProps {
   register: UseFormRegister<RecordsFilter>;
@@ -44,9 +37,7 @@ const Search = ({
           })) || []),
         ]}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -78,9 +69,7 @@ const Search = ({
             []),
         ]}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -113,9 +102,7 @@ const Search = ({
             []),
         ]}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -143,9 +130,7 @@ const Search = ({
           { value: 'NORMAL', label: 'Normal' },
         ]}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -162,9 +147,7 @@ const Search = ({
           { value: 'REJECTED', label: 'Rejeitado' },
         ]}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -172,9 +155,7 @@ const Search = ({
         placeholder="Buscar por nome"
         {...register('name')}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
 
@@ -183,15 +164,9 @@ const Search = ({
         placeholder="Data de cadastro"
         {...register('date')}
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
+          if (e.key === 'Enter') onSubmit();
         }}
       />
-
-      <Button onClick={onSubmit}>
-        <LabelButton>Buscar</LabelButton>
-      </Button>
     </div>
   </div>
 );

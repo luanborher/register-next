@@ -28,8 +28,8 @@ const Pagination = ({ page, onChangePage, pageCount }: Props) => (
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="8.247"
-            height="16.889"
+            width="9.247"
+            height="17.889"
             viewBox="0 0 8.247 16.889"
           >
             <path
@@ -57,8 +57,8 @@ const Pagination = ({ page, onChangePage, pageCount }: Props) => (
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="8.247"
-            height="16.889"
+            width="9.247"
+            height="17.889"
             viewBox="0 0 8.247 16.889"
           >
             <path

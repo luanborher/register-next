@@ -54,13 +54,14 @@ export const PaginationPageLimit = styled.li`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
+  min-width: 1.5rem;
   height: 1.5rem;
   font-size: 0.875rem;
   font-weight: 700;
   border-radius: 0.3125rem;
   background-color: #bbe28a;
   color: #171717;
+  padding: 0 0.2rem;
 
   cursor: pointer;
 `;
