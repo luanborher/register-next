@@ -138,4 +138,5 @@ export const Image = styled.img`
   box-shadow: 1px 1px 4px 0px #b1b1b1;
   object-fit: contain;
   cursor: pointer;
+  background-color: white;
 `;

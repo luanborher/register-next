@@ -14,10 +14,6 @@ export interface Records {
   telephone: string;
   gender: string;
   birthDate: string;
-
-  user_id: string;
-  user: User;
-
   entity_type: string;
   marital_status: string;
   number_people_living: number;
@@ -26,13 +22,17 @@ export interface Records {
   profession: string;
   unemployed: boolean;
   status: string;
-  property: Property;
-  social_information: SocialInformation;
+  what_awaits_your_family: string;
+  fornecimento: string;
+  situation_status: string;
   created_at: string;
   updated_at: string;
-  situation_status: string;
 
-  what_awaits_your_family: string;
+  property: Property;
+  social_information: SocialInformation;
+
+  user_id: string;
+  user: User;
 
   attendant_name: string;
   attendant_cpf: string;
@@ -46,8 +46,6 @@ export interface Property {
   codification: string;
   street_code: string;
   area: number;
-  hydrometer_number: string;
-  old_hydro: string;
   registration: string;
   street: Street;
   street_id: string;
@@ -64,6 +62,9 @@ export interface Property {
   structure_type: string;
   bed: string;
   tour: string;
+  old_hydro: string;
+  hydrometer_number: string;
+  pde: string;
 
   status: string;
   reservoir: boolean;

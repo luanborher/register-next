@@ -151,6 +151,10 @@ const ClientsDetails = ({
     }
   });
 
+  const normalizeUrl = (value: string) => {
+    return value.includes('https') ? value : `${baseURL}files/${value}`;
+  };
+
   const renderSubtitle = () => {
     const createdAt = formatDateHours(client.created_at);
     const status = renderStatus(client.status);
@@ -180,7 +184,16 @@ const ClientsDetails = ({
           placeholder="Nome completo"
           {...register('name')}
         />
+
         <InputText label="CPF" placeholder="CPF" {...register('cpf')} />
+
+        <InputText
+          label="Fornecimento"
+          placeholder="Fornecimento"
+          color="#8CD630"
+          style={{ border: '2px solid #8CD630' }}
+          {...register('fornecimento')}
+        />
       </Row>
 
       <Row>
@@ -191,6 +204,7 @@ const ClientsDetails = ({
           placeholder="Celular"
           {...register('phone')}
         />
+
         <InputText type="date" label="Nascimento" {...register('birthDate')} />
       </Row>
 
@@ -269,6 +283,30 @@ const ClientsDetails = ({
 
       <Row>
         <InputText
+          label="PDE"
+          placeholder="PDE"
+          color="#8CD630"
+          style={{ border: '2px solid #8CD630' }}
+          {...register('property.pde')}
+        />
+
+        <InputText
+          label="Hidrômetro"
+          placeholder="Hidrômetro"
+          color="#8CD630"
+          style={{ border: '2px solid #8CD630' }}
+          {...register('property.hydrometer_number')}
+        />
+
+        <InputText
+          label="Hidrômetro antigo"
+          placeholder="Hidrômetro antigo"
+          {...register('property.old_hydro')}
+        />
+      </Row>
+
+      <Row>
+        <InputText
           label="Codificação"
           placeholder="Codificação"
           {...register('property.codification')}
@@ -284,20 +322,6 @@ const ClientsDetails = ({
           label="Área"
           placeholder="Área"
           {...register('property.area')}
-        />
-      </Row>
-
-      <Row>
-        <InputText
-          label="Hidrômetro"
-          placeholder="Hidrômetro"
-          {...register('property.hydrometer_number')}
-        />
-
-        <InputText
-          label="Hidrômetro antigo"
-          placeholder="Hidrômetro antigo"
-          {...register('property.old_hydro')}
         />
       </Row>
 
@@ -567,17 +591,11 @@ const ClientsDetails = ({
       <Row style={{ justifyContent: 'center' }}>
         {client.property.first_document_url && (
           <Image
-            src={
-              client.property.first_document_url.includes('https')
-                ? client.property.first_document_url
-                : `${baseURL}files/${client.property.first_document_url}`
-            }
+            src={normalizeUrl(client.property.first_document_url)}
             alt="Documento 1"
             onClick={() => {
               setShowImage(true);
-              setUrlImage(
-                `${baseURL}files/${client.property.first_document_url}`,
-              );
+              setUrlImage(normalizeUrl(client.property.first_document_url));
             }}
             style={{ objectFit: 'contain' }}
           />
@@ -585,17 +603,11 @@ const ClientsDetails = ({
 
         {client.property.second_document_url && (
           <Image
-            src={
-              client.property.second_document_url.includes('https')
-                ? client.property.second_document_url
-                : `${baseURL}files/${client.property.second_document_url}`
-            }
+            src={normalizeUrl(client.property.second_document_url)}
             alt="Documento 2"
             onClick={() => {
               setShowImage(true);
-              setUrlImage(
-                `${baseURL}files/${client.property.second_document_url}`,
-              );
+              setUrlImage(normalizeUrl(client.property.second_document_url));
             }}
             style={{ objectFit: 'contain' }}
           />
@@ -603,15 +615,11 @@ const ClientsDetails = ({
 
         {client.property.facade_url && (
           <Image
-            src={
-              client.property.facade_url.includes('https')
-                ? client.property.facade_url
-                : `${baseURL}files/${client.property.facade_url}`
-            }
+            src={normalizeUrl(client.property.facade_url)}
             alt="Fachada"
             onClick={() => {
               setShowImage(true);
-              setUrlImage(`${baseURL}files/${client.property.facade_url}`);
+              setUrlImage(normalizeUrl(client.property.facade_url));
             }}
             style={{ objectFit: 'contain' }}
           />
@@ -619,15 +627,11 @@ const ClientsDetails = ({
 
         {client.property.additional_url && (
           <Image
-            src={
-              client.property.additional_url.includes('https')
-                ? client.property.additional_url
-                : `${baseURL}files/${client.property.additional_url}`
-            }
+            src={normalizeUrl(client.property.additional_url)}
             alt="Adicional"
             onClick={() => {
               setShowImage(true);
-              setUrlImage(`${baseURL}files/${client.property.additional_url}`);
+              setUrlImage(normalizeUrl(client.property.additional_url));
             }}
             style={{ objectFit: 'contain' }}
           />
@@ -658,11 +662,7 @@ const ClientsDetails = ({
 
           <Row style={{ justifyContent: 'center' }}>
             <Image
-              src={
-                client.property.signature_url.includes('https')
-                  ? client.property.signature_url
-                  : `${baseURL}files/${client.property.signature_url}`
-              }
+              src={normalizeUrl(client.property.signature_url)}
               alt="Assinatura"
               style={{ width: '500px', objectFit: 'contain' }}
             />
@@ -724,7 +724,7 @@ const ClientsDetails = ({
             setUrlImage('');
           }}
         >
-          <Image src={urlImage} style={{ width: '500px', height: 'auto' }} />
+          <Image src={urlImage} style={{ width: '600px', height: 'auto' }} />
         </ModalImage>
       )}
 

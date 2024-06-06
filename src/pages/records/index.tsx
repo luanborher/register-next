@@ -1,10 +1,9 @@
-/* eslint-disable prettier/prettier */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { MoreHorizontal } from 'lucide-react';
+import { FaDownload, FaDatabase } from 'react-icons/fa6';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { MoreHorizontal } from 'lucide-react';
-import { FaDownload } from 'react-icons/fa6';
 
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
@@ -13,32 +12,27 @@ import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import ClientsDetails from '@/components/Details/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import Loading from '@/components/Modals/Loading/Loading';
 
 import api from '@/services/api';
 import { handleError } from '@/utils/message';
 import { formatDate } from '@/utils/format';
 
-import {
-  Records,
-  Paginated,
-  RecordsFilter,
-  Contract,
-  Community,
-  Street,
-} from '@/interfaces/Records';
+import { Records, Paginated, RecordsFilter } from '@/interfaces/Records';
+import { Contract, Community, Street } from '@/interfaces/Records';
 
-import ModalQuest from '@/components/Modals/ModalQuest/Modal';
-import { FaDatabase } from 'react-icons/fa';
-import Loading from '@/components/Modals/Loading/Loading';
-import { ButtonImport, ContainerPagination, Content, ExportRow, Field } from './styles';
+import { FaSearch } from 'react-icons/fa';
+import { Button, ButtonImport, ContainerPagination, Content } from './styles';
+import { ExportRow, ExportSection, Field, LabelButton } from './styles';
 
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [community, setCommunity] = useState<Community[]>([]);
   const [streets, setStreets] = useState<Street[]>([]);
+  const [selected, setSelected] = useState<Records | null>(null);
 
-  const [clientSelected, setClientSelected] = useState<Records | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -142,9 +136,11 @@ const IndexPage = () => {
   }, []);
 
   const onGenerateCodification = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       const { data } = await api.get<string>('/client/export-cod');
+
       window.open(data, '_blank');
     } catch (error) {
       handleError(error);
@@ -154,7 +150,7 @@ const IndexPage = () => {
   };
 
   const openDetails = (client: Records) => {
-    setClientSelected(client);
+    setSelected(client);
     setShowDetails(true);
   };
 
@@ -178,16 +174,6 @@ const IndexPage = () => {
     return colors[status || 'IN_REVIEW'];
   };
 
-  const handleDonwload = async () => {
-    try {
-      const { data } = await api.get<string>('/client/export-data');
-
-      window.open(data);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const renderSituationColors = (status: string) => {
     const colors = {
       NORMAL: '#14dd46',
@@ -198,58 +184,73 @@ const IndexPage = () => {
     return colors[status || 'NORMAL'];
   };
 
+  const handleDonwload = async () => {
+    setLoading(true);
+
+    try {
+      const { data } = await api.get<string>('/client/export-data');
+
+      window.open(data);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fields = [
+    'Situação',
+    'Nome',
+    'Endereço',
+    'Comunidade',
+    'Contrato',
+    'Data',
+    'Status',
+    'Ações',
+  ];
+
   return (
     <RootLayout>
       <main className="flex flex-col gap-2 h-full">
         <Header
           title="Cadastros"
-          subtitle="Primeira ligação, validação de cadastro e correções de dados."
+          subtitle="Listagem de primeira ligação, validação e correções das informações."
           action
         />
 
         <Search
-          register={register}
-          onSubmit={getClients}
           filtered={{
             contracts,
             communities: community,
             streets,
           }}
+          onSubmit={getClients}
+          register={register}
           setValue={setValue}
           watch={watch}
         />
 
         <ExportRow>
-          <ButtonImport>
-            <FaDatabase
-              className="icon"
-              onClick={onGenerateCodification}
-            />
-            Exportar codificação
-          </ButtonImport>
+          <ExportSection>
+            <ButtonImport>
+              <FaDatabase className="icon" onClick={onGenerateCodification} />
+              Exportar codificação
+            </ButtonImport>
 
-          <ButtonImport>
-            <FaDownload
-              className="icon"
-              onClick={() => setShowQuest(true)}
-            />
-            Exportar cadastros
-          </ButtonImport>
+            <ButtonImport>
+              <FaDownload className="icon" onClick={() => setShowQuest(true)} />
+              Exportar cadastros
+            </ButtonImport>
+          </ExportSection>
+
+          <Button onClick={getClients}>
+            <FaSearch />
+            <LabelButton>Buscar</LabelButton>
+          </Button>
         </ExportRow>
 
         <Content>
-          <TableComponent
-            headers={[
-              'Situação',
-              'Nome',
-              'Endereço',
-              'Comunidade',
-              'Contrato',
-              'Data',
-              'Status',
-              'Ações',
-            ]}
-          >
+          <TableComponent headers={fields}>
             {clientsList?.map(row => (
               <TableRow
                 key={row.id}
@@ -268,15 +269,17 @@ const IndexPage = () => {
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
-                  <Field title={row.name}>{row.name.toUpperCase() || '-- --'}</Field>
+                  <Field title={row.name}>
+                    {row.name.toUpperCase() || '-- --'}
+                  </Field>
                 </TableCell>
 
                 <TableCell align="left" height={55} className="p-0">
                   <Field>
                     {row.property.street.name.toUpperCase() || ''},{' '}
                     {row.property.number.toUpperCase() || ''}
-                    {row.property.complement
-                      && `, ${row.property.complement.toUpperCase()}`}
+                    {row.property.complement &&
+                      `, ${row.property.complement.toUpperCase()}`}
                   </Field>
                 </TableCell>
 
@@ -288,7 +291,8 @@ const IndexPage = () => {
 
                 <TableCell align="left" className="p-0">
                   <Field title={row.property.street.community.contract.name}>
-                    {row.property.street.community.contract.name.toUpperCase() || ''}
+                    {row.property.street.community.contract.name.toUpperCase() ||
+                      ''}
                   </Field>
                 </TableCell>
 
@@ -325,10 +329,10 @@ const IndexPage = () => {
           </ContainerPagination>
         )}
 
-        {showDetails && clientSelected && (
+        {showDetails && selected && (
           <Modal>
             <ClientsDetails
-              client={clientSelected}
+              client={selected}
               onClose={() => setShowDetails(false)}
               refetch={getClients}
               filtered={{

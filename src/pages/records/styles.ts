@@ -59,10 +59,15 @@ export const ButtonImport = styled.label`
 export const ExportRow = styled.div`
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: space-between;
   padding-bottom: 10px;
-  color: #8cd630;
+`;
+
+export const ExportSection = styled.div`
+  display: flex;
+  align-items: center;
   gap: 1.5rem;
+  color: #8cd630;
 `;
 
 export const Field = styled.div`
@@ -71,4 +76,28 @@ export const Field = styled.div`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   overflow: hidden;
+`;
+
+export const LabelButton = styled.span`
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+`;
+
+export const Button = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 175px;
+  padding: 0.3rem 1rem;
+  gap: 0.5rem;
+  color: #fff;
+  background-color: #8cd630;
+  border-radius: 8px;
+  border: none;
+
+  &:hover {
+    background-color: #8cd630;
+    opacity: 0.8;
+  }
 `;
