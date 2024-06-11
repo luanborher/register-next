@@ -19,6 +19,7 @@ interface SelectProps
   label?: string;
   id?: string;
   name?: string;
+  height?: string;
   options: Option[];
 }
 
@@ -27,6 +28,7 @@ const Select = ({
   id,
   name,
   options,
+  height,
   value,
   placeholder,
   onChange,
@@ -50,8 +52,9 @@ const Select = ({
           borderRadius: '8px',
           borderWidth: '2px',
           borderColor: isFocused ? '#e4e4e4' : '#e4e4e4',
-          padding: '0.23rem 1rem',
+          padding: height ? '0 1rem' : '0.23rem 1rem',
           color: '#818181',
+          height,
         }),
         indicatorSeparator: prev => ({
           ...prev,
