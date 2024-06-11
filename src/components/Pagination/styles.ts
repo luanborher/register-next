@@ -4,7 +4,7 @@ export const PaginationNav = styled.nav`
   margin-top: 0.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 export const PaginationUl = styled.ul`
   display: flex;
@@ -77,4 +77,11 @@ export const PaginationNext = styled.button`
   font-size: 0;
   border: none;
   cursor: pointer;
+`;
+
+export const TotalText = styled.div`
+  font-size: 1rem;
+  font-weight: 400;
+  color: #020c3b;
+  margin-left: 2rem;
 `;

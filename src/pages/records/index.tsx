@@ -34,6 +34,7 @@ const IndexPage = () => {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
 
   const { register, getValues, setValue, watch } = useForm<RecordsFilter>({
@@ -89,6 +90,7 @@ const IndexPage = () => {
       );
 
       setTotalPages(Math.ceil(data.totalCount / 10));
+      setTotal(data.totalCount);
       setClientsList(data.data);
     } catch (error) {
       handleError(error);
@@ -339,11 +341,17 @@ const IndexPage = () => {
 
         {totalPages > 1 && (
           <ContainerPagination>
+            <div />
+
             <Pagination
               onChangePage={setPage}
               page={page}
               pageCount={totalPages}
             />
+
+            <div>
+              <span>Total:</span> {total}
+            </div>
           </ContainerPagination>
         )}
 
