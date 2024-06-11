@@ -25,7 +25,7 @@ import { ExportRow, ExportSection, Field, LabelButton } from './styles';
 const IndexPage = () => {
   const [clientsList, setClientsList] = useState<Records[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
-  const [community, setCommunity] = useState<Community[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
   const [streets, setStreets] = useState<Street[]>([]);
   const [selected, setSelected] = useState<Records | null>(null);
 
@@ -76,6 +76,7 @@ const IndexPage = () => {
             page,
             limit: 10,
             number: getValues('number') || undefined,
+            name: getValues('name') || undefined,
             contract_id: getValues('contract_id') || undefined,
             street_id: getValues('street_id') || undefined,
             community_id: getValues('community_id') || undefined,
@@ -124,7 +125,7 @@ const IndexPage = () => {
         return 0;
       });
 
-      setCommunity(result);
+      setCommunities(result);
 
       await getStreet();
     } catch (error) {
@@ -228,6 +229,8 @@ const IndexPage = () => {
     'Ações',
   ];
 
+  const filtered = { contracts, communities, streets };
+
   return (
     <RootLayout>
       <main className="flex flex-col gap-2 h-full">
@@ -238,11 +241,7 @@ const IndexPage = () => {
         />
 
         <Search
-          filtered={{
-            contracts,
-            communities: community,
-            streets,
-          }}
+          filtered={filtered}
           onSubmit={getClients}
           register={register}
           setValue={setValue}
@@ -354,11 +353,7 @@ const IndexPage = () => {
               client={selected}
               onClose={() => setShowDetails(false)}
               refetch={getClients}
-              filtered={{
-                contracts,
-                communities: community,
-                streets,
-              }}
+              filtered={filtered}
             />
           </Modal>
         )}

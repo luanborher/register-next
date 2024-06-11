@@ -24,6 +24,7 @@ const Search = ({
     <SearchContent>
       <Select
         placeholder="Contrato"
+        height="40px"
         onChange={e => {
           setValue('contract_id', e?.value || '');
           setValue('community_id', '');
@@ -40,6 +41,7 @@ const Search = ({
 
       <Select
         placeholder="Comunidade"
+        height="40px"
         value={{
           value: watch('community_id') || '',
           label:
@@ -69,6 +71,7 @@ const Search = ({
 
       <Select
         placeholder="Rua"
+        height="40px"
         value={{
           value: watch('street_id') || '',
           label:
@@ -94,17 +97,19 @@ const Search = ({
         ]}
         onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
-
-      <InputText
-        placeholder="Número"
-        {...register('number')}
-        onKeyDown={e => e.key === 'Enter' && onSubmit()}
-      />
     </SearchContent>
 
     <SearchContent>
+      <InputText
+        placeholder="Número"
+        style={{ height: '40px' }}
+        {...register('number')}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
+      />
+
       <Select
         placeholder="Situação"
+        height="40px"
         onChange={e => setValue('situation', e?.value || '')}
         options={[
           { value: 'AUSENTE', label: 'Ausente' },
@@ -116,6 +121,7 @@ const Search = ({
 
       <Select
         placeholder="Status"
+        height="40px"
         onChange={e => setValue('status', e?.value || '')}
         defaultValue={{ value: 'IN_REVIEW', label: 'Auditoria' }}
         options={[
@@ -125,9 +131,20 @@ const Search = ({
         ]}
         onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
+    </SearchContent>
+
+    <SearchContent>
+      <InputText
+        type="text"
+        style={{ height: '40px' }}
+        placeholder="Busca por nome"
+        {...register('name')}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
+      />
 
       <Select
         placeholder="Filtrar por campo"
+        height="40px"
         onChange={e => setValue('field', e?.value || '')}
         options={[
           { value: 'FORNECIMENTO_PDE', label: 'Com PDE e fornecimento' },
@@ -140,6 +157,7 @@ const Search = ({
 
       <InputText
         type="date"
+        style={{ height: '40px' }}
         placeholder="Data de cadastro"
         {...register('date')}
         onKeyDown={e => e.key === 'Enter' && onSubmit()}
