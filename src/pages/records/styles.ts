@@ -25,10 +25,16 @@ export const Content = styled.div`
 export const ContainerPagination = styled.div`
   width: 100%;
   max-width: 100%;
-
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  color: black;
+  padding: 0 2rem;
+
+  span {
+    font-weight: 600;
+    color: #5c8826;
+  }
 `;
 
 export const ButtonImport = styled.label`
