@@ -1,9 +1,9 @@
-/* eslint-disable operator-linebreak */
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { UseFormWatch } from 'react-hook-form';
 import { Filtered, RecordsFilter } from '@/interfaces/Records';
 import Select from '../Select/Select';
 import InputText from '../Input/Input';
+import { SearchContainer, SearchContent } from './styles';
 
 interface SearchProps {
   register: UseFormRegister<RecordsFilter>;
@@ -20,10 +20,9 @@ const Search = ({
   setValue,
   watch,
 }: SearchProps) => (
-  <div className="flex flex-col w-full mt-8">
-    <div className="w-full flex flex-row gap-4">
+  <SearchContainer>
+    <SearchContent>
       <Select
-        id="contract_id"
         placeholder="Contrato"
         onChange={e => {
           setValue('contract_id', e?.value || '');
@@ -36,13 +35,10 @@ const Search = ({
             label: contract.name,
           })) || []),
         ]}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
       <Select
-        id="community_id"
         placeholder="Comunidade"
         value={{
           value: watch('community_id') || '',
@@ -68,13 +64,10 @@ const Search = ({
               }))) ||
             []),
         ]}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
       <Select
-        id="street_id"
         placeholder="Rua"
         value={{
           value: watch('street_id') || '',
@@ -88,9 +81,7 @@ const Search = ({
           watch('community_id') === undefined ||
           watch('contract_id') === undefined
         }
-        onChange={e => {
-          setValue('street_id', e?.value || '');
-        }}
+        onChange={e => setValue('street_id', e?.value || '')}
         options={[
           ...((watch('community_id') &&
             filtered?.streets
@@ -101,74 +92,60 @@ const Search = ({
               }))) ||
             []),
         ]}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
       <InputText
         placeholder="Número"
         {...register('number')}
-        onKeyDown={e => {
-          if (e.key === 'Enter') {
-            onSubmit();
-          }
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
-    </div>
+    </SearchContent>
 
-    <div className="flex flex-row gap-4 w-full mt-4 mb-4">
+    <SearchContent>
       <Select
-        id="situation"
         placeholder="Situação"
-        onChange={e => {
-          setValue('situation', e?.value || '');
-        }}
+        onChange={e => setValue('situation', e?.value || '')}
         options={[
           { value: 'AUSENTE', label: 'Ausente' },
           { value: 'VAGO', label: 'Vago' },
           { value: 'NORMAL', label: 'Normal' },
         ]}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
       <Select
-        id="status"
         placeholder="Status"
-        onChange={e => {
-          setValue('status', e?.value || '');
-        }}
+        onChange={e => setValue('status', e?.value || '')}
         defaultValue={{ value: 'IN_REVIEW', label: 'Auditoria' }}
         options={[
           { value: 'IN_REVIEW', label: 'Auditoria' },
           { value: 'VALIDATED', label: 'Validado' },
           { value: 'REJECTED', label: 'Rejeitado' },
         ]}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
-      <InputText
-        placeholder="Buscar por nome"
-        {...register('name')}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+      <Select
+        placeholder="Filtrar por campo"
+        onChange={e => setValue('field', e?.value || '')}
+        options={[
+          { value: 'FORNECIMENTO_PDE', label: 'Com PDE e fornecimento' },
+          { value: 'WITH_HIDRO', label: 'Com hidrômetro' },
+          { value: 'WITH_PDE', label: 'Com PDE' },
+          { value: 'WITH_FORNECIMENTO', label: 'Com fornecimento' },
+        ]}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
 
       <InputText
         type="date"
         placeholder="Data de cadastro"
         {...register('date')}
-        onKeyDown={e => {
-          if (e.key === 'Enter') onSubmit();
-        }}
+        onKeyDown={e => e.key === 'Enter' && onSubmit()}
       />
-    </div>
-  </div>
+    </SearchContent>
+  </SearchContainer>
 );
 
 export default Search;

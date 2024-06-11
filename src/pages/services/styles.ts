@@ -142,6 +142,7 @@ export const ExportRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
+  gap: 1rem;
   padding-bottom: 10px;
   color: #8cd630;
 `;
@@ -169,5 +170,47 @@ export const Label = styled.label`
   strong {
     font-weight: 500;
     margin-right: 4px;
+  }
+`;
+
+export const SendButton = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 1rem;
+  border: 1px solid #8cd630;
+  border-radius: 6px;
+  font-weight: 600;
+  background-color: #8cd630;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+export const ButtonImport = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 1rem;
+  border: 1px solid #8cd630;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+
+  .icon {
+    color: #8cd630;
+    size: 22px;
+    cursor: pointer;
+  }
+
+  &:hover {
+    background-color: #eeeeee;
+  }
+
+  input {
+    display: none;
   }
 `;

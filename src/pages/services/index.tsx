@@ -1,22 +1,21 @@
-/* eslint-disable react/jsx-no-useless-fragment */
+import { useEffect, useRef, useState } from 'react';
+import { Square, BookOpenCheck } from 'lucide-react';
+import { addDays, format } from 'date-fns';
+import { useReactToPrint } from 'react-to-print';
+import { FaFileImport, FaFileCirclePlus } from 'react-icons/fa6';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
 import { getPrateleira } from '@/services/querys/inativas';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Square, BookOpenCheck } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { Block, IInativas, Route } from '@/interfaces/prateleira';
 import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
-import api from '@/services/api';
-import { handleError, handleSuccess } from '@/utils/message';
-import { addDays, format } from 'date-fns';
-import ModalImport from '@/components/Modals/ModalImport/ModalImport';
-import { useReactToPrint } from 'react-to-print';
-import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
-import { ResponseInativas } from '@/interfaces/inativas';
 import Loading from '@/components/Modals/Loading/Loading';
-import { FaFileImport } from 'react-icons/fa6';
-import { ButtonImport } from '../records/styles';
+import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
+import { Block, IInativas, Route } from '@/interfaces/prateleira';
+import ModalImport from '@/components/Modals/ModalImport/ModalImport';
+import { handleError, handleSuccess } from '@/utils/message';
+import { ResponseInativas } from '@/interfaces/inativas';
+import api from '@/services/api';
+import ModalSendPDE from '@/components/Modals/ModalSendPDE/ModalSendPDE';
 import {
   TableCard,
   TableCell,
@@ -34,6 +33,8 @@ import {
   CheckBox,
   Quantity,
   Label,
+  SendButton,
+  ButtonImport,
 } from './styles';
 
 interface Option {
@@ -46,6 +47,7 @@ const IndexPage = () => {
   const componentRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState(false);
+  const [showModalPDE, setShowModalPDE] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
@@ -187,8 +189,8 @@ const IndexPage = () => {
 
         <ExportRow>
           <ButtonImport>
-            Importar inativas
             <FaFileImport className="icon" />
+            Importar inativas
             <input
               type="file"
               accept=".xlsx, .xls, .csv, .xlsm"
@@ -198,6 +200,11 @@ const IndexPage = () => {
               }}
             />
           </ButtonImport>
+
+          <SendButton onClick={() => setShowModalPDE(true)}>
+            <FaFileCirclePlus />
+            Enviar PDE
+          </SendButton>
         </ExportRow>
 
         <SectionList>
@@ -253,28 +260,26 @@ const IndexPage = () => {
             )}
 
             <TableComponent>
-              {sectorSelected?.map(sector => (
-                <>
-                  {sector.routes?.map((route, i) => (
-                    <TableCard key={+i} onClick={() => onSelectedRoute(route)}>
-                      <CheckBox>
-                        <Square />
-                        {routesSelected.includes(route) && <Check />}
-                      </CheckBox>
-                      <TableCell>
-                        <Label>
-                          <strong>Rota: </strong> {route.route}
-                        </Label>
-                      </TableCell>
-                      <Quantity>
-                        <Label>
-                          <strong>Quantidade: </strong> {route.count}
-                        </Label>
-                      </Quantity>
-                    </TableCard>
-                  ))}
-                </>
-              ))}
+              {sectorSelected?.map(sector =>
+                sector.routes?.map((route, i) => (
+                  <TableCard key={+i} onClick={() => onSelectedRoute(route)}>
+                    <CheckBox>
+                      <Square />
+                      {routesSelected.includes(route) && <Check />}
+                    </CheckBox>
+                    <TableCell>
+                      <Label>
+                        <strong>Rota: </strong> {route.route}
+                      </Label>
+                    </TableCell>
+                    <Quantity>
+                      <Label>
+                        <strong>Quantidade: </strong> {route.count}
+                      </Label>
+                    </Quantity>
+                  </TableCard>
+                )),
+              )}
             </TableComponent>
           </Column>
 
@@ -295,28 +300,26 @@ const IndexPage = () => {
             )}
 
             <TableComponent>
-              {routesSelected?.map(route => (
-                <>
-                  {route.blocks?.map((block, i) => (
-                    <TableCard key={+i} onClick={() => onSelectedBlock(block)}>
-                      <CheckBox>
-                        <Square />
-                        {blocksSelected.includes(block) && <Check />}
-                      </CheckBox>
-                      <TableCell>
-                        <Label>
-                          <strong>Quadra: </strong> {block.block}
-                        </Label>
-                      </TableCell>
-                      <Quantity>
-                        <Label>
-                          <strong>Quantidade: </strong> {block.count}
-                        </Label>
-                      </Quantity>
-                    </TableCard>
-                  ))}
-                </>
-              ))}
+              {routesSelected?.map(route =>
+                route.blocks?.map((block, i) => (
+                  <TableCard key={+i} onClick={() => onSelectedBlock(block)}>
+                    <CheckBox>
+                      <Square />
+                      {blocksSelected.includes(block) && <Check />}
+                    </CheckBox>
+                    <TableCell>
+                      <Label>
+                        <strong>Quadra: </strong> {block.block}
+                      </Label>
+                    </TableCell>
+                    <Quantity>
+                      <Label>
+                        <strong>Quantidade: </strong> {block.count}
+                      </Label>
+                    </Quantity>
+                  </TableCard>
+                )),
+              )}
             </TableComponent>
           </Column>
 
@@ -353,6 +356,10 @@ const IndexPage = () => {
               {blocksSelected?.reduce((total, obg) => total + obg.count, 0)}
             </Resume>
           </ModalInativas>
+        )}
+
+        {showModalPDE && (
+          <ModalSendPDE onClose={() => setShowModalPDE(false)} />
         )}
       </main>
 
