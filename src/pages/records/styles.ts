@@ -56,6 +56,23 @@ export const ButtonImport = styled.label`
   }
 `;
 
+export const SendButton = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 1rem;
+  border: 1px solid #8cd630;
+  border-radius: 6px;
+  font-weight: 600;
+  background-color: #8cd630;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 export const ExportRow = styled.div`
   display: flex;
   align-items: center;

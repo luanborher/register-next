@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MoreHorizontal } from 'lucide-react';
+import { FaSearch } from 'react-icons/fa';
 import { FaDownload, FaDatabase } from 'react-icons/fa6';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
 import TableComponent from '@/components/Table/Table';
@@ -14,15 +14,11 @@ import ClientsDetails from '@/components/Details/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import Loading from '@/components/Modals/Loading/Loading';
-
 import api from '@/services/api';
 import { handleError } from '@/utils/message';
 import { formatDate } from '@/utils/format';
-
 import { Records, Paginated, RecordsFilter } from '@/interfaces/Records';
 import { Contract, Community, Street } from '@/interfaces/Records';
-
-import { FaSearch } from 'react-icons/fa';
 import { Button, ButtonImport, ContainerPagination, Content } from './styles';
 import { ExportRow, ExportSection, Field, LabelButton } from './styles';
 
@@ -47,6 +43,8 @@ const IndexPage = () => {
     },
   });
 
+  const onValidateStatus = () => {};
+
   const getClients = async () => {
     try {
       const { data } = await api.get<Paginated<Records[]>>(
@@ -55,7 +53,6 @@ const IndexPage = () => {
           params: {
             page,
             limit: 10,
-
             name: getValues('name') || undefined,
             number: getValues('number') || undefined,
             contract_id: getValues('contract_id') || undefined,
