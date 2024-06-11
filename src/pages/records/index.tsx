@@ -43,7 +43,29 @@ const IndexPage = () => {
     },
   });
 
-  const onValidateStatus = () => {};
+  const onValidateStatus = (value: string) => {
+    switch (value) {
+      case 'FORNECIMENTO_PDE':
+        return {
+          pde: true,
+          fornecimento: true,
+        };
+      case 'WITH_HIDRO':
+        return {
+          hydro: true,
+        };
+      case 'WITH_PDE':
+        return {
+          pde: true,
+        };
+      case 'WITH_FORNECIMENTO':
+        return {
+          fornecimento: true,
+        };
+      default:
+        return null;
+    }
+  };
 
   const getClients = async () => {
     try {
@@ -53,7 +75,6 @@ const IndexPage = () => {
           params: {
             page,
             limit: 10,
-            name: getValues('name') || undefined,
             number: getValues('number') || undefined,
             contract_id: getValues('contract_id') || undefined,
             street_id: getValues('street_id') || undefined,
@@ -61,6 +82,7 @@ const IndexPage = () => {
             situation_status: getValues('situation') || undefined,
             status: getValues('status') || undefined,
             date: getValues('date') || undefined,
+            ...onValidateStatus(getValues('field')),
           },
         },
       );
