@@ -3,6 +3,8 @@ export const renderStatus = (status: string) => {
     VALIDATED: 'VALIDADO',
     IN_REVIEW: 'AUDITORIA',
     REJECTED: 'REJEITADO',
+    SENT: 'PENDENTE',
+    REVIEW: 'EM ANÁLISE',
   } as any;
 
   return statusList[status || 'IN_REVIEW'];
@@ -23,6 +25,9 @@ export const renderSituationColors = (status: string) => {
     NORMAL: '#14dd46',
     AUSENTE: '#FF9100',
     VAGO: '#008cff',
+    VALIDATED: '#14dd46',
+    SENT: '#FF9100',
+    REVIEW: '#008cff',
   } as any;
 
   return colors[status || 'NORMAL'];
