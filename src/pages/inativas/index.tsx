@@ -1,5 +1,6 @@
-/* eslint-disable operator-linebreak */
-/* eslint-disable implicit-arrow-linebreak */
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { TableCell, TableRow } from '@mui/material';
 import Header from '@/components/Header/Header';
 import InativasDetails from '@/components/Details/InativasDetails/InativasDetails';
 import InputText from '@/components/Input/Input';
@@ -8,14 +9,17 @@ import RootLayout from '@/components/RootLayout/Layout';
 import Select from '@/components/Select/Select';
 import TableComponent from '@/components/Table/Table';
 import { Inativas, InativasSent } from '@/interfaces/inativas';
-import { getInativas } from '@/services/querys/inativas';
-import { getUser } from '@/services/querys/user';
-import { TableCell, TableRow } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useInativas } from '@/services/querys/inativas';
+import { useUsers } from '@/services/querys/user';
+import { normalize } from '@/utils/format';
 import { INACTIVE_OPTIONS } from '@/utils/options';
-import { useForm } from 'react-hook-form';
-import { Field } from './styles';
+import { renderSituationColors, renderStatus } from '@/utils/verifications';
+import { FaDownload } from 'react-icons/fa6';
+import api from '@/services/api';
+import { handleError } from '@/utils/message';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import Loading from '@/components/Modals/Loading/Loading';
+import { ButtonImport, ExportSection, Field } from './styles';
 
 interface Option {
   value: string;
@@ -29,6 +33,8 @@ const option = {
 
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [showQuest, setShowQuest] = useState('');
+  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
   const [inativa, setInativa] = useState<InativasSent>({} as InativasSent);
 
@@ -45,30 +51,9 @@ const IndexPage = () => {
     },
   });
 
-  const inativasParam = {
+  const { data: users } = useUsers();
+  const { data: inativasList } = useInativas({
     status: watch('status').value,
-  };
-
-  const normalize = (texto: string) => {
-    return texto
-      ?.normalize('NFD')
-      ?.replace(/[\u0300-\u036f]/g, '')
-      ?.replace(/[^\w\s]/gi, '')
-      ?.replace(' ', '')
-      ?.toLowerCase();
-  };
-
-  const { data: inativasList } = useQuery({
-    queryKey: ['inativasData', inativasParam],
-    queryFn: async () => {
-      const data = await getInativas(inativasParam);
-
-      return data.map(item => ({
-        ...item,
-        filter: normalize(item.InativasSent?.[0]?.type),
-        userName: normalize(item.InativasSent?.[0]?.name),
-      }));
-    },
   });
 
   const inativas = inativasList?.filter(item => {
@@ -86,22 +71,26 @@ const IndexPage = () => {
     );
   });
 
-  const { data: users } = useQuery({
-    queryKey: ['usersData'],
-    queryFn: async () => getUser(),
-  });
+  const handleDonwload = async () => {
+    try {
+      setLoading(true);
 
-  const colors = {
-    VALIDATED: '#14dd46',
-    SENT: '#FF9100',
-    REVIEW: '#008cff',
-  } as any;
+      const { data } = await api.get<string>('/inativa/export', {
+        params: {
+          ...(showQuest === 'ALL' ? {} : { status: showQuest }),
+        },
+      });
 
-  const status = {
-    VALIDATED: 'VALIDADO',
-    SENT: 'PENDENTE',
-    REVIEW: 'EM ANÁLISE',
-  } as any;
+      setShowQuest('');
+      window.open(data);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fields = ['Nome', 'PDE', 'Endereço', 'Agente', 'Tipo', 'Status'];
 
   return (
     <RootLayout>
@@ -114,13 +103,11 @@ const IndexPage = () => {
             placeholder="Buscar por nome"
             {...register('name')}
           />
-
           <InputText
             type="text"
             placeholder="Buscar por PDE"
             {...register('pde')}
           />
-
           <Select
             id="status"
             placeholder="Selecione..."
@@ -133,7 +120,6 @@ const IndexPage = () => {
               { value: 'VALIDATED', label: 'Validados' },
             ]}
           />
-
           <Select
             id="type"
             placeholder="Selecione..."
@@ -144,10 +130,20 @@ const IndexPage = () => {
           />
         </div>
 
+        <ExportSection>
+          <ButtonImport onClick={() => setShowQuest('ALL')}>
+            <FaDownload className="icon" />
+            Exportar todas as inativas
+          </ButtonImport>
+
+          <ButtonImport onClick={() => setShowQuest('VALIDATED')}>
+            <FaDownload className="icon" />
+            Exportar inativas validadas
+          </ButtonImport>
+        </ExportSection>
+
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
-          <TableComponent
-            headers={['Nome', 'PDE', 'Endereço', 'Agente', 'Tipo', 'Status']}
-          >
+          <TableComponent headers={fields}>
             {inativas?.map(inativa => (
               <TableRow
                 onClick={() => {
@@ -201,13 +197,12 @@ const IndexPage = () => {
                 >
                   <Field
                     style={{
-                      color:
-                        colors[
-                          inativa.InativasSent?.[0]?.status || 'VALIDATED'
-                        ],
+                      color: renderSituationColors(
+                        inativa.InativasSent?.[0]?.status,
+                      ),
                     }}
                   >
-                    {status[inativa.InativasSent?.[0]?.status]}
+                    {renderStatus(inativa.InativasSent?.[0]?.status)}
                   </Field>
                 </TableCell>
               </TableRow>
@@ -225,6 +220,14 @@ const IndexPage = () => {
           />
         </Modal>
       )}
+
+      {showQuest !== '' && (
+        <ModalQuest onClose={() => setShowQuest('')} onConfirm={handleDonwload}>
+          Tem certeza que deseja exportar os dados?
+        </ModalQuest>
+      )}
+
+      {loading && <Loading />}
     </RootLayout>
   );
 };
