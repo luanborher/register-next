@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { MoreHorizontal } from 'lucide-react';
-import { FaSearch } from 'react-icons/fa';
-import { FaDownload, FaDatabase } from 'react-icons/fa6';
+import { BookOpenCheck, MoreHorizontal } from 'lucide-react';
+import { FaFileImport, FaDownload } from 'react-icons/fa6';
+import { useQueryClient } from '@tanstack/react-query';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Header from '@/components/Header/Header';
@@ -14,153 +14,63 @@ import ClientsDetails from '@/components/Details/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import Loading from '@/components/Modals/Loading/Loading';
-import api from '@/services/api';
-import { handleError } from '@/utils/message';
+import { handleError, handleSuccess } from '@/utils/message';
 import { formatDate } from '@/utils/format';
-import { Records, Paginated, RecordsFilter } from '@/interfaces/Records';
-import { Contract, Community, Street } from '@/interfaces/Records';
-import { Button, ButtonImport, ContainerPagination, Content } from './styles';
-import { ExportRow, ExportSection, Field, LabelButton } from './styles';
+import { Records, RecordsFilter } from '@/interfaces/Records';
+import ModalImport from '@/components/Modals/ModalImport/ModalImport';
+import { useClients, useCommunity } from '@/services/querys/cadastros';
+import { useContract, useStreet } from '@/services/querys/cadastros';
+import { onValidateStatus, renderSituationColors } from '@/utils/verifications';
+import { renderColors, renderStatus } from '@/utils/verifications';
+import api from '@/services/api';
+import { Content, ButtonImport, ContainerPagination, Field } from './styles';
+import { ExportRow, ExportSection, ButtonConfirm, ImportRow } from './styles';
 
 const IndexPage = () => {
-  const [clientsList, setClientsList] = useState<Records[]>([]);
-  const [contracts, setContracts] = useState<Contract[]>([]);
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [streets, setStreets] = useState<Street[]>([]);
-  const [selected, setSelected] = useState<Records | null>(null);
+  const query = useQueryClient();
 
+  const [selected, setSelected] = useState<Records | null>(null);
+  const [file, setFile] = useState<File>();
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [showDetails, setShowDetails] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
+  const [showQuestCod, setShowQuestCod] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [page, setPage] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
-  const [totalPages, setTotalPages] = useState<number>(1);
-
-  const { register, getValues, setValue, watch } = useForm<RecordsFilter>({
+  const { register, setValue, watch } = useForm<RecordsFilter>({
     defaultValues: {
       status: 'IN_REVIEW',
       situation: 'NORMAL',
     },
   });
 
-  const onValidateStatus = (value: string) => {
-    switch (value) {
-      case 'FORNECIMENTO_PDE':
-        return {
-          pde: true,
-          fornecimento: true,
-        };
-      case 'WITH_HIDRO':
-        return {
-          hydro: true,
-        };
-      case 'WITH_PDE':
-        return {
-          pde: true,
-        };
-      case 'WITH_FORNECIMENTO':
-        return {
-          fornecimento: true,
-        };
-      default:
-        return null;
-    }
-  };
+  const onRefresh = () => query.invalidateQueries({ queryKey: ['getClients'] });
 
-  const getClients = async () => {
-    try {
-      const { data } = await api.get<Paginated<Records[]>>(
-        '/client/filter/validated',
-        {
-          params: {
-            page,
-            limit: 10,
-            number: getValues('number') || undefined,
-            name: getValues('name') || undefined,
-            contract_id: getValues('contract_id') || undefined,
-            street_id: getValues('street_id') || undefined,
-            community_id: getValues('community_id') || undefined,
-            situation_status: getValues('situation') || undefined,
-            status: getValues('status') || undefined,
-            date: getValues('date') || undefined,
-            ...onValidateStatus(getValues('field')),
-          },
-        },
-      );
-
-      setTotalPages(Math.ceil(data.totalCount / 10));
-      setTotal(data.totalCount);
-      setClientsList(data.data);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  useEffect(() => {
-    getClients();
-  }, [page]);
-
-  const getStreet = async () => {
-    try {
-      const { data } = await api.get<Street[]>('/general/street');
-
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) return -1;
-        if (a.name > b.name) return 1;
-        return 0;
-      });
-
-      setStreets(result);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const getCommunity = async () => {
-    try {
-      const { data } = await api.get<Community[]>('/general/community');
-
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) return -1;
-        if (a.name > b.name) return 1;
-        return 0;
-      });
-
-      setCommunities(result);
-
-      await getStreet();
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const getContract = async () => {
-    try {
-      const { data } = await api.get<Contract[]>('/general/contract');
-
-      const result = data.sort((a, b) => {
-        if (a.name < b.name) return -1;
-        if (a.name > b.name) return 1;
-        return 0;
-      });
-
-      setContracts(result);
-
-      await getCommunity();
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  useEffect(() => {
-    getContract();
-  }, []);
+  const { data: clients } = useClients({
+    page: currentPage,
+    limit: 10,
+    number: watch('number') || undefined,
+    name: watch('name') || undefined,
+    contract_id: watch('contract_id') || undefined,
+    street_id: watch('street_id') || undefined,
+    community_id: watch('community_id') || undefined,
+    situation_status: watch('situation') || undefined,
+    status: watch('status') || undefined,
+    date: watch('date') || undefined,
+    ...onValidateStatus(watch('field')),
+  });
+  const totalPages = Math.ceil((clients?.totalCount || 0) / 10);
+  const { data: contracts } = useContract({});
+  const hasContract = contracts && contracts.length > 0;
+  const { data: communities } = useCommunity({}, hasContract);
+  const hasCommunity = communities && communities.length > 0;
+  const { data: streets } = useStreet({}, hasCommunity);
 
   const onGenerateCodification = async () => {
-    setLoading(true);
-
     try {
+      setLoading(true);
+      setShowQuestCod(false);
+
       const { data } = await api.get<string>('/client/export-cod');
 
       window.open(data, '_blank');
@@ -171,45 +81,11 @@ const IndexPage = () => {
     }
   };
 
-  const openDetails = (client: Records) => {
-    setSelected(client);
-    setShowDetails(true);
-  };
-
-  const renderStatus = (status: string) => {
-    const statusList = {
-      VALIDATED: 'VALIDADO',
-      IN_REVIEW: 'AUDITORIA',
-      REJECTED: 'REJEITADO',
-    } as any;
-
-    return statusList[status || 'IN_REVIEW'];
-  };
-
-  const renderColors = (status: string) => {
-    const colors = {
-      VALIDATED: '#14dd46',
-      IN_REVIEW: '#008cff',
-      REJECTED: '#ff0000',
-    } as any;
-
-    return colors[status || 'IN_REVIEW'];
-  };
-
-  const renderSituationColors = (status: string) => {
-    const colors = {
-      NORMAL: '#14dd46',
-      AUSENTE: '#FF9100',
-      VAGO: '#008cff',
-    } as any;
-
-    return colors[status || 'NORMAL'];
-  };
-
   const handleDonwload = async () => {
-    setLoading(true);
-
     try {
+      setLoading(true);
+      setShowQuest(false);
+
       const { data } = await api.get<string>('/client/export-data');
 
       window.open(data);
@@ -217,6 +93,27 @@ const IndexPage = () => {
       handleError(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onSubmitImport = async () => {
+    if (file) {
+      try {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        await api.post('/client/import-cod', formData);
+
+        handleSuccess('Importação realizada sucesso.');
+        setFile(undefined);
+        onRefresh();
+      } catch (error) {
+        setFile(undefined);
+        handleError(error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -244,7 +141,7 @@ const IndexPage = () => {
 
         <Search
           filtered={filtered}
-          onSubmit={getClients}
+          onSubmit={onRefresh}
           register={register}
           setValue={setValue}
           watch={watch}
@@ -252,31 +149,42 @@ const IndexPage = () => {
 
         <ExportRow>
           <ExportSection>
-            <ButtonImport>
-              <FaDatabase className="icon" onClick={onGenerateCodification} />
+            <ButtonImport onClick={() => setShowQuestCod(true)}>
+              <FaDownload className="icon" />
               Exportar codificação
             </ButtonImport>
 
             <ButtonImport>
-              <FaDownload className="icon" onClick={() => setShowQuest(true)} />
+              <FaFileImport className="icon" />
+              Importar codificação
+              <input
+                type="file"
+                accept=".xlsx, .xls, .csv, .xlsm"
+                onChange={e => {
+                  setFile(e?.target?.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+            </ButtonImport>
+
+            <ButtonImport onClick={() => setShowQuest(true)}>
+              <FaDownload className="icon" />
               Exportar cadastros
             </ButtonImport>
           </ExportSection>
-
-          <Button onClick={getClients}>
-            <FaSearch />
-            <LabelButton>Buscar</LabelButton>
-          </Button>
         </ExportRow>
 
         <Content>
           <TableComponent headers={fields}>
-            {clientsList?.map(row => (
+            {clients?.data?.map(row => (
               <TableRow
                 key={row.id}
-                onClick={() => openDetails(row)}
+                onClick={() => {
+                  setSelected(row);
+                  setShowDetails(true);
+                }}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                className="hover:opacity-80 cursor-pointer border-b-2 border-shadow hover:bg-shadow scroll"
+                className="tableRow"
               >
                 <TableCell align="left" height={10} className="p-0">
                   <Field
@@ -344,13 +252,13 @@ const IndexPage = () => {
             <div />
 
             <Pagination
-              onChangePage={setPage}
-              page={page}
+              onChangePage={setCurrentPage}
+              page={currentPage}
               pageCount={totalPages}
             />
 
             <div>
-              <span>Total:</span> {total}
+              <span>Total:</span> {clients?.totalCount || 0}
             </div>
           </ContainerPagination>
         )}
@@ -360,7 +268,7 @@ const IndexPage = () => {
             <ClientsDetails
               client={selected}
               onClose={() => setShowDetails(false)}
-              refetch={getClients}
+              refetch={onRefresh}
               filtered={filtered}
             />
           </Modal>
@@ -371,8 +279,30 @@ const IndexPage = () => {
             onClose={() => setShowQuest(false)}
             onConfirm={handleDonwload}
           >
-            Deseja exportar os dados?
+            Deseja exportar os dados de cadastros?
           </ModalQuest>
+        )}
+
+        {showQuestCod && (
+          <ModalQuest
+            onClose={() => setShowQuestCod(false)}
+            onConfirm={onGenerateCodification}
+          >
+            Deseja exportar cadastros para a criação de codificação?
+          </ModalQuest>
+        )}
+
+        {file && (
+          <ModalImport>
+            <BookOpenCheck size={90} color="white" />
+            <div>{file?.name || 'Arquivo selecionado'}</div>
+            <ImportRow>
+              <ButtonConfirm cancel onClick={() => setFile(undefined)}>
+                Cancelar
+              </ButtonConfirm>
+              <ButtonConfirm onClick={onSubmitImport}>Importar</ButtonConfirm>
+            </ImportRow>
+          </ModalImport>
         )}
 
         {loading && <Loading />}
