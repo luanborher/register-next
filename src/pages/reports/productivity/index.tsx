@@ -3,17 +3,15 @@ import { TableCell, TableRow } from '@mui/material';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-
 import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
 import TableComponent from '@/components/Table/Table';
 import InputText from '@/components/Input/Input';
-
 import ModalUserReports from '@/components/Modals/ModalUserReports/ModalUserReports';
 import Modal from '@/components/Modals/Modal/Modal';
 import { BookOpenCheck, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getUserReports } from '@/services/querys/reports';
+import { getUserReports } from '@/services/querys/cadastros';
 import { Row } from './styles';
 import { BackButton, BackText } from '../styles';
 

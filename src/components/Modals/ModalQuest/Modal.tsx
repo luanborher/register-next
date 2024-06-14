@@ -31,12 +31,9 @@ const ModalQuest = ({
       <ContainerHeader>
         <FaInfoCircle color="#171717" size={36} /> Atenção!
       </ContainerHeader>
-
       <ContainerTitle>{children}</ContainerTitle>
-
       <ContainerButtons>
         <ButtonCancel onClick={onClose}>Fechar</ButtonCancel>
-
         <ButtonConfirm onClick={onConfirm} disabled={loading}>
           Confirmar
         </ButtonConfirm>

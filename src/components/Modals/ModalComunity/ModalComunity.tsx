@@ -1,11 +1,9 @@
 import { ChevronLeft, Map } from 'lucide-react';
 import { TableCell, TableRow } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-
-import { getContractsReports } from '@/services/querys/reports';
+import { getContractsReports } from '@/services/querys/cadastros';
 import Header from '../../Header/Header';
 import TableComponent from '../../Table/Table';
-
 import { BackButton, BackText, Wrapper } from './styles';
 
 interface ClientsDetailsProps {

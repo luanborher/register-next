@@ -33,7 +33,7 @@ const LoginPage = () => {
       localStorage.setItem('@register:user', JSON.stringify(data.user));
 
       setUser(data.user);
-      push('/records');
+      push('/cadastros');
     } catch (error) {
       handleError(error);
     }

@@ -164,7 +164,7 @@ export interface RecordsFilter {
 }
 
 export interface Filtered {
-  contracts: Contract[];
-  communities: Community[];
-  streets: Street[];
+  contracts: Contract[] | undefined;
+  communities: Community[] | undefined;
+  streets: Street[] | undefined;
 }
