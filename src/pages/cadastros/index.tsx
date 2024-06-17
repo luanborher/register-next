@@ -122,7 +122,7 @@ const IndexPage = () => {
     'Nome',
     'Endereço',
     'Comunidade',
-    'Contrato',
+    'Hidrômetro',
     'Data',
     'Status',
     'Ações',
@@ -218,9 +218,8 @@ const IndexPage = () => {
                 </TableCell>
 
                 <TableCell align="left" className="p-0">
-                  <Field title={row.property.street.community.contract.name}>
-                    {row.property.street.community.contract.name.toUpperCase() ||
-                      ''}
+                  <Field title={row.property.hydrometer_number}>
+                    {row.property.hydrometer_number.toUpperCase() || ''}
                   </Field>
                 </TableCell>
 

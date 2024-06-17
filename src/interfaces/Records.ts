@@ -45,6 +45,7 @@ export interface Property {
   id: string;
   codification: string;
   street_code: string;
+  codlog: string;
   area: number;
   registration: string;
   street: Street;
