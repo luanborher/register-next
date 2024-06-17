@@ -315,7 +315,7 @@ const ClientsDetails = ({
         <InputText
           label="Cód. Logradouro"
           placeholder="Cód. Logradouro"
-          {...register('property.street_code')}
+          {...register('property.codlog')}
         />
 
         <InputText
