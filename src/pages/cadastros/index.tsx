@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { BookOpenCheck, MoreHorizontal } from 'lucide-react';
 import { FaFileImport, FaDownload } from 'react-icons/fa6';
+import { MdCreateNewFolder } from 'react-icons/md';
 import { useQueryClient } from '@tanstack/react-query';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -35,6 +36,7 @@ const IndexPage = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showQuest, setShowQuest] = useState(false);
   const [showQuestCod, setShowQuestCod] = useState(false);
+  const [showQuestPde, setShowQuestPde] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { register, setValue, watch } = useForm<RecordsFilter>({
@@ -72,6 +74,21 @@ const IndexPage = () => {
       setShowQuestCod(false);
 
       const { data } = await api.get<string>('/client/export-cod');
+
+      window.open(data, '_blank');
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onGeneratePde = async () => {
+    try {
+      setLoading(true);
+      setShowQuestPde(false);
+
+      const { data } = await api.get<string>('/client/export-rgi');
 
       window.open(data, '_blank');
     } catch (error) {
@@ -170,6 +187,11 @@ const IndexPage = () => {
             <ButtonImport onClick={() => setShowQuest(true)}>
               <FaDownload className="icon" />
               Exportar cadastros
+            </ButtonImport>
+
+            <ButtonImport onClick={() => setShowQuestPde(true)}>
+              <MdCreateNewFolder size={20} className="icon" />
+              Gerar PDE
             </ButtonImport>
           </ExportSection>
         </ExportRow>
@@ -288,6 +310,15 @@ const IndexPage = () => {
             onConfirm={onGenerateCodification}
           >
             Deseja exportar cadastros para a criação de codificação?
+          </ModalQuest>
+        )}
+
+        {showQuestPde && (
+          <ModalQuest
+            onClose={() => setShowQuestPde(false)}
+            onConfirm={onGeneratePde}
+          >
+            Deseja exportar excel para geração de PDE?
           </ModalQuest>
         )}
 

@@ -90,7 +90,7 @@ export const ExportRow = styled.div`
 export const ExportSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.5rem;
   color: #8cd630;
 `;
 
