@@ -43,7 +43,7 @@ const ModalSendPDE = ({ onClose }: ModalProps) => {
         date: format(addDays(date, 1), 'dd/MM/yyyy'),
       };
 
-      await api.post('/send-pde', data);
+      await api.post('/inativa/send-pde', data);
 
       handleSuccess('PDE enviado com sucesso!');
       onClose();
