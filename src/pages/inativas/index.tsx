@@ -16,10 +16,17 @@ import { INACTIVE_OPTIONS } from '@/utils/options';
 import { renderSituationColors, renderStatus } from '@/utils/verifications';
 import { FaDownload } from 'react-icons/fa6';
 import api from '@/services/api';
-import { handleError } from '@/utils/message';
+import { handleError, handleSuccess } from '@/utils/message';
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import Loading from '@/components/Modals/Loading/Loading';
-import { ButtonImport, ExportSection, Field } from './styles';
+import { FaRedoAlt } from 'react-icons/fa';
+import {
+  ButtonImport,
+  ButtonOutlined,
+  ExportSection,
+  Field,
+  RowButtons,
+} from './styles';
 
 interface Option {
   value: string;
@@ -34,6 +41,7 @@ const option = {
 const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [showQuest, setShowQuest] = useState('');
+  const [showReturn, setShowReturn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
   const [inativa, setInativa] = useState<InativasSent>({} as InativasSent);
@@ -90,6 +98,23 @@ const IndexPage = () => {
     }
   };
 
+  const handleReturn = async () => {
+    try {
+      setLoading(true);
+
+      const { data } = await api.post<{ count: number }>('/inativa/return');
+
+      setShowReturn(false);
+      handleSuccess(
+        `Ordens retornadas com sucesso! Quantidade: ${data.count || 0}`,
+      );
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fields = ['Nome', 'PDE', 'Endereço', 'Agente', 'Tipo', 'Status'];
 
   return (
@@ -130,17 +155,24 @@ const IndexPage = () => {
           />
         </div>
 
-        <ExportSection>
-          <ButtonImport onClick={() => setShowQuest('ALL')}>
-            <FaDownload className="icon" />
-            Exportar todas as inativas
-          </ButtonImport>
+        <RowButtons>
+          <ExportSection>
+            <ButtonImport onClick={() => setShowQuest('ALL')}>
+              <FaDownload className="icon" />
+              Exportar todas as inativas
+            </ButtonImport>
 
-          <ButtonImport onClick={() => setShowQuest('VALIDATED')}>
-            <FaDownload className="icon" />
-            Exportar inativas validadas
-          </ButtonImport>
-        </ExportSection>
+            <ButtonImport onClick={() => setShowQuest('VALIDATED')}>
+              <FaDownload className="icon" />
+              Exportar inativas validadas
+            </ButtonImport>
+          </ExportSection>
+
+          <ButtonOutlined onClick={() => setShowReturn(true)}>
+            <FaRedoAlt className="icon" />
+            Retornar ordens
+          </ButtonOutlined>
+        </RowButtons>
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
           <TableComponent headers={fields}>
@@ -224,6 +256,15 @@ const IndexPage = () => {
       {showQuest !== '' && (
         <ModalQuest onClose={() => setShowQuest('')} onConfirm={handleDonwload}>
           Tem certeza que deseja exportar os dados?
+        </ModalQuest>
+      )}
+
+      {showReturn && (
+        <ModalQuest
+          onClose={() => setShowReturn(false)}
+          onConfirm={handleReturn}
+        >
+          Tem certeza que deseja retornar as ordens criadas anteriormente?
         </ModalQuest>
       )}
 
