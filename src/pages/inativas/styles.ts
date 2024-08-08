@@ -73,3 +73,7 @@ export const RowButtons = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+
+export const Hidden = styled.div`
+  display: none;
+`;
