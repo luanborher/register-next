@@ -186,3 +186,7 @@ export const Row = styled.div`
   font-weight: 400;
   text-align: center;
 `;
+
+export const Hidden = styled.div`
+  display: none;
+`;

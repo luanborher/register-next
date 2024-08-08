@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { TableCell, TableRow } from '@mui/material';
+import { FaClipboardList, FaRedoAlt } from 'react-icons/fa';
+import { FaDownload } from 'react-icons/fa6';
+
 import Header from '@/components/Header/Header';
 import InativasDetails from '@/components/Details/InativasDetails/InativasDetails';
 import InputText from '@/components/Input/Input';
@@ -8,18 +11,19 @@ import Modal from '@/components/Modals/Modal/Modal';
 import RootLayout from '@/components/RootLayout/Layout';
 import Select from '@/components/Select/Select';
 import TableComponent from '@/components/Table/Table';
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import Loading from '@/components/Modals/Loading/Loading';
+
 import { Inativas, InativasSent } from '@/interfaces/inativas';
 import { useInativas } from '@/services/querys/inativas';
 import { useUsers } from '@/services/querys/user';
 import { normalize } from '@/utils/format';
 import { INACTIVE_OPTIONS } from '@/utils/options';
 import { renderSituationColors, renderStatus } from '@/utils/verifications';
-import { FaDownload } from 'react-icons/fa6';
-import api from '@/services/api';
 import { handleError, handleSuccess } from '@/utils/message';
-import ModalQuest from '@/components/Modals/ModalQuest/Modal';
-import Loading from '@/components/Modals/Loading/Loading';
-import { FaRedoAlt } from 'react-icons/fa';
+import api from '@/services/api';
+
+import ModalExportFicha from '@/components/Modals/ModalExportFicha/ModalExportFicha';
 import {
   ButtonImport,
   ButtonOutlined,
@@ -42,6 +46,7 @@ const IndexPage = () => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [showQuest, setShowQuest] = useState('');
   const [showReturn, setShowReturn] = useState(false);
+  const [showFiles, setShowFiles] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Inativas>({} as Inativas);
   const [inativa, setInativa] = useState<InativasSent>({} as InativasSent);
@@ -168,10 +173,17 @@ const IndexPage = () => {
             </ButtonImport>
           </ExportSection>
 
-          <ButtonOutlined onClick={() => setShowReturn(true)}>
-            <FaRedoAlt className="icon" />
-            Retornar ordens
-          </ButtonOutlined>
+          <ExportSection>
+            <ButtonOutlined onClick={() => setShowFiles(true)}>
+              <FaClipboardList className="icon" />
+              Imprimir fichas
+            </ButtonOutlined>
+
+            <ButtonOutlined onClick={() => setShowReturn(true)}>
+              <FaRedoAlt className="icon" />
+              Retornar ordens
+            </ButtonOutlined>
+          </ExportSection>
         </RowButtons>
 
         <div className="flex flex-col w-full max-h-full overflow-y-auto mt-4">
@@ -267,6 +279,8 @@ const IndexPage = () => {
           Tem certeza que deseja retornar as ordens criadas anteriormente?
         </ModalQuest>
       )}
+
+      {showFiles && <ModalExportFicha onClose={() => setShowFiles(false)} />}
 
       {loading && <Loading />}
     </RootLayout>
