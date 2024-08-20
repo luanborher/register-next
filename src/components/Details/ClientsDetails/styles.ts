@@ -136,7 +136,17 @@ export const Image = styled.img`
   width: 320px;
   height: 350px;
   box-shadow: 1px 1px 4px 0px #b1b1b1;
+  background-color: white;
   object-fit: contain;
   cursor: pointer;
-  background-color: white;
+`;
+
+export const TextArea = styled.textarea`
+  width: 90%;
+  height: 210px;
+  resize: none;
+  border: 2px solid #e4e4e4;
+  border-radius: 8px;
+  color: #000;
+  padding: 0.5rem 1rem;
 `;

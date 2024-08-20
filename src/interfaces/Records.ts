@@ -51,6 +51,7 @@ export interface Property {
   street: Street;
   street_id: string;
   number: string;
+  rejected_reason: string;
   zip_code: string;
   complement: string;
   reference: string;

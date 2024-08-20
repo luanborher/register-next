@@ -48,6 +48,7 @@ const ClientsDetails = ({
 
   const [showImage, setShowImage] = useState(false);
   const [urlImage, setUrlImage] = useState('');
+  const [reject, setReject] = useState(client?.property?.rejected_reason || '');
   const [showQuest, setShowQuest] = useState(false);
   const [showRejected, setShowRejected] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
@@ -123,7 +124,9 @@ const ClientsDetails = ({
 
   const onRejected = async () => {
     try {
-      await api.patch(`/client/reject/${client.id}`);
+      await api.patch(`/client/reject/${client.property.id}`, {
+        rejected_reason: reject,
+      });
 
       handleSuccess('Cliente rejeitado com sucesso!');
 
@@ -741,8 +744,11 @@ const ClientsDetails = ({
         <ModalQuest
           onClose={() => setShowRejected(false)}
           onConfirm={() => onRejected()}
+          setReject={setReject}
+          reject={reject}
+          isReject
         >
-          Deseja rejeitar este cliente?
+          Descreva o motivo da rejeição deste cadastro?
         </ModalQuest>
       )}
 
