@@ -142,6 +142,22 @@ export const ButtonDownload = styled.button`
   height: 45px;
   padding: 0.5rem 1rem;
   background-color: #fff;
+  border: 2px solid #d6aa30;
+  border-radius: 8px;
+  color: #d6aa30;
+  font-weight: 500;
+`;
+
+export const ButtonUpdate = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 180px;
+  height: 45px;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
   border: 2px solid #8cd630;
   border-radius: 8px;
   color: #8cd630;

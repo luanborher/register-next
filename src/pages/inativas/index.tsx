@@ -24,6 +24,7 @@ import { handleError, handleSuccess } from '@/utils/message';
 import api from '@/services/api';
 
 import ModalExportFicha from '@/components/Modals/ModalExportFicha/ModalExportFicha';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ButtonImport,
   ButtonOutlined,
@@ -43,6 +44,8 @@ const option = {
 } as Option;
 
 const IndexPage = () => {
+  const query = useQueryClient();
+
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [showQuest, setShowQuest] = useState('');
   const [showReturn, setShowReturn] = useState(false);
@@ -260,7 +263,10 @@ const IndexPage = () => {
           <InativasDetails
             inativa={inativa}
             client={selected}
-            onClose={() => setShowDetails(false)}
+            onClose={() => {
+              query.invalidateQueries({ queryKey: ['getInativas'] });
+              setShowDetails(false);
+            }}
           />
         </Modal>
       )}

@@ -19,6 +19,7 @@ import {
   ButtonValidated,
   Hidden,
   ButtonDownload,
+  ButtonUpdate,
 } from './styles';
 
 interface DetailsProps {
@@ -32,13 +33,31 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
 
   const [showQuest, setShowQuest] = useState(false);
 
-  const { register } = useForm({
+  const { register, watch } = useForm({
     defaultValues: {
       ...inativa,
-      ...client,
-      name: inativa.name,
-      number: inativa.number,
-      complement: inativa.complement,
+      pde: client.pde,
+      community: client.community,
+      neighborhood: client.neighborhood,
+      cep: client.cep,
+      situation: client.situation,
+      property_type: client.property_type,
+      economy_count: client.economy_count,
+      fornecimento: client.fornecimento,
+      hidrometer: client.hidrometer,
+      bill_quantity: client.bill_quantity,
+      total_value: client.total_value,
+      proposal: client.proposal,
+      total_value_corrected: client.total_value_corrected,
+      consulted_status: client.consulted_status,
+      atc: client.atc,
+      group: client.group,
+      sector: client.sector,
+      route: client.route,
+      block: client.block,
+      local: client.local,
+      sublocal: client.sublocal,
+      village: client.village,
     },
   });
 
@@ -47,6 +66,47 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
       await api.put('/inativa', {
         id: inativa.id,
         status: 'VALIDATED',
+      });
+
+      handleSuccess('Serviço validado com sucesso.');
+      setShowQuest(false);
+      onClose();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+
+  console.log(inativa);
+
+  const onUpdate = async () => {
+    const form = watch();
+
+    try {
+      await api.put('/inativa', {
+        ...form,
+        pde: undefined,
+        street: undefined,
+        community: undefined,
+        neighborhood: undefined,
+        cep: undefined,
+        situation: undefined,
+        property_type: undefined,
+        economy_count: undefined,
+        fornecimento: undefined,
+        hidrometer: undefined,
+        bill_quantity: undefined,
+        total_value: undefined,
+        proposal: undefined,
+        total_value_corrected: undefined,
+        consulted_status: undefined,
+        atc: undefined,
+        group: undefined,
+        sector: undefined,
+        route: undefined,
+        block: undefined,
+        local: undefined,
+        sublocal: undefined,
+        village: undefined,
       });
 
       handleSuccess('Serviço validado com sucesso.');
@@ -131,7 +191,7 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
       <Title>Informações do imóvel</Title>
 
       <Row>
-        <InputText label="Rua" placeholder="Rua" {...register('street')} />
+        <InputText label="Rua" placeholder="Rua" {...register('address')} />
         <InputText type="number" label="Numero" {...register('number')} />
         <InputText
           label="Complemento"
@@ -365,6 +425,10 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
         <ButtonDownload type="button" onClick={handlePrint}>
           Baixar ficha
         </ButtonDownload>
+
+        <ButtonUpdate type="button" onClick={onUpdate}>
+          Editar
+        </ButtonUpdate>
 
         {client.status === 'REVIEW' && (
           <ButtonValidated type="button" onClick={() => setShowQuest(true)}>
