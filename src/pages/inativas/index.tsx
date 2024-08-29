@@ -70,7 +70,7 @@ const IndexPage = () => {
   const { data: users } = useUsers();
   const { data: inativasList } = useInativas({
     status: watch('status').value,
-    type: watch('type')?.value || undefined,
+    type: watch('type')?.value ? watch('type')?.value.toUpperCase() : undefined,
   });
 
   const inativas = inativasList?.filter(item => {
