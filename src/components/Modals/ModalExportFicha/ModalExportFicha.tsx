@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { addDays, format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
+import { useReactToPrint } from 'react-to-print';
 
 import { handleError } from '@/utils/message';
 import { getUser } from '@/services/querys/user';
@@ -10,7 +11,6 @@ import api from '@/services/api';
 import InputText from '@/components/Input/Input';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
 import { ResponseInativas } from '@/interfaces/inativas';
-import { useReactToPrint } from 'react-to-print';
 import Select from '../../Select/Select';
 
 import {
