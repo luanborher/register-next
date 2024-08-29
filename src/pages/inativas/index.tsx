@@ -70,17 +70,10 @@ const IndexPage = () => {
   const { data: users } = useUsers();
   const { data: inativasList } = useInativas({
     status: watch('status').value,
+    type: watch('type')?.value,
   });
 
   const inativas = inativasList?.filter(item => {
-    if (watch('type')?.value !== '') {
-      return (
-        item.pde.includes(watch('pde')) &&
-        normalize(item.userName)?.includes(normalize(watch('name'))) &&
-        item?.filter === normalize(watch('type')?.value)
-      );
-    }
-
     return (
       item.pde.includes(watch('pde')) &&
       normalize(item.userName)?.includes(normalize(watch('name')))
