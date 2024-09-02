@@ -4,9 +4,23 @@ import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { normalize } from '@/utils/format';
 import api from '../api';
 
-export const getPrateleira = async () => {
-  const { data } = await api.get<IInativas[]>('/inativa/shelf');
-  return data;
+export const usePrateleira = (
+  params: Record<string, any>,
+  enable?: boolean,
+) => {
+  const getPrateleira = async ({ queryKey }: QueryFunctionContext) => {
+    const [, params] = queryKey;
+
+    const { data } = await api.get<IInativas[]>('/inativa/shelf', { params });
+
+    return data;
+  };
+
+  return useQuery({
+    queryKey: ['getPrateleira', params],
+    queryFn: getPrateleira,
+    enabled: enable,
+  });
 };
 
 export const useInativas = (params: Record<string, any>, enable?: boolean) => {

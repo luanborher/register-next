@@ -3,10 +3,10 @@ import { Square, BookOpenCheck } from 'lucide-react';
 import { addDays, format } from 'date-fns';
 import { useReactToPrint } from 'react-to-print';
 import { FaFileImport, FaFileCirclePlus } from 'react-icons/fa6';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
-import { getPrateleira } from '@/services/querys/inativas';
+import { usePrateleira } from '@/services/querys/inativas';
 import ModalInativas from '@/components/Modals/ModalInativa/ModalInativa';
 import Loading from '@/components/Modals/Loading/Loading';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
@@ -16,6 +16,8 @@ import { handleError, handleSuccess } from '@/utils/message';
 import { ResponseInativas } from '@/interfaces/inativas';
 import api from '@/services/api';
 import ModalSendPDE from '@/components/Modals/ModalSendPDE/ModalSendPDE';
+import Select from '@/components/Select/Select';
+import { useForm } from 'react-hook-form';
 import {
   TableCard,
   TableCell,
@@ -35,6 +37,7 @@ import {
   Label,
   SendButton,
   ButtonImport,
+  ButtonWrapper,
 } from './styles';
 
 interface Option {
@@ -60,10 +63,13 @@ const IndexPage = () => {
   const [user, setUser] = useState<Option>();
   const [file, setFile] = useState<File>();
 
-  const { data: inativas } = useQuery({
-    queryKey: ['prateleiraData'],
-    queryFn: async () => getPrateleira(),
-  });
+  const { setValue, watch } = useForm();
+
+  const prateleiraParams = {
+    type: watch('type')?.value,
+  };
+
+  const { data: inativas } = usePrateleira(prateleiraParams);
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current as HTMLDivElement,
@@ -188,23 +194,40 @@ const IndexPage = () => {
         />
 
         <ExportRow>
-          <ButtonImport>
-            <FaFileImport className="icon" />
-            Importar inativas
-            <input
-              type="file"
-              accept=".xlsx, .xls, .csv, .xlsm"
-              onChange={e => {
-                setFile(e?.target?.files?.[0]);
-                e.target.value = '';
-              }}
-            />
-          </ButtonImport>
+          <Select
+            id="type"
+            placeholder="Selecione..."
+            onChange={e => e && setValue('type', e)}
+            defaultValue={{ value: 'AMBOS', label: 'Todos' }}
+            isClearable={false}
+            width="350px"
+            label="Filtro por tipo"
+            options={[
+              { value: 'AMBOS', label: 'Todos' },
+              { value: 'INATIVA', label: 'Inativas' },
+              { value: 'CONSUMO ZERO', label: 'Consumo Zero' },
+            ]}
+          />
 
-          <SendButton onClick={() => setShowModalPDE(true)}>
-            <FaFileCirclePlus />
-            Enviar PDE
-          </SendButton>
+          <ButtonWrapper>
+            <ButtonImport>
+              <FaFileImport className="icon" />
+              Importar inativas
+              <input
+                type="file"
+                accept=".xlsx, .xls, .csv, .xlsm"
+                onChange={e => {
+                  setFile(e?.target?.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
+            </ButtonImport>
+
+            <SendButton onClick={() => setShowModalPDE(true)}>
+              <FaFileCirclePlus />
+              Enviar PDE
+            </SendButton>
+          </ButtonWrapper>
         </ExportRow>
 
         <SectionList>
