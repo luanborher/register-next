@@ -138,13 +138,19 @@ export const ActionSection = styled.div`
   color: black;
 `;
 
-export const ExportRow = styled.div`
+export const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
   gap: 1rem;
-  padding-bottom: 10px;
   color: #8cd630;
+`;
+
+export const ExportRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
 `;
 
 export const ImportRow = styled.div`

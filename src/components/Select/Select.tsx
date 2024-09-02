@@ -20,6 +20,7 @@ interface SelectProps
   id?: string;
   name?: string;
   height?: string;
+  width?: string;
   options: Option[];
 }
 
@@ -30,12 +31,13 @@ const Select = ({
   options,
   height,
   value,
+  width,
   placeholder,
-  onChange,
   isClearable = true,
+  onChange,
   ...rest
 }: SelectProps) => (
-  <Wrapper>
+  <Wrapper style={{ width }}>
     {label && <Label htmlFor={id}>{label}</Label>}
     <ReactSelect
       id={id}
