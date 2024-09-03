@@ -4,8 +4,10 @@ import { BookOpenCheck, MoreHorizontal } from 'lucide-react';
 import { FaFileImport, FaDownload } from 'react-icons/fa6';
 import { MdCreateNewFolder } from 'react-icons/md';
 import { useQueryClient } from '@tanstack/react-query';
+
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+
 import Header from '@/components/Header/Header';
 import Search from '@/components/Search/Search';
 import TableComponent from '@/components/Table/Table';
@@ -15,15 +17,17 @@ import ClientsDetails from '@/components/Details/ClientsDetails/ClientsDetails';
 import Pagination from '@/components/Pagination/Pagination';
 import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import Loading from '@/components/Modals/Loading/Loading';
+import ModalImport from '@/components/Modals/ModalImport/ModalImport';
+
 import { handleError, handleSuccess } from '@/utils/message';
 import { formatDate } from '@/utils/format';
 import { Records, RecordsFilter } from '@/interfaces/Records';
-import ModalImport from '@/components/Modals/ModalImport/ModalImport';
 import { useClients, useCommunity } from '@/services/querys/cadastros';
 import { useContract, useStreet } from '@/services/querys/cadastros';
 import { onValidateStatus, renderSituationColors } from '@/utils/verifications';
 import { renderColors, renderStatus } from '@/utils/verifications';
 import api from '@/services/api';
+
 import { Content, ButtonImport, ContainerPagination, Field } from './styles';
 import { ExportRow, ExportSection, ButtonConfirm, ImportRow } from './styles';
 
@@ -61,6 +65,7 @@ const IndexPage = () => {
     date: watch('date') || undefined,
     ...onValidateStatus(watch('field')),
   });
+
   const totalPages = Math.ceil((clients?.totalCount || 0) / 10);
   const { data: contracts } = useContract({});
   const hasContract = contracts && contracts.length > 0;

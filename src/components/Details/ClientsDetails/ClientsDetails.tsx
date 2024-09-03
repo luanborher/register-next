@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 
+import api from '@/services/api';
 import { Filtered, Records } from '@/interfaces/Records';
-import api, { baseURL } from '@/services/api';
 import { handleSuccess, handleError } from '@/utils/message';
 import { options } from '@/utils/options';
 import { formatDateHours } from '@/utils/format';
 import { useAuth } from '@/hooks/useAuth';
 
+import ImageList from './components/ImageList/ImageList';
+import Signature from './components/Signature/Signature';
 import Header from '../../Header/Header';
 import InputText from '../../Input/Input';
 import Dropdown from '../../Dropdown/Dropdown';
@@ -26,7 +28,6 @@ import {
   Row,
   Title,
   Wrapper,
-  Image,
 } from './styles';
 
 interface ClientsDetailsProps {
@@ -46,7 +47,6 @@ const ClientsDetails = ({
 
   const date = new Date(client.birthDate);
 
-  const [showImage, setShowImage] = useState(false);
   const [urlImage, setUrlImage] = useState('');
   const [reject, setReject] = useState(client?.property?.rejected_reason || '');
   const [showQuest, setShowQuest] = useState(false);
@@ -153,10 +153,6 @@ const ClientsDetails = ({
       onClose();
     }
   });
-
-  const normalizeUrl = (value: string) => {
-    return value.includes('https') ? value : `${baseURL}files/${value}`;
-  };
 
   const renderSubtitle = () => {
     const createdAt = formatDateHours(client.created_at);
@@ -592,53 +588,15 @@ const ClientsDetails = ({
       <Title>Imagens</Title>
 
       <Row style={{ justifyContent: 'center' }}>
-        {client.property.first_document_url && (
-          <Image
-            src={normalizeUrl(client.property.first_document_url)}
-            alt="Documento 1"
-            onClick={() => {
-              setShowImage(true);
-              setUrlImage(normalizeUrl(client.property.first_document_url));
-            }}
-            style={{ objectFit: 'contain' }}
-          />
-        )}
-
-        {client.property.second_document_url && (
-          <Image
-            src={normalizeUrl(client.property.second_document_url)}
-            alt="Documento 2"
-            onClick={() => {
-              setShowImage(true);
-              setUrlImage(normalizeUrl(client.property.second_document_url));
-            }}
-            style={{ objectFit: 'contain' }}
-          />
-        )}
-
-        {client.property.facade_url && (
-          <Image
-            src={normalizeUrl(client.property.facade_url)}
-            alt="Fachada"
-            onClick={() => {
-              setShowImage(true);
-              setUrlImage(normalizeUrl(client.property.facade_url));
-            }}
-            style={{ objectFit: 'contain' }}
-          />
-        )}
-
-        {client.property.additional_url && (
-          <Image
-            src={normalizeUrl(client.property.additional_url)}
-            alt="Adicional"
-            onClick={() => {
-              setShowImage(true);
-              setUrlImage(normalizeUrl(client.property.additional_url));
-            }}
-            style={{ objectFit: 'contain' }}
-          />
-        )}
+        <ImageList
+          setImage={setUrlImage}
+          imageList={[
+            client.property.first_document_url || '',
+            client.property.second_document_url || '',
+            client.property.facade_url || '',
+            client.property.additional_url || '',
+          ]}
+        />
       </Row>
 
       <Title>Dados de cadastros</Title>
@@ -659,31 +617,7 @@ const ClientsDetails = ({
         />
       </Row>
 
-      {client.property.signature_url ? (
-        <>
-          <Title>Assinatura</Title>
-
-          <Row style={{ justifyContent: 'center' }}>
-            <Image
-              src={normalizeUrl(client.property.signature_url)}
-              alt="Assinatura"
-              style={{ width: '500px', objectFit: 'contain' }}
-            />
-          </Row>
-        </>
-      ) : (
-        <Title
-          style={{
-            color: '#c91919e4',
-            border: '1px solid #c91919e4',
-            textAlign: 'center',
-            padding: '0.3rem',
-            borderRadius: '5px',
-          }}
-        >
-          Sem assinatura cadastrada
-        </Title>
-      )}
+      <Signature image={client.property.signature_url} />
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
         {(user.role === 'DEVELOPER' || user.role === 'MASTER') && (
@@ -720,16 +654,17 @@ const ClientsDetails = ({
         </ButtonConfirm>
       </Row>
 
-      {showImage && urlImage !== '' && (
-        <ModalImage
-          onClose={() => {
-            setShowImage(false);
-            setUrlImage('');
-          }}
-        >
-          <Image src={urlImage} style={{ width: '600px', height: 'auto' }} />
-        </ModalImage>
-      )}
+      <ModalImage
+        client={client}
+        image={urlImage}
+        setImage={setUrlImage}
+        imageList={[
+          client.property.first_document_url || '',
+          client.property.second_document_url || '',
+          client.property.facade_url || '',
+          client.property.additional_url || '',
+        ]}
+      />
 
       {showQuest && (
         <ModalQuest
