@@ -24,31 +24,17 @@ export const firestore = initializeFirestore(app, {
 });
 
 export const uploadPhoto = async (
-  uri: string,
+  file: File,
   register_id: string,
   photo_name: string,
 ) => {
   try {
-    const storageRef = ref(storage, `images/${register_id}/${photo_name}`);
-    const blob = await uriToBlob(uri);
-    await uploadBytes(storageRef, blob);
+    const storageRef = ref(storage, `images/second_document/${photo_name}`);
+    await uploadBytes(storageRef, file);
     const url = getDownloadURL(storageRef);
     return url;
   } catch (error) {
+    console.error('Upload failed: ', error);
     return '';
   }
 };
-
-export const uriToBlob = (uri: string): Promise<Blob> =>
-  new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = () => {
-      resolve(xhr.response);
-    };
-    xhr.onerror = () => {
-      reject(new Error('uriToBlob failed'));
-    };
-    xhr.responseType = 'blob';
-    xhr.open('GET', uri, true);
-    xhr.send(null);
-  });
