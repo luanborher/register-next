@@ -47,7 +47,7 @@ const ClientsDetails = ({
 
   const date = new Date(client.birthDate);
 
-  const [urlImage, setUrlImage] = useState('');
+  const [urlImage, setUrlImage] = useState<{ image: string; type: string }>();
   const [reject, setReject] = useState(client?.property?.rejected_reason || '');
   const [showQuest, setShowQuest] = useState(false);
   const [showRejected, setShowRejected] = useState(false);
@@ -591,10 +591,13 @@ const ClientsDetails = ({
         <ImageList
           setImage={setUrlImage}
           imageList={[
-            client.property.first_document_url || '',
-            client.property.second_document_url || '',
-            client.property.facade_url || '',
-            client.property.additional_url || '',
+            { image: client.property.first_document_url || '', type: 'first' },
+            {
+              image: client.property.second_document_url || '',
+              type: 'second',
+            },
+            { image: client.property.facade_url || '', type: 'facade' },
+            { image: client.property.additional_url || '', type: 'additional' },
           ]}
         />
       </Row>
@@ -659,10 +662,10 @@ const ClientsDetails = ({
         image={urlImage}
         setImage={setUrlImage}
         imageList={[
-          client.property.first_document_url || '',
-          client.property.second_document_url || '',
-          client.property.facade_url || '',
-          client.property.additional_url || '',
+          { image: client.property.first_document_url || '', type: 'first' },
+          { image: client.property.second_document_url || '', type: 'second' },
+          { image: client.property.facade_url || '', type: 'facade' },
+          { image: client.property.additional_url || '', type: 'additional' },
         ]}
       />
 
