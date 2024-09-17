@@ -45,7 +45,7 @@ export const Thumbnails = styled.img`
 export const Image = styled.img`
   width: 550px;
   height: auto;
-  max-height: 85%;
+  max-height: 80vh;
 
   box-shadow: 1px 1px 4px 0px #b1b1b1;
   background-color: white;

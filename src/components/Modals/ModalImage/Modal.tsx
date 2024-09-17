@@ -22,40 +22,45 @@ import {
 } from './styles';
 
 interface ModalProps {
-  image: string;
-  imageList: string[];
+  image: { image: string; type: string } | undefined;
+  imageList: { image: string; type: string }[];
   client: Records;
-  setImage: Dispatch<SetStateAction<string>>;
+  setImage: Dispatch<
+    SetStateAction<{ image: string; type: string } | undefined>
+  >;
 }
 
 const ModalImage = ({ image, imageList, client, setImage }: ModalProps) => {
   const [file, setFile] = useState<File>();
 
-  if (image === '') return;
+  if (!image || image?.image === '') return;
 
   const normalizeUrl = (value: string) => {
     return value.includes('https') ? value : `${baseURL}files/${value}`;
   };
 
-  const onClose = () => setImage('');
+  const onClose = () => setImage({ image: '', type: '' });
 
-  // const onUpdateImage = async (url: string) => {
-  //   try {
-  //     await api.put(`/client/${client.id}`, {
-  //       ...client,
-  //       property: {
-  //         ...client.property,
-  //         second_document_url: url,
-  //       },
-  //     });
+  const onUpdateImage = async (url: string, type: string) => {
+    try {
+      await api.put(`/client/${client.id}`, {
+        ...client,
+        property: {
+          ...client.property,
+          ...(type === 'first' && { first_document_url: url }),
+          ...(type === 'second' && { second_document_url: url }),
+          ...(type === 'facade' && { facade_url: url }),
+          ...(type === 'additional' && { additional_url: url }),
+        },
+      });
 
-  //     handleSuccess('Imagem alterada com sucesso!');
-  //     setFile(undefined);
-  //     onClose();
-  //   } catch (error: any) {
-  //     handleError(error);
-  //   }
-  // };
+      handleSuccess('Imagem alterada com sucesso!');
+      setFile(undefined);
+      onClose();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
 
   const handleUpload = async () => {
     if (file) {
@@ -63,8 +68,8 @@ const ModalImage = ({ image, imageList, client, setImage }: ModalProps) => {
       const photo_name = file.name;
       const url = await uploadPhoto(file, register_id, photo_name);
 
-      setImage(normalizeUrl(url));
-      // onUpdateImage(url);
+      setImage({ image: normalizeUrl(url), type: image.type });
+      onUpdateImage(url, image.type);
     }
   };
 
@@ -75,18 +80,23 @@ const ModalImage = ({ image, imageList, client, setImage }: ModalProps) => {
           <ThumbnailsWrapper>
             <ThumbnailsWrapper>
               {imageList
-                .filter(image => image && image !== '')
+                .filter(image => image.image && image.image !== '')
                 .map(item => (
                   <Thumbnails
-                    src={normalizeUrl(item)}
-                    alt="images"
-                    onClick={() => setImage(normalizeUrl(item))}
+                    src={normalizeUrl(item.image)}
+                    alt={item.type}
+                    onClick={() =>
+                      setImage({
+                        image: normalizeUrl(item.image),
+                        type: item.type,
+                      })
+                    }
                   />
                 ))}
             </ThumbnailsWrapper>
           </ThumbnailsWrapper>
 
-          <Image src={image} />
+          <Image src={image.image} alt={image.type} />
 
           <ButtonsWrapper>
             <UploadButton>
