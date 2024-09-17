@@ -47,10 +47,10 @@ const ModalImage = ({ image, imageList, client, setImage }: ModalProps) => {
         ...client,
         property: {
           ...client.property,
-          ...(type === 'first' && { first_document_url: url }),
-          ...(type === 'second' && { second_document_url: url }),
-          ...(type === 'facade' && { facade_url: url }),
-          ...(type === 'additional' && { additional_url: url }),
+          ...(type === 'first' && { first_document: url }),
+          ...(type === 'second' && { second_document: url }),
+          ...(type === 'facade' && { facade: url }),
+          ...(type === 'additional' && { additional: url }),
         },
       });
 
