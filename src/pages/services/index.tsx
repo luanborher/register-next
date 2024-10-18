@@ -103,6 +103,7 @@ const IndexPage = () => {
           block: item?.block,
         })),
         date: format(addDays(date, 1), 'dd/MM/yyyy'),
+        type: watch('type')?.value,
         user_id: user?.value || '',
       });
 
