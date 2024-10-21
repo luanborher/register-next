@@ -124,7 +124,7 @@ const ClientsDetails = ({
 
   const onRejected = async () => {
     try {
-      await api.patch(`/client/reject/${client.property.id}`, {
+      await api.patch(`/client/reject/${client.property?.id}`, {
         rejected_reason: reject,
       });
 
@@ -165,7 +165,7 @@ const ClientsDetails = ({
       <Header
         title={client.name || ''}
         subtitle={renderSubtitle()}
-        id={client.property.registration}
+        id={client.property?.registration}
         action
       >
         <BackButton onClick={onClose}>
@@ -572,7 +572,7 @@ const ClientsDetails = ({
           disabled
           label="Histórico de Doenças Transmitidas Pela Água"
           placeholder="Histórico de Doenças Transmitidas Pela Água"
-          value={client.social_information.have_history_of_illness.join(', ')}
+          value={client.social_information?.have_history_of_illness.join(', ')}
         />
       </Row>
 
@@ -591,13 +591,16 @@ const ClientsDetails = ({
         <ImageList
           setImage={setUrlImage}
           imageList={[
-            { image: client.property.first_document_url || '', type: 'first' },
+            { image: client.property?.first_document_url || '', type: 'first' },
             {
-              image: client.property.second_document_url || '',
+              image: client.property?.second_document_url || '',
               type: 'second',
             },
-            { image: client.property.facade_url || '', type: 'facade' },
-            { image: client.property.additional_url || '', type: 'additional' },
+            { image: client.property?.facade_url || '', type: 'facade' },
+            {
+              image: client.property?.additional_url || '',
+              type: 'additional',
+            },
           ]}
         />
       </Row>
@@ -608,7 +611,7 @@ const ClientsDetails = ({
         <InputText
           label="Nome do agente"
           placeholder="Nome do agente"
-          value={client.user.name}
+          value={client.user?.name || 'sem usuário'}
           disabled
         />
 
@@ -623,7 +626,7 @@ const ClientsDetails = ({
       <Signature image={client.property.signature_url} />
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-        {(user.role === 'DEVELOPER' || user.role === 'MASTER') && (
+        {(user?.role === 'DEVELOPER' || user?.role === 'MASTER') && (
           <ButtonDeletar
             type="button"
             onClick={() => {
