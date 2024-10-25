@@ -1,14 +1,20 @@
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
+import { useReactToPrint } from 'react-to-print';
+
 import { Inativas, InativasSent } from '@/interfaces/inativas';
-import { useRef, useState } from 'react';
-import ModalQuest from '@/components/Modals/ModalQuest/Modal';
+import { INACTIVE_OPTIONS } from '@/utils/options';
 import { handleError, handleSuccess } from '@/utils/message';
 import api from '@/services/api';
+
+import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
-import { useReactToPrint } from 'react-to-print';
+import Dropdown from '@/components/Dropdown/Dropdown';
+
 import Header from '../../Header/Header';
 import InputText from '../../Input/Input';
+
 import {
   BackButton,
   BackText,
@@ -33,7 +39,7 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
 
   const [showQuest, setShowQuest] = useState(false);
 
-  const { register, watch } = useForm({
+  const { register, watch, control } = useForm({
     defaultValues: {
       ...inativa,
       pde: client.pde,
@@ -75,8 +81,6 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
       handleError(error);
     }
   };
-
-  console.log(inativa);
 
   const onUpdate = async () => {
     const form = watch();
@@ -153,11 +157,15 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
           {...register('name')}
         />
         <InputText label="PDE" placeholder="PDE" {...register('pde')} />
-        <InputText
+        <Dropdown
+          name="type"
           label="Tipo de serviço"
-          placeholder="Tipo de serviço"
-          {...register('type')}
-        />{' '}
+          control={control}
+          options={INACTIVE_OPTIONS.map(item => ({
+            value: item.value.toUpperCase(),
+            label: item.label.toUpperCase(),
+          }))}
+        />
       </Row>
 
       <Row>
