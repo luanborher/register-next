@@ -86,7 +86,9 @@ const IndexPage = () => {
 
       const { data } = await api.get<string>('/inativa/export', {
         params: {
-          ...(showQuest === 'ALL' ? {} : { status: showQuest }),
+          ...(showQuest === 'ALL' && { type: 'all' }),
+          ...(showQuest === 'REDUCED' && { type: 'new' }),
+          ...(showQuest === 'VALIDATED' && { status: 'VALIDATED' }),
         },
       });
 
@@ -160,12 +162,17 @@ const IndexPage = () => {
           <ExportSection>
             <ButtonImport onClick={() => setShowQuest('ALL')}>
               <FaDownload className="icon" />
-              Exportar todas as inativas
+              Exportar Geral
+            </ButtonImport>
+
+            <ButtonImport onClick={() => setShowQuest('REDUCED')}>
+              <FaDownload className="icon" />
+              Exportar Reduzido
             </ButtonImport>
 
             <ButtonImport onClick={() => setShowQuest('VALIDATED')}>
               <FaDownload className="icon" />
-              Exportar inativas validadas
+              Exportar Validadas
             </ButtonImport>
           </ExportSection>
 
