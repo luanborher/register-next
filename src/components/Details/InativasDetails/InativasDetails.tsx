@@ -39,9 +39,12 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
 
   const [showQuest, setShowQuest] = useState(false);
 
+  console.log(client);
+
   const { register, watch, control } = useForm({
     defaultValues: {
       ...inativa,
+      status: client.status,
       pde: client.pde,
       community: client.community,
       neighborhood: client.neighborhood,
@@ -133,13 +136,14 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
     REVIEW: 'Em análise',
     SENT: 'Pendente',
     VALIDATED: 'Validado',
+    STAND_BY: 'Prateleira',
   } as any;
 
   return (
     <Wrapper>
       <Header
         title={inativa?.name || ''}
-        subtitle={`${inativa?.date || ''} - ${status[client.status]}`}
+        subtitle={`${inativa?.date || ''} - ${status[inativa.status]}`}
         action
       >
         <BackButton onClick={onClose}>
@@ -438,7 +442,7 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
           Editar
         </ButtonUpdate>
 
-        {client.status === 'REVIEW' && (
+        {inativa.status === 'REVIEW' && (
           <ButtonValidated type="button" onClick={() => setShowQuest(true)}>
             Validar
           </ButtonValidated>
