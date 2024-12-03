@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { ChevronLeft } from 'lucide-react';
 
@@ -9,6 +9,8 @@ import { options } from '@/utils/options';
 import { formatDateHours } from '@/utils/format';
 import { useAuth } from '@/hooks/useAuth';
 
+import { useReactToPrint } from 'react-to-print';
+import FichaVisita from '@/components/Pdfs/FichaVisita/FichaVisita';
 import ImageList from './components/ImageList/ImageList';
 import Signature from './components/Signature/Signature';
 import Header from '../../Header/Header';
@@ -21,10 +23,8 @@ import ModalDuplicates from '../../Modals/ModalDuplicates/ModalDuplicates';
 import {
   BackButton,
   BackText,
-  ButtonCancel,
-  ButtonConfirm,
-  ButtonDeletar,
-  ButtonValidated,
+  Button,
+  Hidden,
   Row,
   Title,
   Wrapper,
@@ -44,6 +44,7 @@ const ClientsDetails = ({
   refetch,
 }: ClientsDetailsProps) => {
   const { user } = useAuth();
+  const componentRef = useRef<HTMLDivElement>(null);
 
   const date = new Date(client.birthDate);
 
@@ -159,6 +160,10 @@ const ClientsDetails = ({
     const status = renderStatus(client.status);
     return `${createdAt} - ${status}`;
   };
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current as HTMLDivElement,
+  });
 
   return (
     <Wrapper>
@@ -626,38 +631,49 @@ const ClientsDetails = ({
       <Signature image={client.property.signature_url} />
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
+        <Button type="button" relationship="pdf" onClick={handlePrint}>
+          Baixar PDF
+        </Button>
+
         {(user?.role === 'DEVELOPER' || user?.role === 'MASTER') && (
-          <ButtonDeletar
+          <Button
             type="button"
+            relationship="deleted"
             onClick={() => {
               setShowDeleted(true);
             }}
           >
             Apagar
-          </ButtonDeletar>
+          </Button>
         )}
 
-        <ButtonCancel
+        <Button
           type="button"
+          relationship="cancel"
           onClick={() => {
             setShowRejected(true);
           }}
         >
           Rejeitar
-        </ButtonCancel>
+        </Button>
 
-        <ButtonValidated
+        <Button
           type="button"
+          relationship="validated"
           onClick={() => {
             getDuplicates(() => setShowQuest(true));
           }}
         >
           Validar
-        </ButtonValidated>
+        </Button>
 
-        <ButtonConfirm type="submit" onClick={handleSubmit(onUpdate)}>
+        <Button
+          type="submit"
+          relationship="confirm"
+          onClick={handleSubmit(onUpdate)}
+        >
           Salvar
-        </ButtonConfirm>
+        </Button>
       </Row>
 
       <ModalImage
@@ -714,6 +730,10 @@ const ClientsDetails = ({
           duplicates={duplicates}
         />
       )}
+
+      <Hidden>
+        <FichaVisita ref={componentRef} client={client} />
+      </Hidden>
     </Wrapper>
   );
 };
