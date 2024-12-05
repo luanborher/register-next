@@ -37,19 +37,19 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
 
           <Info>
             <InfoRow style={{ gridTemplateColumns: '2fr 1fr' }}>
-              <div className="row">Cliente: {client.name}</div>
-              <div className="row">CPF/CNPJ: {client.cpf}</div>
+              <div className="row">Cliente: {client?.name}</div>
+              <div className="row">CPF/CNPJ: {client?.cpf}</div>
             </InfoRow>
             <InfoRow>
-              <div className="row">RG: {client.rg}</div>
-              <div className="row">Data de Nasc.: {client.birthDate}</div>
-              <div className="row">Gênero: {client.gender}</div>
+              <div className="row">RG: {client?.rg}</div>
+              <div className="row">Data de Nasc.: {client?.birthDate}</div>
+              <div className="row">Gênero: {client?.gender}</div>
             </InfoRow>
             <InfoRow>
-              <div className="row">Telefone: {client.phone}</div>
-              <div className="row">Estado Civíl: {client.marital_status}</div>
+              <div className="row">Telefone: {client?.phone}</div>
+              <div className="row">Estado Civíl: {client?.marital_status}</div>
               <div className="row">
-                Situação Habitação: {client.entity_type}
+                Situação Habitação: {client?.entity_type}
               </div>
             </InfoRow>
           </Info>
@@ -60,51 +60,51 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
 
           <Info>
             <InfoRow>
-              <div className="row">PDE: {client.property.pde}</div>
+              <div className="row">PDE: {client?.property?.pde}</div>
               <div className="row">
-                Hidrômetro: {client.property.hydrometer_number}
+                Hidrômetro: {client?.property?.hydrometer_number}
               </div>
               <div className="row">
-                Qtd. Economia: {client.property.quantity_amount}
+                Qtd. Economia: {client?.property?.quantity_amount}
               </div>
             </InfoRow>
             <InfoRow style={{ gridTemplateColumns: '2fr 1fr' }}>
               <div>
                 Endereço:{' '}
-                {`${client.property.street.name || ''} ${
-                  client.property.number && `, ${client.property.number}`
+                {`${client?.property?.street?.name || ''} ${
+                  client?.property?.number && `, ${client?.property?.number}`
                 } ${
-                  client.property.complement &&
-                  `, ${client.property.complement}`
+                  client?.property?.complement &&
+                  `, ${client?.property?.complement}`
                 }`}
               </div>
               <div className="row">
-                Comunidade: {client.property.street.community.name}
+                Comunidade: {client?.property?.street?.community?.name}
               </div>
             </InfoRow>
             <InfoRow>
               <div className="row">
-                Contrato: {client.property.street.community.contract.name}
+                Contrato: {client?.property?.street?.community?.contract?.name}
               </div>
               <div className="row">
-                Entre Números: {client.property.between_numbers}
+                Entre Números: {client?.property?.between_numbers}
               </div>
-              <div className="row">CEP: {client.property.zip_code}</div>
+              <div className="row">CEP: {client?.property?.zip_code}</div>
             </InfoRow>
             <InfoRow>
               <div className="row">
-                Estrutura Imóvel: {client.property.structure_type}
+                Estrutura Imóvel: {client?.property?.structure_type}
               </div>
-              <div className="row">Leito: {client.property.bed}</div>
-              <div className="row">Passeio: {client.property.tour}</div>
+              <div className="row">Leito: {client?.property?.bed}</div>
+              <div className="row">Passeio: {client?.property?.tour}</div>
             </InfoRow>
             <InfoRow>
-              <div className="row">Cód.: {client.property.codification}</div>
+              <div className="row">Cód.: {client?.property?.codification}</div>
               <div className="row">
-                Situação Imóvel: {client.property.property_situation}
+                Situação Imóvel: {client?.property?.property_situation}
               </div>
               <div className="row">
-                Tipo Imóvel: {client.property.property_type}
+                Tipo Imóvel: {client?.property?.property_type}
               </div>
             </InfoRow>
           </Info>
@@ -116,59 +116,59 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
           <Info>
             <InfoRow>
               <div className="row">
-                Escolaridade: {client.social_information.scholarity}
+                Escolaridade: {client?.social_information?.scholarity}
               </div>
               <div className="row">
-                Provedora: {client.social_information.provider}
+                Provedora: {client?.social_information?.provider}
               </div>
               <div className="row">
-                Renda Familiar: {client.social_information.income}
+                Renda Familiar: {client?.social_information?.income}
               </div>
             </InfoRow>
             <InfoRow>
               <div className="row">
-                Benefício Familiar: {client.social_information.benefit}
+                Benefício Familiar: {client?.social_information?.benefit}
               </div>
               <div className="row">
-                Profissão: {client.social_information.profission}
+                Profissão: {client?.social_information?.profission}
               </div>
               <div className="row">
                 Nº Matriculados na Escola:{' '}
-                {client.social_information.registered_people}
+                {client?.social_information?.registered_people}
               </div>
             </InfoRow>
 
             <InfoRow>
               <div className="row">
                 Nº Crianca (0 a 12 anos):{' '}
-                {client.social_information.quantity_children}
+                {client?.social_information?.quantity_children}
               </div>
               <div className="row">
                 Nº Adolescente (13 a 18 anos):{' '}
-                {client.social_information.quantity_teenagers}
+                {client?.social_information?.quantity_teenagers}
               </div>
               <div className="row">
                 Nº Adulto (19 a 59 anos):{' '}
-                {client.social_information.quantity_adults}
+                {client?.social_information?.quantity_adults}
               </div>
             </InfoRow>
             <InfoRow>
               <div className="row">
                 Nº Idoso (60 anos ou mais):{' '}
-                {client.social_information.quantity_elder}
+                {client?.social_information?.quantity_elder}
               </div>
               <div className="row">
                 Nº Pessoas Trabalhando:{' '}
-                {client.social_information.quantity_working}
+                {client?.social_information?.quantity_working}
               </div>
               <div className="row">
-                Grupo Racial: {client.social_information.race}
+                Grupo Racial: {client?.social_information?.race}
               </div>
             </InfoRow>
             <InfoRow style={{ gridTemplateColumns: '1fr' }}>
               <div className="row">
                 Histórico de Doenças Transmitidas Pela Água:{' '}
-                {client.social_information?.have_history_of_illness.join(', ')}
+                {client?.social_information?.have_history_of_illness.join(', ')}
               </div>
             </InfoRow>
             <InfoRow style={{ gridTemplateColumns: '1fr' }}>
@@ -177,7 +177,7 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
               </div>
             </InfoRow>
             <InfoRow style={{ gridTemplateColumns: '1fr' }}>
-              <div className="row">{client.what_awaits_your_family}</div>
+              <div className="row">{client?.what_awaits_your_family || ''}</div>
             </InfoRow>
           </Info>
         </Content>
@@ -226,13 +226,13 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
             }}
           >
             <div className="row">
-              <Image src={client.property?.first_document_url} alt="" />
+              <Image src={client?.property?.first_document_url || ''} alt="" />
             </div>
             <div className="row">
-              <Image src={client.property?.second_document_url} alt="" />
+              <Image src={client?.property?.second_document_url || ''} alt="" />
             </div>
             <div className="row">
-              <Image src={client.property?.facade_url} alt="" />
+              <Image src={client?.property?.facade_url || ''} alt="" />
             </div>
           </InfoRow>
         </Content>
@@ -254,7 +254,7 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
                 width: '100%',
               }}
             >
-              <Image src={client.property?.signature_url} alt="" />
+              <Image src={client?.property?.signature_url || ''} alt="" />
             </div>
           </InfoRow>
 
@@ -278,11 +278,11 @@ const FichaVisita = React.forwardRef<HTMLDivElement, ComponentToPrintProps>(
 
           <Info>
             <InfoRow style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
-              <div className="row">Agente: {client.user.name}</div>
+              <div className="row">Agente: {client?.user?.name || ''}</div>
               <div className="row">
-                Data Visita: {formatDateHours(client.created_at)}
+                Data Visita: {formatDateHours(client?.created_at || '')}
               </div>
-              <div className="row">Status: {client.status}</div>
+              <div className="row">Status: {client?.status || ''}</div>
               <div className="row">Evento: Primeira Ligação</div>
             </InfoRow>
           </Info>
