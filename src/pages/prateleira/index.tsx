@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Square, BookOpenCheck } from 'lucide-react';
 import { addDays, format } from 'date-fns';
 import { useReactToPrint } from 'react-to-print';
-import { FaFileImport, FaFileCirclePlus } from 'react-icons/fa6';
+import {
+  FaFileImport,
+  FaFileCirclePlus,
+  FaArrowRightArrowLeft,
+} from 'react-icons/fa6';
 import { useQueryClient } from '@tanstack/react-query';
 import Header from '@/components/Header/Header';
 import RootLayout from '@/components/RootLayout/Layout';
@@ -38,6 +42,8 @@ import {
   SendButton,
   ButtonImport,
   ButtonWrapper,
+  TableHeader,
+  FileCountBadge,
 } from './styles';
 
 interface Option {
@@ -52,16 +58,21 @@ const IndexPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModalPDE, setShowModalPDE] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [sectorSelected, setSectorSelected] = useState<IInativas[]>([]);
   const [routesSelected, setRoutesSelected] = useState<Route[]>([]);
   const [blocksSelected, setBlocksSelected] = useState<Block[]>([]);
   const [response, setInativas] = useState<ResponseInativas[]>([]);
-
   const [total, settotal] = useState(0);
   const [date, setDate] = useState('');
   const [user, setUser] = useState<Option>();
   const [file, setFile] = useState<File>();
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setWindowWidth(window.innerWidth);
+    });
+  }, []);
 
   const { setValue, watch } = useForm();
 
@@ -186,25 +197,42 @@ const IndexPage = () => {
     setBlocksSelected(props => [...props, block]);
   };
 
+  const calculateTotalCount = () => {
+    if (blocksSelected.length > 0) {
+      return blocksSelected.reduce((total, block) => total + block.count, 0);
+    }
+    if (routesSelected.length > 0) {
+      return routesSelected.reduce((total, route) => total + route.count, 0);
+    }
+    if (sectorSelected.length > 0) {
+      return sectorSelected.reduce((total, sector) => total + sector.count, 0);
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    settotal(calculateTotalCount());
+  }, [sectorSelected, routesSelected, blocksSelected]);
+
   return (
     <RootLayout>
       <main>
-        <Header
-          title="Prateleira"
-          subtitle="Importação e criação de ordem de serviço"
-        />
+        <Header title="Prateleira" />
 
         <ExportRow>
           <Select
             id="type"
             placeholder="Selecione..."
             onChange={e => e && setValue('type', e)}
-            defaultValue={{ value: 'AMBOS', label: 'Todos' }}
+            defaultValue={{
+              value: 'AMBOS',
+              label: 'Todos (Inativas/ C. Zero)',
+            }}
             isClearable={false}
-            width="350px"
-            label="Filtro por tipo"
+            width={windowWidth <= 920 ? '200px' : '350px'}
+            height="30px"
             options={[
-              { value: 'AMBOS', label: 'Todos' },
+              { value: 'AMBOS', label: 'Todos (Inativas/ C. Zero)' },
               { value: 'INATIVA', label: 'Inativas' },
               { value: 'CONSUMO ZERO', label: 'Consumo Zero' },
             ]}
@@ -231,27 +259,32 @@ const IndexPage = () => {
           </ButtonWrapper>
         </ExportRow>
 
+        <FileCountBadge>
+          {calculateTotalCount()} Ordens selecionada
+        </FileCountBadge>
+
         <SectionList>
           <Column>
-            {inativas && inativas?.length > 0 && 'Setor'}
-
-            {inativas && inativas?.length > 0 && (
-              <SelectedAllCard onClick={() => onSelectedSectorAll(inativas)}>
+            <TableHeader>
+              Setor
+              <SelectedAllCard
+                onClick={() => onSelectedSectorAll(inativas || [])}
+              >
+                Selecionar todos
                 <CheckBox>
                   <Square />
                   {sectorSelected?.length === inativas?.length && <Check />}
                 </CheckBox>
-                Selecionar todos
               </SelectedAllCard>
-            )}
+            </TableHeader>
 
             <TableComponent>
               {inativas?.map((sector, i) => (
-                <TableCard key={+i} onClick={() => onSelectedSector(sector)}>
-                  <CheckBox>
-                    <Square />
-                    {sectorSelected.includes(sector) && <Check />}
-                  </CheckBox>
+                <TableCard
+                  key={+i}
+                  active={sectorSelected.includes(sector)}
+                  onClick={() => onSelectedSector(sector)}
+                >
                   <TableCell>
                     <Label>
                       <strong>Setor: </strong> {sector.sector}
@@ -267,11 +300,13 @@ const IndexPage = () => {
             </TableComponent>
           </Column>
 
-          <Column>
-            {sectorSelected?.length > 0 && 'Rota'}
+          <FaArrowRightArrowLeft size={22} color="#8BD630" />
 
-            {sectorSelected?.length > 0 && (
+          <Column>
+            <TableHeader>
+              Rota
               <SelectedAllCard onClick={onSelectedRouteAll}>
+                Selecionar todos
                 <CheckBox>
                   <Square />
                   {routesSelected?.length ===
@@ -279,18 +314,17 @@ const IndexPage = () => {
                     <Check />
                   )}
                 </CheckBox>
-                Selecionar todos
               </SelectedAllCard>
-            )}
+            </TableHeader>
 
             <TableComponent>
               {sectorSelected?.map(sector =>
                 sector.routes?.map((route, i) => (
-                  <TableCard key={+i} onClick={() => onSelectedRoute(route)}>
-                    <CheckBox>
-                      <Square />
-                      {routesSelected.includes(route) && <Check />}
-                    </CheckBox>
+                  <TableCard
+                    key={+i}
+                    active={routesSelected.includes(route)}
+                    onClick={() => onSelectedRoute(route)}
+                  >
                     <TableCell>
                       <Label>
                         <strong>Rota: </strong> {route.route}
@@ -307,10 +341,11 @@ const IndexPage = () => {
             </TableComponent>
           </Column>
 
-          <Column>
-            {routesSelected?.length > 0 && 'Quadra'}
+          <FaArrowRightArrowLeft size={22} color="#8BD630" />
 
-            {routesSelected?.length > 0 && (
+          <Column>
+            <TableHeader>
+              Quadra
               <SelectedAllCard onClick={onSelectedBlockAll}>
                 <CheckBox>
                   <Square />
@@ -321,16 +356,16 @@ const IndexPage = () => {
                 </CheckBox>
                 Selecionar todos
               </SelectedAllCard>
-            )}
+            </TableHeader>
 
             <TableComponent>
               {routesSelected?.map(route =>
                 route.blocks?.map((block, i) => (
-                  <TableCard key={+i} onClick={() => onSelectedBlock(block)}>
-                    <CheckBox>
-                      <Square />
-                      {blocksSelected.includes(block) && <Check />}
-                    </CheckBox>
+                  <TableCard
+                    key={+i}
+                    active={blocksSelected.includes(block)}
+                    onClick={() => onSelectedBlock(block)}
+                  >
                     <TableCell>
                       <Label>
                         <strong>Quadra: </strong> {block.block}
@@ -346,15 +381,16 @@ const IndexPage = () => {
               )}
             </TableComponent>
           </Column>
-
-          {blocksSelected?.length > 0 && (
-            <ActionSection>
-              <ButtonConfirm onClick={() => setShowModal(true)}>
-                Criar roteiro
-              </ButtonConfirm>
-            </ActionSection>
-          )}
         </SectionList>
+
+        <ActionSection>
+          <ButtonConfirm
+            disabled={blocksSelected?.length <= 0}
+            onClick={() => setShowModal(true)}
+          >
+            Criar roteiro
+          </ButtonConfirm>
+        </ActionSection>
 
         {showModal && (
           <ModalInativas

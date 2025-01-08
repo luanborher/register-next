@@ -12,6 +12,7 @@ import ModalQuest from '@/components/Modals/ModalQuest/Modal';
 import FichaCampo from '@/components/Pdfs/FichaCampo/FichaCampo';
 import Dropdown from '@/components/Dropdown/Dropdown';
 
+import FichaVisitaInativa from '@/components/Pdfs/FichaVisitaInativa/FichaVisitaInativa';
 import Header from '../../Header/Header';
 import InputText from '../../Input/Input';
 
@@ -26,6 +27,7 @@ import {
   Hidden,
   ButtonDownload,
   ButtonUpdate,
+  ButtonExcel,
 } from './styles';
 
 interface DetailsProps {
@@ -36,10 +38,9 @@ interface DetailsProps {
 
 const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
   const componentRef = useRef<HTMLDivElement>(null);
+  const componentRef2 = useRef<HTMLDivElement>(null);
 
   const [showQuest, setShowQuest] = useState(false);
-
-  console.log(client);
 
   const { register, watch, control } = useForm({
     defaultValues: {
@@ -128,6 +129,10 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
     content: () => componentRef.current as HTMLDivElement,
   });
 
+  const handlePrint2 = useReactToPrint({
+    content: () => componentRef2.current as HTMLDivElement,
+  });
+
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') onClose();
   });
@@ -139,11 +144,15 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
     STAND_BY: 'Prateleira',
   } as any;
 
+  const dateText = `${inativa?.date || ''} - `;
+  const statusText = status[inativa.status].toUpperCase();
+  const typeText = ` (${inativa.type})`;
+
   return (
     <Wrapper>
       <Header
         title={inativa?.name || ''}
-        subtitle={`${inativa?.date || ''} - ${status[inativa.status]}`}
+        subtitle={`${dateText}${statusText}${typeText}`}
         action
       >
         <BackButton onClick={onClose}>
@@ -434,6 +443,10 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
       </Row>
 
       <Row style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
+        <ButtonExcel type="button" onClick={handlePrint2}>
+          Baixar PDF visita
+        </ButtonExcel>
+
         <ButtonDownload type="button" onClick={handlePrint}>
           Baixar ficha
         </ButtonDownload>
@@ -469,6 +482,19 @@ const InativasDetails = ({ client, inativa, onClose }: DetailsProps) => {
               complement: inativa.complement,
             },
           ]}
+        />
+      </Hidden>
+
+      <Hidden>
+        <FichaVisitaInativa
+          ref={componentRef2}
+          client={inativa}
+          cep={client?.cep || ''}
+          situation={client?.situation || ''}
+          property_type={client?.property_type || ''}
+          community={client?.community || ''}
+          fornecimento={client?.fornecimento || ''}
+          pde={client?.pde}
         />
       </Hidden>
     </Wrapper>

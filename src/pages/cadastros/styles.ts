@@ -100,6 +100,19 @@ export const Field = styled.div`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   overflow: hidden;
+  font-size: 0.85rem;
+
+  @media (max-width: 1030px) {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 1006px) {
+    font-size: 0.7rem;
+  }
+
+  @media (max-width: 962px) {
+    font-size: 0.6rem;
+  }
 `;
 
 export const LabelButton = styled.span`
@@ -129,8 +142,8 @@ export const Button = styled.button`
 export const ButtonImport = styled.label`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 1rem;
+  gap: 0.3rem;
+  padding: 0.3rem 0.5rem;
   border: 2px solid #8cd630;
   border-radius: 8px;
   font-weight: 600;
@@ -138,8 +151,12 @@ export const ButtonImport = styled.label`
 
   .icon {
     color: #8cd630;
-    size: 22px;
+    font-size: 16px;
     cursor: pointer;
+
+    @media (max-width: 1028px) {
+      font-size: 14px;
+    }
   }
 
   &:hover {
@@ -148,6 +165,14 @@ export const ButtonImport = styled.label`
 
   input {
     display: none;
+  }
+
+  @media (max-width: 920px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 860px) {
+    font-size: 0.8rem;
   }
 `;
 

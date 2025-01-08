@@ -49,7 +49,7 @@ export default function RootLayout({
               <Title text="MENU PRINCIPAL" />
 
               <NavLink icon={Users} text="Cadastros" href="/cadastros" />
-              <NavLink icon={UserPlus} text="Prateleira" href="/services" />
+              <NavLink icon={UserPlus} text="Prateleira" href="/prateleira" />
               <NavLink icon={FileHeart} text="Inativas" href="/inativas" />
               <NavLink icon={FileHeart} text="Relatórios" href="/reports" />
 
