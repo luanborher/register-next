@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { BookOpenCheck, MoreHorizontal } from 'lucide-react';
+import { BookOpenCheck } from 'lucide-react';
 import { FaFileImport, FaDownload } from 'react-icons/fa6';
-import { MdCreateNewFolder } from 'react-icons/md';
 import { useQueryClient } from '@tanstack/react-query';
 
 import TableCell from '@mui/material/TableCell';
@@ -42,6 +41,13 @@ const IndexPage = () => {
   const [showQuestCod, setShowQuestCod] = useState(false);
   const [showQuestPde, setShowQuestPde] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setWindowWidth(window.innerWidth);
+    });
+  }, []);
 
   const { register, setValue, watch } = useForm<RecordsFilter>({
     defaultValues: {
@@ -145,9 +151,8 @@ const IndexPage = () => {
     'Endereço',
     'Comunidade',
     'Hidrômetro',
-    'Data',
+    ...(windowWidth <= 910 ? [] : ['Data']),
     'Status',
-    'Ações',
   ];
 
   const filtered = { contracts, communities, streets };
@@ -173,12 +178,12 @@ const IndexPage = () => {
           <ExportSection>
             <ButtonImport onClick={() => setShowQuestCod(true)}>
               <FaDownload className="icon" />
-              Exportar codificação
+              {windowWidth <= 800 ? 'Exp. cod.' : 'Exportar codificação'}
             </ButtonImport>
 
             <ButtonImport>
               <FaFileImport className="icon" />
-              Importar codificação
+              {windowWidth <= 800 ? 'Imp. cod.' : 'Importar codificação'}
               <input
                 type="file"
                 accept=".xlsx, .xls, .csv, .xlsm"
@@ -191,18 +196,18 @@ const IndexPage = () => {
 
             <ButtonImport onClick={() => setShowQuest(true)}>
               <FaDownload className="icon" />
-              Exportar cadastros
+              {windowWidth <= 800 ? 'Exp. cadastros.' : 'Exportar cadastros'}
             </ButtonImport>
 
             <ButtonImport onClick={() => setShowQuestPde(true)}>
-              <MdCreateNewFolder size={20} className="icon" />
+              <FaDownload className="icon" />
               Gerar PDE
             </ButtonImport>
           </ExportSection>
         </ExportRow>
 
         <Content>
-          <TableComponent headers={fields}>
+          <TableComponent headers={fields} windowWidth={windowWidth}>
             {clients?.data?.map(row => (
               <TableRow
                 key={row.id}
@@ -250,23 +255,18 @@ const IndexPage = () => {
                   </Field>
                 </TableCell>
 
-                <TableCell align="left" className="p-0">
-                  <Field>
-                    {(row.created_at && formatDate(row.created_at)) || ''}
-                  </Field>
-                </TableCell>
+                {windowWidth > 910 && (
+                  <TableCell align="left" className="p-0">
+                    <Field>
+                      {(row.created_at && formatDate(row.created_at)) || ''}
+                    </Field>
+                  </TableCell>
+                )}
 
                 <TableCell align="left" height={55} className="p-0">
                   <Field style={{ color: renderColors(row.status) }}>
                     {renderStatus(row.status)}
                   </Field>
-                </TableCell>
-
-                <TableCell align="right" width={40} className="p-0">
-                  <MoreHorizontal
-                    size={24}
-                    className="text-secondary self-end"
-                  />
                 </TableCell>
               </TableRow>
             ))}

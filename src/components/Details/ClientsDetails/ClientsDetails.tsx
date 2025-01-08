@@ -158,7 +158,8 @@ const ClientsDetails = ({
   const renderSubtitle = () => {
     const createdAt = formatDateHours(client.created_at);
     const status = renderStatus(client.status);
-    return `${createdAt} - ${status}`;
+    const situation = ` (${client.situation_status})`;
+    return `${createdAt} - ${status}${situation}`;
   };
 
   const handlePrint = useReactToPrint({

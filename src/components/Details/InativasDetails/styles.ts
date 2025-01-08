@@ -148,6 +148,22 @@ export const ButtonDownload = styled.button`
   font-weight: 500;
 `;
 
+export const ButtonExcel = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 180px;
+  height: 45px;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border: 2px solid black;
+  border-radius: 8px;
+  color: black;
+  font-weight: 500;
+`;
+
 export const ButtonUpdate = styled.button`
   display: flex;
   flex-direction: row;

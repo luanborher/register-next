@@ -10,16 +10,25 @@ import React from 'react';
 interface TableProps {
   headers?: string[];
   children: React.ReactNode;
+  windowWidth?: number;
 }
 
-const TableComponent = ({ headers, children }: TableProps) => (
+const TableComponent = ({ headers, children, windowWidth }: TableProps) => (
   <TableContainer component={Paper}>
     <Table aria-label="custom pagination table">
       {headers && (
         <TableHead>
           <TableRow>
             {headers.map((header: string) => (
-              <TableCell key={header} align="left">
+              <TableCell
+                key={header}
+                align="left"
+                style={
+                  windowWidth
+                    ? { fontSize: windowWidth <= 815 ? '0.75rem' : '0.88rem' }
+                    : {}
+                }
+              >
                 <strong>{header}</strong>
               </TableCell>
             ))}
