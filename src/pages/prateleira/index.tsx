@@ -82,6 +82,13 @@ const IndexPage = () => {
 
   const { data: inativas } = usePrateleira(prateleiraParams);
 
+  const sortedInativas = inativas?.sort((a, b) =>
+    a.sector.localeCompare(b.sector, 'pt', {
+      numeric: true,
+      sensitivity: 'base',
+    }),
+  );
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current as HTMLDivElement,
   });
@@ -279,7 +286,7 @@ const IndexPage = () => {
             </TableHeader>
 
             <TableComponent>
-              {inativas?.map((sector, i) => (
+              {sortedInativas?.map((sector, i) => (
                 <TableCard
                   key={+i}
                   active={sectorSelected.includes(sector)}
@@ -319,24 +326,31 @@ const IndexPage = () => {
 
             <TableComponent>
               {sectorSelected?.map(sector =>
-                sector.routes?.map((route, i) => (
-                  <TableCard
-                    key={+i}
-                    active={routesSelected.includes(route)}
-                    onClick={() => onSelectedRoute(route)}
-                  >
-                    <TableCell>
-                      <Label>
-                        <strong>Rota: </strong> {route.route}
-                      </Label>
-                    </TableCell>
-                    <Quantity>
-                      <Label>
-                        <strong>Quantidade: </strong> {route.count}
-                      </Label>
-                    </Quantity>
-                  </TableCard>
-                )),
+                sector.routes
+                  ?.sort((a, b) =>
+                    a.route.localeCompare(b.route, 'pt', {
+                      numeric: true,
+                      sensitivity: 'base',
+                    }),
+                  )
+                  .map((route, i) => (
+                    <TableCard
+                      key={+i}
+                      active={routesSelected.includes(route)}
+                      onClick={() => onSelectedRoute(route)}
+                    >
+                      <TableCell>
+                        <Label>
+                          <strong>Rota: </strong> {route.route}
+                        </Label>
+                      </TableCell>
+                      <Quantity>
+                        <Label>
+                          <strong>Quantidade: </strong> {route.count}
+                        </Label>
+                      </Quantity>
+                    </TableCard>
+                  )),
               )}
             </TableComponent>
           </Column>
@@ -360,24 +374,31 @@ const IndexPage = () => {
 
             <TableComponent>
               {routesSelected?.map(route =>
-                route.blocks?.map((block, i) => (
-                  <TableCard
-                    key={+i}
-                    active={blocksSelected.includes(block)}
-                    onClick={() => onSelectedBlock(block)}
-                  >
-                    <TableCell>
-                      <Label>
-                        <strong>Quadra: </strong> {block.block}
-                      </Label>
-                    </TableCell>
-                    <Quantity>
-                      <Label>
-                        <strong>Quantidade: </strong> {block.count}
-                      </Label>
-                    </Quantity>
-                  </TableCard>
-                )),
+                route.blocks
+                  ?.sort((a, b) =>
+                    a.block.localeCompare(b.block, 'pt', {
+                      numeric: true,
+                      sensitivity: 'base',
+                    }),
+                  )
+                  .map((block, i) => (
+                    <TableCard
+                      key={+i}
+                      active={blocksSelected.includes(block)}
+                      onClick={() => onSelectedBlock(block)}
+                    >
+                      <TableCell>
+                        <Label>
+                          <strong>Quadra: </strong> {block.block}
+                        </Label>
+                      </TableCell>
+                      <Quantity>
+                        <Label>
+                          <strong>Quantidade: </strong> {block.count}
+                        </Label>
+                      </Quantity>
+                    </TableCard>
+                  )),
               )}
             </TableComponent>
           </Column>
